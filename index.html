@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Action ou Vérité</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+  }
+  .container {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(12px);
+    border-radius: 24px;
+    padding: 40px;
+    width: 90%;
+    max-width: 520px;
+    text-align: center;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #f7971e, #ffd200);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .subtitle { color: #aaa; margin-bottom: 24px; font-size: 0.95rem; }
+  .player-section { margin-bottom: 20px; }
+  #player-name {
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: none;
+    width: 200px;
+    font-size: 1rem;
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    outline: none;
+  }
+  #player-name::placeholder { color: #888; }
+  #add-player {
+    padding: 10px 18px;
+    border-radius: 12px;
+    border: none;
+    background: #f7971e;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 6px;
+  }
+  #add-player:hover { background: #e08600; }
+  .players-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 12px;
+  }
+  .player-tag {
+    background: rgba(255,255,255,0.15);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .player-tag .remove {
+    cursor: pointer;
+    color: #ff6b6b;
+    font-weight: bold;
+  }
+  .current-player {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #ffd200;
+    min-height: 2.2rem;
+  }
+  .buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin: 20px 0;
+  }
+  .btn {
+    padding: 14px 36px;
+    border: none;
+    border-radius: 16px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:active { transform: scale(0.97); }
+  .btn-truth {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(102,126,234,0.4);
+  }
+  .btn-dare {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(245,87,108,0.4);
+  }
+  .btn-next {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(79,172,254,0.4);
+    margin-top: 12px;
+  }
+  .card {
+    background: rgba(0,0,0,0.3);
+    border-radius: 16px;
+    padding: 24px;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 16px 0;
+  }
+  .card-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.6;
+    margin-bottom: 8px;
+  }
+  .card-text {
+    font-size: 1.25rem;
+    line-height: 1.5;
+  }
+  .start-screen { margin: 10px 0; }
+  .start-screen p { color: #aaa; margin-bottom: 14px; }
+  .hidden { display: none; }
+  .error { color: #ff6b6b; font-size: 0.85rem; margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Action ou Vérité</h1>
+  <p class="subtitle">Le jeu qui fait parler et oser</p>
+
+  <div class="player-section">
+    <input type="text" id="player-name" placeholder="Nom du joueur" maxlength="20">
+    <button id="add-player">Ajouter</button>
+    <div class="players-list" id="players-list"></div>
+    <div class="error" id="error-msg"></div>
+  </div>
+
+  <div id="game-area">
+    <div class="current-player" id="current-player">Ajoutez des joueurs pour commencer</div>
+
+    <div class="buttons" id="choice-buttons">
+      <button class="btn btn-truth" id="btn-truth">Vérité</button>
+      <button class="btn btn-dare" id="btn-dare">Action</button>
+    </div>
+
+    <div class="card" id="card">
+      <div class="card-label" id="card-label">Cliquez sur Vérité ou Action</div>
+      <div class="card-text" id="card-text">―</div>
+    </div>
+
+    <button class="btn btn-next hidden" id="btn-next">Joueur suivant →</button>
+  </div>
+</div>
+
+<script>
+  const truths = [
+    "Quel est ton prénom complet ?",
+    "Quel âge as-tu ?",
+    "Quelle est ta couleur préférée ?",
+    "Quel est ton plat préféré ?",
+    "Quel est ton film préféré ?",
+    "Quelle est ta chanson préférée ?",
+    "Quel est ton plus grand rêve ?",
+    "Quelle est ta plus grande peur ?",
+    "Quel est ton plus gros défaut ?",
+    "Quelle est ta plus grande qualité ?",
+    "As-tu déjà eu un crush sur quelqu'un ici ?",
+    "Qui a été ton premier crush ?",
+    "As-tu déjà été amoureux(se) ?",
+    "As-tu déjà eu le coeur brisé ?",
+    "As-tu déjà aimé quelqu'un en secret ?",
+    "As-tu déjà été jaloux(se) de quelqu'un ?",
+    "Qui trouves-tu le plus beau / la plus belle dans ce groupe ?",
+    "Qui trouves-tu le plus drôle dans ce groupe ?",
+    "As-tu déjà regretté un message envoyé ?",
+    "As-tu déjà eu honte d'avouer tes sentiments ?",
+    "As-tu déjà menti à tes parents ?",
+    "As-tu déjà triché à un examen ?",
+    "As-tu déjà fait semblant d'aimer un cadeau ?",
+    "As-tu déjà pleuré devant quelqu'un ?",
+    "As-tu déjà parlé dans le dos de quelqu'un ?",
+    "As-tu déjà été puni(e) ?",
+    "As-tu déjà eu une honte énorme en public ?",
+    "As-tu déjà regretté une photo postée ?",
+    "As-tu déjà stalké quelqu'un sur les réseaux sociaux ?",
+    "As-tu déjà menti pour éviter un problème ?",
+    "Quelle est la chose la plus bizarre que tu aies mangée ?",
+    "Quelle est la chose la plus ridicule que tu aies faite ?",
+    "As-tu déjà chanté seul(e) devant un miroir ?",
+    "Quelle est ta pire habitude ?",
+    "Quelle est la coupe de cheveux la plus ratée que tu aies eue ?",
+    "As-tu déjà ri au mauvais moment ?",
+    "Quelle est la chose la plus embarrassante dans ta chambre ?",
+    "As-tu déjà dansé sans musique ?",
+    "Quelle est la chose la plus enfantine que tu fais encore ?",
+    "Si tu pouvais changer ton nom, lequel choisirais-tu ?",
+    "De quoi es-tu le plus fier/fière ?",
+    "Quelle est la chose que tu aimerais changer chez toi ?",
+    "Quel est ton plus grand regret ?",
+    "Quelle est la leçon la plus importante que tu aies apprise ?",
+    "Quelle est la personne qui t'inspire le plus ?",
+    "Quel est ton plus grand objectif dans la vie ?",
+    "Qu'est-ce qui te rend vraiment heureux/heureuse ?",
+    "Quelle est la chose que tu n'as jamais osé dire à quelqu'un ?",
+    "Si tu pouvais recommencer une journée de ta vie, laquelle choisirais-tu ?",
+    "Quelle est la chose la plus importante pour toi dans une amitié ?",
+    "As-tu déjà menti sur ton âge ?",
+    "As-tu déjà eu un secret que personne ne connaît ?",
+    "As-tu déjà regretté une amitié ?",
+    "As-tu déjà eu peur d'être rejeté(e) ?",
+    "Quelle est la chose la plus folle que tu aies faite par amour ?",
+    "As-tu déjà eu un crush sur une célébrité ?",
+    "As-tu déjà envoyé un message à la mauvaise personne ?",
+    "As-tu déjà eu envie de disparaître de honte ?",
+    "Quelle est la chose la plus étrange que tu fasses quand tu es seul(e) ?",
+    "As-tu déjà pleuré de rire ?"
+  ];
+
+  const dares = [
+    "Fais 10 sauts sur place.",
+    "Tourne sur toi-même 5 fois.",
+    "Imite un animal pendant 30 secondes.",
+    "Chante une chanson au hasard.",
+    "Danse sans musique pendant 20 secondes.",
+    "Fais une grimace très drôle.",
+    "Parle avec une voix bizarre pendant 1 minute.",
+    "Fais semblant d'être un présentateur télé.",
+    "Marche comme un robot pendant 30 secondes.",
+    "Fais le cri d'un animal choisi par le groupe.",
+    "Fais une déclaration d'amour à un objet.",
+    "Parle comme si tu étais très vieux/vieille.",
+    "Fais semblant de pleurer pendant 15 secondes.",
+    "Imite quelqu'un du groupe.",
+    "Fais une mini chorégraphie improvisée.",
+    "Raconte une blague.",
+    "Fais semblant d'être un influenceur.",
+    "Fais 5 pompes ou essaie.",
+    "Fais la statue pendant 30 secondes.",
+    "Chante l'alphabet à l'envers si tu peux.",
+    "Appelle un ami et dis-lui 'je pense à toi'.",
+    "Envoie un emoji au hasard à quelqu'un.",
+    "Fais un compliment sincère à la personne de gauche.",
+    "Lis le dernier message que tu as envoyé.",
+    "Fais semblant de faire un défilé de mode.",
+    "Parle sans fermer la bouche pendant 20 secondes.",
+    "Fais une imitation de bébé.",
+    "Fais semblant d'être un professeur strict.",
+    "Dis ton prénom comme si tu étais en colère.",
+    "Fais un bruit d'ambulance pendant 10 secondes.",
+    "Laisse le groupe choisir ton prochain défi.",
+    "Fais 20 secondes de danse libre.",
+    "Imite une célébrité.",
+    "Fais semblant d'être dans un film d'action.",
+    "Raconte une histoire inventée en 30 secondes.",
+    "Fais une pose de super-héros.",
+    "Parle avec un accent inventé.",
+    "Fais semblant de cuisiner sans rien.",
+    "Fais un discours de victoire.",
+    "Fais semblant d'être un chat pendant 20 secondes.",
+    "Fais rire quelqu'un sans parler.",
+    "Choisis une personne et fais-lui un compliment.",
+    "Fais deviner un mot par mime.",
+    "Fais une battle de danse avec quelqu'un.",
+    "Imite la personne qui rit le plus fort.",
+    "Fais un selfie de groupe drôle.",
+    "Fais une chaîne de gestes avec le groupe.",
+    "Fais semblant d'être le chef du groupe.",
+    "Donne un surnom à chaque joueur.",
+    "Fais une révérence comme un roi ou une reine."
+  ];
+
+  const players = [];
+  let currentIndex = 0;
+  let lastPick = null;
+
+  const nameInput = document.getElementById('player-name');
+  const addBtn = document.getElementById('add-player');
+  const playersList = document.getElementById('players-list');
+  const errorMsg = document.getElementById('error-msg');
+  const currentPlayerEl = document.getElementById('current-player');
+  const btnTruth = document.getElementById('btn-truth');
+  const btnDare = document.getElementById('btn-dare');
+  const btnNext = document.getElementById('btn-next');
+  const cardLabel = document.getElementById('card-label');
+  const cardText = document.getElementById('card-text');
+
+  function renderPlayers() {
+    playersList.innerHTML = players.map((p, i) =>
+      `<span class="player-tag">${escapeHtml(p)} <span class="remove" data-index="${i}">✕</span></span>`
+    ).join('');
+    document.querySelectorAll('.player-tag .remove').forEach(el => {
+      el.addEventListener('click', () => {
+        const idx = parseInt(el.dataset.index);
+        players.splice(idx, 1);
+        if (currentIndex >= players.length) currentIndex = 0;
+        updateGameState();
+        renderPlayers();
+      });
+    });
+    updateGameState();
+  }
+
+  function escapeHtml(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  addBtn.addEventListener('click', () => {
+    const name = nameInput.value.trim();
+    errorMsg.textContent = '';
+    if (!name) { errorMsg.textContent = 'Entrez un nom.'; return; }
+    if (players.includes(name)) { errorMsg.textContent = 'Ce joueur existe déjà.'; return; }
+    players.push(name);
+    nameInput.value = '';
+    renderPlayers();
+  });
+
+  nameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addBtn.click(); });
+
+  function updateGameState() {
+    if (players.length === 0) {
+      currentPlayerEl.textContent = 'Ajoutez des joueurs pour commencer';
+      btnTruth.disabled = true;
+      btnDare.disabled = true;
+      cardLabel.textContent = 'Cliquez sur Vérité ou Action';
+      cardText.textContent = '―';
+      btnNext.classList.add('hidden');
+      return;
+    }
+    btnTruth.disabled = false;
+    btnDare.disabled = false;
+    currentPlayerEl.textContent = `Au tour de ${escapeHtml(players[currentIndex % players.length])}`;
+    btnNext.classList.add('hidden');
+    lastPick = null;
+  }
+
+  function pick(arr) {
+    let idx;
+    do {
+      idx = Math.floor(Math.random() * arr.length);
+    } while (arr.length > 1 && idx === lastPick);
+    lastPick = idx;
+    return arr[idx];
+  }
+
+  btnTruth.addEventListener('click', () => {
+    if (players.length === 0) return;
+    cardLabel.textContent = '☯ VÉRITÉ';
+    cardText.textContent = pick(truths);
+    showNext();
+  });
+
+  btnDare.addEventListener('click', () => {
+    if (players.length === 0) return;
+    cardLabel.textContent = '⚡ ACTION';
+    cardText.textContent = pick(dares);
+    showNext();
+  });
+
+  function showNext() {
+    btnNext.classList.remove('hidden');
+    btnTruth.disabled = true;
+    btnDare.disabled = true;
+  }
+
+  btnNext.addEventListener('click', () => {
+    currentIndex = (currentIndex + 1) % players.length;
+    updateGameState();
+  });
+
+  updateGameState();
+</script>
+</body>
+</html>
