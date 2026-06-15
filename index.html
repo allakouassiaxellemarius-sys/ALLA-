@@ -545,6 +545,47 @@ body {
 
 .btn-reset:hover { color: var(--text); }
 
+/* ========== SHARE ROW ========== */
+.share-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn-share {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-share:hover { transform: translateY(-2px); }
+.btn-share:active { transform: scale(0.97); }
+
+.btn-whatsapp {
+  background: #25D366;
+  color: #fff;
+}
+
+.btn-whatsapp:hover { background: #1da851; }
+
+.btn-share-link {
+  background: var(--surface-hover);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+
+.btn-share-link:hover { color: var(--text); }
+
 /* ========== HISTORY ========== */
 .history-section {
   margin-top: 16px;
@@ -813,6 +854,11 @@ body {
     <div class="action-row" id="action-row">
       <button class="btn-action btn-next" id="btn-next">Joueur suivant →</button>
       <button class="btn-action btn-reset" id="btn-reset-game">↺</button>
+    </div>
+
+    <div class="share-row" id="share-row">
+      <button class="btn-share btn-whatsapp" id="btn-whatsapp">💬 Partager sur WhatsApp</button>
+      <button class="btn-share btn-share-link" id="btn-share-link">🔗 Lien du jeu</button>
     </div>
 
     <div class="history-section" id="history-section">
@@ -1190,6 +1236,9 @@ const dom = {
   historyList: $('history-list'),
   btnClearHistory: $('btn-clear-history'),
   choiceArea: $('choice-area'),
+  shareRow: $('share-row'),
+  btnWhatsapp: $('btn-whatsapp'),
+  btnShareLink: $('btn-share-link'),
 };
 
 // ============================================================
@@ -1482,6 +1531,42 @@ function renderHistory() {
 }
 
 // ============================================================
+// SHARE FUNCTIONS
+// ============================================================
+function shareOnWhatsApp() {
+  const text = dom.cardText.textContent;
+  const label = dom.cardLabel.textContent;
+  const player = dom.activePlayer.textContent;
+
+  if (!text || text === t('clickToStart') || text === '―') {
+    showToast('Tire d\'abord une question !');
+    return;
+  }
+
+  const msg = encodeURIComponent(
+    `🎮 *Action ou Vérité*%0A%0A` +
+    `👤 ${player}%0A` +
+    `${label}%0A` +
+    `❓ ${text}%0A%0A` +
+    `📱 Joue aussi : https://allakouassiaxellemarius-sys.github.io/ALLA-/`
+  );
+
+  window.open(`https://wa.me/?text=${msg}`, '_blank');
+  showToast('💬 WhatsApp ouvert !');
+}
+
+function shareGameLink() {
+  const url = 'https://allakouassiaxellemarius-sys.github.io/ALLA-/';
+  if (navigator.share) {
+    navigator.share({ title: 'Action ou Vérité', text: 'Viens jouer avec moi !', url });
+  } else {
+    navigator.clipboard.writeText(url).then(() => showToast('🔗 Lien copié !')).catch(() => {
+      prompt('Copie le lien :', url);
+    });
+  }
+}
+
+// ============================================================
 // SCREEN MANAGEMENT
 // ============================================================
 function showScreen(screen) {
@@ -1582,6 +1667,10 @@ dom.btnDare.addEventListener('click', () => handleChoice('dare'));
 dom.btnNext.addEventListener('click', nextPlayer);
 dom.btnResetGame.addEventListener('click', resetGame);
 dom.btnClearHistory.addEventListener('click', clearHistory);
+
+// Share
+dom.btnWhatsapp.addEventListener('click', shareOnWhatsApp);
+dom.btnShareLink.addEventListener('click', shareGameLink);
 
 // Settings save
 dom.btnSaveSettings.addEventListener('click', () => {
