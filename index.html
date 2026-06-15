@@ -2,397 +2,1615 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Action ou Vérité</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-  }
-  .container {
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(12px);
-    border-radius: 24px;
-    padding: 40px;
-    width: 90%;
-    max-width: 520px;
-    text-align: center;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-    border: 1px solid rgba(255,255,255,0.1);
-  }
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 8px;
-    background: linear-gradient(90deg, #f7971e, #ffd200);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  .subtitle { color: #aaa; margin-bottom: 24px; font-size: 0.95rem; }
-  .player-section { margin-bottom: 20px; }
-  #player-name {
-    padding: 10px 16px;
-    border-radius: 12px;
-    border: none;
-    width: 200px;
-    font-size: 1rem;
-    background: rgba(255,255,255,0.12);
-    color: #fff;
-    outline: none;
-  }
-  #player-name::placeholder { color: #888; }
-  #add-player {
-    padding: 10px 18px;
-    border-radius: 12px;
-    border: none;
-    background: #f7971e;
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-    margin-left: 6px;
-  }
-  #add-player:hover { background: #e08600; }
-  .players-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    margin-top: 12px;
-  }
-  .player-tag {
-    background: rgba(255,255,255,0.15);
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .player-tag .remove {
-    cursor: pointer;
-    color: #ff6b6b;
-    font-weight: bold;
-  }
-  .current-player {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin: 20px 0;
-    color: #ffd200;
-    min-height: 2.2rem;
-  }
-  .buttons {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-    margin: 20px 0;
-  }
-  .btn {
-    padding: 14px 36px;
-    border: none;
-    border-radius: 16px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
-  }
-  .btn:hover { transform: translateY(-2px); }
-  .btn:active { transform: scale(0.97); }
-  .btn-truth {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff;
-    box-shadow: 0 6px 20px rgba(102,126,234,0.4);
-  }
-  .btn-dare {
-    background: linear-gradient(135deg, #f093fb, #f5576c);
-    color: #fff;
-    box-shadow: 0 6px 20px rgba(245,87,108,0.4);
-  }
-  .btn-next {
-    background: linear-gradient(135deg, #4facfe, #00f2fe);
-    color: #fff;
-    box-shadow: 0 6px 20px rgba(79,172,254,0.4);
-    margin-top: 12px;
-  }
-  .card {
-    background: rgba(0,0,0,0.3);
-    border-radius: 16px;
-    padding: 24px;
-    min-height: 100px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin: 16px 0;
-  }
-  .card-label {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    opacity: 0.6;
-    margin-bottom: 8px;
-  }
-  .card-text {
-    font-size: 1.25rem;
-    line-height: 1.5;
-  }
-  .start-screen { margin: 10px 0; }
-  .start-screen p { color: #aaa; margin-bottom: 14px; }
-  .hidden { display: none; }
-  .error { color: #ff6b6b; font-size: 0.85rem; margin-top: 6px; }
+:root {
+  --bg1: #0f0c29;
+  --bg2: #302b63;
+  --bg3: #24243e;
+  --surface: rgba(255,255,255,0.07);
+  --surface-hover: rgba(255,255,255,0.12);
+  --border: rgba(255,255,255,0.08);
+  --text: #fff;
+  --text-dim: #999;
+  --accent: #f7971e;
+  --accent2: #ffd200;
+  --truth: #667eea;
+  --truth-light: #8b9cf7;
+  --dare: #f5576c;
+  --dare-light: #f7798b;
+  --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="fire"] {
+  --bg1: #1a0a00;
+  --bg2: #4a1a00;
+  --bg3: #2d1000;
+  --accent: #ff4500;
+  --accent2: #ff8c00;
+  --truth: #ff6347;
+  --truth-light: #ff7f6e;
+  --dare: #ffd700;
+  --dare-light: #ffe44d;
+}
+
+[data-theme="ocean"] {
+  --bg1: #001220;
+  --bg2: #003355;
+  --bg3: #002244;
+  --accent: #00bcd4;
+  --accent2: #4dd0e1;
+  --truth: #26a69a;
+  --truth-light: #4db6ac;
+  --dare: #ff7043;
+  --dare-light: #ff8a65;
+}
+
+[data-theme="neon"] {
+  --bg1: #0a0a0a;
+  --bg2: #1a1a2e;
+  --bg3: #12121a;
+  --accent: #00ff88;
+  --accent2: #00ffcc;
+  --truth: #7c3aed;
+  --truth-light: #a78bfa;
+  --dare: #ec4899;
+  --dare-light: #f472b6;
+  --border: rgba(0,255,136,0.15);
+  --surface: rgba(0,255,136,0.05);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--text);
+  padding: 16px;
+  transition: background var(--transition);
+  overflow-x: hidden;
+}
+
+.container {
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 32px;
+  width: 100%;
+  max-width: 520px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  position: relative;
+  transition: background var(--transition), border var(--transition);
+}
+
+/* ========== HEADER ========== */
+.header {
+  text-align: center;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.logo {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.logo span {
+  display: inline-block;
+  font-size: 2.2rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -1px;
+  animation: logoPop 0.6s ease-out;
+}
+
+.logo .ou {
+  background: linear-gradient(135deg, var(--truth), var(--dare));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@keyframes logoPop {
+  0% { opacity: 0; transform: scale(0.5) translateY(20px); }
+  60% { transform: scale(1.05) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+/* ========== THEME SELECTOR ========== */
+.theme-bar {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.theme-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.theme-dot:hover { transform: scale(1.15); }
+.theme-dot.active { border-color: var(--text); transform: scale(1.1); box-shadow: 0 0 12px rgba(255,255,255,0.2); }
+.theme-dot[data-theme="default"] { background: linear-gradient(135deg, #667eea, #f5576c); }
+.theme-dot[data-theme="fire"] { background: linear-gradient(135deg, #ff4500, #ffd700); }
+.theme-dot[data-theme="ocean"] { background: linear-gradient(135deg, #003355, #00bcd4); }
+.theme-dot[data-theme="neon"] { background: linear-gradient(135deg, #7c3aed, #00ff88); }
+
+/* ========== TABS ========== */
+.settings-tabs {
+  display: flex;
+  gap: 4px;
+  background: rgba(255,255,255,0.05);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  margin-bottom: 20px;
+}
+
+.tab {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-dim);
+  transition: all var(--transition);
+}
+
+.tab.active { background: var(--surface-hover); color: var(--text); }
+.tab:hover { color: var(--text); }
+
+/* ========== SCREENS ========== */
+.screen { display: none; animation: fadeSlideIn 0.35s ease-out; }
+.screen.active { display: block; }
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== SETTINGS (HOME) ========== */
+.settings-group {
+  margin-bottom: 18px;
+}
+
+.settings-group label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+
+.player-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.player-input-row input {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border var(--transition);
+}
+
+.player-input-row input:focus { border-color: var(--accent); }
+.player-input-row input::placeholder { color: #666; }
+
+.btn-icon {
+  padding: 12px 18px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.btn-icon:hover { background: var(--accent2); transform: translateY(-1px); }
+.btn-icon:active { transform: scale(0.97); }
+
+.players-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  min-height: 36px;
+}
+
+.player-chip {
+  background: var(--surface-hover);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: chipIn 0.25s ease-out;
+  border: 1px solid var(--border);
+}
+
+@keyframes chipIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.player-chip .remove {
+  cursor: pointer;
+  color: var(--dare);
+  font-weight: 700;
+  font-size: 0.8rem;
+  line-height: 1;
+  padding: 0 2px;
+  transition: transform var(--transition);
+}
+
+.player-chip .remove:hover { transform: scale(1.3); }
+
+.error-msg {
+  color: var(--dare-light);
+  font-size: 0.8rem;
+  margin-top: 6px;
+  min-height: 1.2em;
+}
+
+/* ========== GAME MODE & STYLE ========== */
+.option-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.option-pill {
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.option-pill:hover { border-color: var(--accent); color: var(--text); }
+.option-pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.btn-start {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  margin-top: 20px;
+  border: none;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff;
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all var(--transition);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  letter-spacing: 0.5px;
+}
+
+.btn-start:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.4); }
+.btn-start:active { transform: scale(0.98); }
+.btn-start:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+/* ========== GAME SCREEN ========== */
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.game-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-back {
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-back:hover { color: var(--text); background: var(--surface); }
+
+.game-style-badge {
+  font-size: 0.7rem;
+  padding: 4px 12px;
+  border-radius: 12px;
+  background: var(--surface-hover);
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.player-indicator {
+  text-align: center;
+  margin: 12px 0 8px;
+}
+
+.player-turn-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  margin-bottom: 2px;
+}
+
+.player-name-display {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--accent2);
+  transition: color var(--transition);
+  min-height: 2.4rem;
+}
+
+.player-count {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+/* ========== CHOICE BUTTONS ========== */
+.choice-area {
+  display: flex;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.btn-choice {
+  flex: 1;
+  padding: 20px;
+  border: none;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.5px;
+}
+
+.btn-choice::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  pointer-events: none;
+}
+
+.btn-choice:hover { transform: translateY(-3px); }
+.btn-choice:active { transform: scale(0.96); }
+.btn-choice:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+.btn-truth {
+  background: linear-gradient(135deg, var(--truth), var(--truth-light));
+  color: #fff;
+  box-shadow: 0 6px 24px rgba(102,126,234,0.35);
+}
+
+.btn-dare {
+  background: linear-gradient(135deg, var(--dare), var(--dare-light));
+  color: #fff;
+  box-shadow: 0 6px 24px rgba(245,87,108,0.35);
+}
+
+/* ========== CARD ========== */
+.card {
+  background: rgba(0,0,0,0.25);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin: 8px 0;
+  border: 1px solid var(--border);
+  position: relative;
+  transition: all var(--transition);
+}
+
+.card-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  opacity: 0.5;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.card-text {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.card-text.truth-color { color: var(--truth-light); }
+.card-text.dare-color { color: var(--dare-light); }
+
+.card-empty {
+  opacity: 0.4;
+  font-style: italic;
+}
+
+/* ========== CARD ANIMATION ========== */
+.card.pop {
+  animation: cardPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes cardPop {
+  0% { opacity: 0; transform: scale(0.85) translateY(10px); }
+  50% { transform: scale(1.02) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ========== ACTION ROW ========== */
+.action-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.btn-action {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-action:hover { transform: translateY(-2px); }
+.btn-action:active { transform: scale(0.97); }
+
+.btn-next {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(79,172,254,0.3);
+}
+
+.btn-reset {
+  background: var(--surface-hover);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+
+.btn-reset:hover { color: var(--text); }
+
+/* ========== HISTORY ========== */
+.history-section {
+  margin-top: 16px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.history-header h3 {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.history-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  animation: fadeSlideIn 0.3s ease-out;
+}
+
+.history-item:last-child { border-bottom: none; }
+
+.history-badge {
+  font-size: 0.6rem;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.history-badge.truth { background: rgba(102,126,234,0.25); color: var(--truth-light); }
+.history-badge.dare { background: rgba(245,87,108,0.25); color: var(--dare-light); }
+.history-badge.solo { background: rgba(0,0,0,0.3); color: var(--text-dim); }
+
+.history-player {
+  font-weight: 600;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.history-text {
+  flex: 1;
+  line-height: 1.4;
+}
+
+.btn-clear-history {
+  background: none;
+  border: none;
+  color: var(--dare-light);
+  font-size: 0.75rem;
+  font-family: inherit;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity var(--transition);
+}
+
+.btn-clear-history:hover { opacity: 1; }
+
+/* ========== SOLO MODE ========== */
+.solo-ai {
+  text-align: center;
+  margin: 10px 0;
+}
+
+.solo-ai-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+/* ========== TOAST ========== */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--surface);
+  backdrop-filter: blur(16px);
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  opacity: 0;
+  transition: all 0.4s ease-out;
+  pointer-events: none;
+  z-index: 100;
+  white-space: nowrap;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 480px) {
+  .container { padding: 20px 16px; border-radius: 18px; }
+  .logo span { font-size: 1.7rem; }
+  .player-name-display { font-size: 1.4rem; }
+  .btn-choice { padding: 16px; font-size: 1rem; }
+  .card-text { font-size: 1rem; }
+  .choice-area { gap: 8px; }
+  .card { padding: 20px 16px; min-height: 100px; }
+  .player-input-row { flex-direction: column; }
+  .btn-icon { width: 100%; }
+  .action-row { flex-direction: column; }
+  .theme-dot { width: 28px; height: 28px; font-size: 12px; }
+  .option-pill { padding: 6px 14px; font-size: 0.8rem; }
+}
+
+@media (max-width: 360px) {
+  .container { padding: 14px 10px; }
+  .logo span { font-size: 1.4rem; }
+  .btn-choice { padding: 12px; font-size: 0.9rem; }
+}
+
+/* ========== NO-SELECT ========== */
+.no-select { user-select: none; -webkit-user-select: none; }
 </style>
 </head>
 <body>
-<div class="container">
-  <h1>Action ou Vérité</h1>
-  <p class="subtitle">Le jeu qui fait parler et oser</p>
 
-  <div class="player-section">
-    <input type="text" id="player-name" placeholder="Nom du joueur" maxlength="20">
-    <button id="add-player">Ajouter</button>
-    <div class="players-list" id="players-list"></div>
-    <div class="error" id="error-msg"></div>
+<div class="container" id="app">
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- HEADER -->
+  <div class="header no-select">
+    <div class="logo">
+      <span>ACTION</span>
+      <span class="ou">OU</span>
+      <span>VÉRITÉ</span>
+    </div>
+    <p class="subtitle" id="subtitle">Le jeu qui fait parler, rire et oser</p>
   </div>
 
-  <div id="game-area">
-    <div class="current-player" id="current-player">Ajoutez des joueurs pour commencer</div>
+  <!-- THEME BAR -->
+  <div class="theme-bar no-select" id="theme-bar">
+    <div class="theme-dot active" data-theme="default" title="Classic"></div>
+    <div class="theme-dot" data-theme="fire" title="Fire">🔥</div>
+    <div class="theme-dot" data-theme="ocean" title="Ocean">🌊</div>
+    <div class="theme-dot" data-theme="neon" title="Neon">💜</div>
+  </div>
 
-    <div class="buttons" id="choice-buttons">
-      <button class="btn btn-truth" id="btn-truth">Vérité</button>
-      <button class="btn btn-dare" id="btn-dare">Action</button>
+  <!-- TABS -->
+  <div class="settings-tabs no-select" id="settings-tabs">
+    <button class="tab active" data-tab="home">Accueil</button>
+    <button class="tab" data-tab="settings">Réglages</button>
+  </div>
+
+  <!-- ========== SCREEN: HOME ========== -->
+  <div class="screen active" id="screen-home">
+    <div class="settings-group">
+      <label>👥 Joueurs</label>
+      <div class="player-input-row">
+        <input type="text" id="player-name-input" placeholder="Entrer un prénom" maxlength="20" autocomplete="off">
+        <button class="btn-icon" id="btn-add-player">+ Ajouter</button>
+      </div>
+      <div class="players-grid" id="players-grid"></div>
+      <div class="error-msg" id="home-error"></div>
+    </div>
+
+    <div class="settings-group">
+      <label>🎮 Mode de jeu</label>
+      <div class="option-row" id="mode-options">
+        <button class="option-pill active" data-mode="multi">Multijoueur</button>
+        <button class="option-pill" data-mode="solo">Solo</button>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <label>🎯 Style</label>
+      <div class="option-row" id="style-options">
+        <button class="option-pill active" data-style="fun">Fun</button>
+        <button class="option-pill" data-style="hard">Hard</button>
+        <button class="option-pill" data-style="romantic">Romantique</button>
+      </div>
+    </div>
+
+    <button class="btn-start" id="btn-start">🚀 Commencer la partie</button>
+  </div>
+
+  <!-- ========== SCREEN: SETTINGS ========== -->
+  <div class="screen" id="screen-settings">
+    <div class="settings-group">
+      <label>🎨 Thème</label>
+      <div class="option-row" id="theme-options">
+        <button class="option-pill active" data-theme="default">Classic</button>
+        <button class="option-pill" data-theme="fire">Fire</button>
+        <button class="option-pill" data-theme="ocean">Ocean</button>
+        <button class="option-pill" data-theme="neon">Neon</button>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <label>🌐 Langue</label>
+      <div class="option-row" id="lang-options">
+        <button class="option-pill active" data-lang="fr">Français</button>
+        <button class="option-pill" data-lang="en">English</button>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <label>📋 Nom de la partie</label>
+      <input type="text" id="game-name-input" placeholder="Soirée entre amis..." maxlength="30" style="width:100%;padding:10px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:rgba(255,255,255,0.06);color:var(--text);font-family:inherit;font-size:0.9rem;outline:none;">
+    </div>
+
+    <div class="settings-group">
+      <label>⚙️ Options avancées</label>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;color:var(--text-dim);cursor:pointer;">
+          <input type="checkbox" id="chk-history" checked> Historique
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;color:var(--text-dim);cursor:pointer;">
+          <input type="checkbox" id="chk-animations" checked> Animations
+        </label>
+      </div>
+    </div>
+
+    <button class="btn-start" id="btn-save-settings" style="margin-top:10px;">✅ Appliquer</button>
+  </div>
+
+  <!-- ========== SCREEN: GAME ========== -->
+  <div class="screen" id="screen-game">
+    <div class="game-header">
+      <div class="game-header-left">
+        <button class="btn-back" id="btn-quit-game">← Quitter</button>
+        <span class="game-style-badge" id="style-badge">Fun</span>
+      </div>
+      <span class="game-style-badge" id="mode-badge">Multi</span>
+    </div>
+
+    <div class="player-indicator">
+      <div class="player-turn-label">Au tour de</div>
+      <div class="player-name-display" id="active-player">―</div>
+      <div class="player-count" id="player-count"></div>
+    </div>
+
+    <div class="choice-area" id="choice-area">
+      <button class="btn-choice btn-truth" id="btn-truth">☯ Vérité</button>
+      <button class="btn-choice btn-dare" id="btn-dare">⚡ Action</button>
     </div>
 
     <div class="card" id="card">
-      <div class="card-label" id="card-label">Cliquez sur Vérité ou Action</div>
-      <div class="card-text" id="card-text">―</div>
+      <div class="card-label" id="card-label">Choisis Vérité ou Action</div>
+      <div class="card-text card-empty" id="card-text">Clique sur un bouton pour commencer</div>
     </div>
 
-    <button class="btn btn-next hidden" id="btn-next">Joueur suivant →</button>
+    <div class="action-row" id="action-row">
+      <button class="btn-action btn-next" id="btn-next">Joueur suivant →</button>
+      <button class="btn-action btn-reset" id="btn-reset-game">↺</button>
+    </div>
+
+    <div class="history-section" id="history-section">
+      <div class="history-header">
+        <h3>📜 Historique</h3>
+        <button class="btn-clear-history" id="btn-clear-history">Effacer</button>
+      </div>
+      <div id="history-list"></div>
+    </div>
   </div>
 </div>
 
 <script>
-  const truths = [
-    "Quel est ton prénom complet ?",
-    "Quel âge as-tu ?",
-    "Quelle est ta couleur préférée ?",
-    "Quel est ton plat préféré ?",
-    "Quel est ton film préféré ?",
-    "Quelle est ta chanson préférée ?",
-    "Quel est ton plus grand rêve ?",
-    "Quelle est ta plus grande peur ?",
-    "Quel est ton plus gros défaut ?",
-    "Quelle est ta plus grande qualité ?",
-    "As-tu déjà eu un crush sur quelqu'un ici ?",
-    "Qui a été ton premier crush ?",
-    "As-tu déjà été amoureux(se) ?",
-    "As-tu déjà eu le coeur brisé ?",
-    "As-tu déjà aimé quelqu'un en secret ?",
-    "As-tu déjà été jaloux(se) de quelqu'un ?",
-    "Qui trouves-tu le plus beau / la plus belle dans ce groupe ?",
-    "Qui trouves-tu le plus drôle dans ce groupe ?",
-    "As-tu déjà regretté un message envoyé ?",
-    "As-tu déjà eu honte d'avouer tes sentiments ?",
-    "As-tu déjà menti à tes parents ?",
-    "As-tu déjà triché à un examen ?",
-    "As-tu déjà fait semblant d'aimer un cadeau ?",
-    "As-tu déjà pleuré devant quelqu'un ?",
-    "As-tu déjà parlé dans le dos de quelqu'un ?",
-    "As-tu déjà été puni(e) ?",
-    "As-tu déjà eu une honte énorme en public ?",
-    "As-tu déjà regretté une photo postée ?",
-    "As-tu déjà stalké quelqu'un sur les réseaux sociaux ?",
-    "As-tu déjà menti pour éviter un problème ?",
-    "Quelle est la chose la plus bizarre que tu aies mangée ?",
-    "Quelle est la chose la plus ridicule que tu aies faite ?",
-    "As-tu déjà chanté seul(e) devant un miroir ?",
-    "Quelle est ta pire habitude ?",
-    "Quelle est la coupe de cheveux la plus ratée que tu aies eue ?",
-    "As-tu déjà ri au mauvais moment ?",
-    "Quelle est la chose la plus embarrassante dans ta chambre ?",
-    "As-tu déjà dansé sans musique ?",
-    "Quelle est la chose la plus enfantine que tu fais encore ?",
-    "Si tu pouvais changer ton nom, lequel choisirais-tu ?",
-    "De quoi es-tu le plus fier/fière ?",
-    "Quelle est la chose que tu aimerais changer chez toi ?",
-    "Quel est ton plus grand regret ?",
-    "Quelle est la leçon la plus importante que tu aies apprise ?",
-    "Quelle est la personne qui t'inspire le plus ?",
-    "Quel est ton plus grand objectif dans la vie ?",
-    "Qu'est-ce qui te rend vraiment heureux/heureuse ?",
-    "Quelle est la chose que tu n'as jamais osé dire à quelqu'un ?",
-    "Si tu pouvais recommencer une journée de ta vie, laquelle choisirais-tu ?",
-    "Quelle est la chose la plus importante pour toi dans une amitié ?",
-    "As-tu déjà menti sur ton âge ?",
-    "As-tu déjà eu un secret que personne ne connaît ?",
-    "As-tu déjà regretté une amitié ?",
-    "As-tu déjà eu peur d'être rejeté(e) ?",
-    "Quelle est la chose la plus folle que tu aies faite par amour ?",
-    "As-tu déjà eu un crush sur une célébrité ?",
-    "As-tu déjà envoyé un message à la mauvaise personne ?",
-    "As-tu déjà eu envie de disparaître de honte ?",
-    "Quelle est la chose la plus étrange que tu fasses quand tu es seul(e) ?",
-    "As-tu déjà pleuré de rire ?"
-  ];
+// ============================================================
+// DATA: Questions & Défis
+// ============================================================
+const DATA = {
+  fr: {
+    name: 'Français',
+    truths: {
+      fun: [
+        "Quel est ton plat préféré ?",
+        "Quelle est ta couleur préférée ?",
+        "Quel est ton film préféré ?",
+        "Quelle est ta chanson préférée ?",
+        "Quel est ton plus grand rêve ?",
+        "Quelle est ta plus grande peur ?",
+        "Quel est ton plus gros défaut ?",
+        "Quelle est ta plus grande qualité ?",
+        "Quel est ton prénom complet ?",
+        "Quel âge as-tu ?",
+        "Quelle est la chose la plus bizarre que tu aies mangée ?",
+        "Quelle est la chose la plus ridicule que tu aies faite ?",
+        "As-tu déjà chanté seul(e) devant un miroir ?",
+        "Quelle est ta pire habitude ?",
+        "La coupe de cheveux la plus ratée que tu aies eue ?",
+        "As-tu déjà ri au mauvais moment ?",
+        "As-tu déjà dansé sans musique ?",
+        "Si tu pouvais changer ton nom, lequel choisirais-tu ?",
+        "Quel est le dernier mensonge que tu as dit ?",
+        "À qui envoyais-tu le plus de messages cette semaine ?",
+        "Quelle est la chose la plus enfantine que tu fais encore ?",
+        "As-tu déjà eu un secret que personne ne connaît ?",
+        "As-tu déjà envoyé un message à la mauvaise personne ?",
+        "As-tu déjà pleuré de rire ?",
+        "Quelle est la chose la plus étrange que tu fasses seul(e) ?",
+      ],
+      hard: [
+        "Qui est ton crush secret dans cette pièce ?",
+        "As-tu déjà été amoureux(se) ?",
+        "As-tu déjà eu le cœur brisé ?",
+        "As-tu déjà aimé quelqu'un en secret ?",
+        "As-tu déjà été jaloux(se) de quelqu'un ?",
+        "Qui trouves-tu le plus beau / la plus belle ici ?",
+        "Qui trouves-tu le plus drôle ici ?",
+        "As-tu déjà regretté un message envoyé ?",
+        "As-tu déjà eu honte d'avouer tes sentiments ?",
+        "As-tu déjà menti à tes parents ? Sur quoi ?",
+        "As-tu déjà triché à un examen ?",
+        "As-tu déjà parlé dans le dos de quelqu'un ?",
+        "As-tu déjà stalké quelqu'un sur les réseaux ?",
+        "Révèle le plus gros mensonge que tu aies raconté.",
+        "Quel est ton plus grand regret ?",
+        "Quelle est la personne qui t'inspire le plus ?",
+        "Qu'est-ce qui te rend vraiment heureux/heureuse ?",
+        "Si tu pouvais recommencer une journée de ta vie ?",
+        "As-tu déjà eu un crush sur une célébrité ?",
+        "As-tu déjà eu envie de disparaître de honte ?",
+        "As-tu déjà regretté une amitié ?",
+        "As-tu déjà eu peur d'être rejeté(e) ?",
+        "Quelle est la chose la plus folle que tu aies faite par amour ?",
+        "Quel est ton plus grand secret que personne ne connaît ?",
+        "De quoi es-tu le plus fier/fière ?",
+      ],
+      romantic: [
+        "Qu'est-ce qui te fait tomber amoureux(se) ?",
+        "Décris ton rendez-vous parfait.",
+        "Quel est le compliment le plus beau qu'on t'ait fait ?",
+        "Qu'est-ce que tu regardes en premier chez une personne ?",
+        "Préfères-tu les grands gestes romantiques ou les petites attentions ?",
+        "Quelle est ta plus belle histoire d'amour ?",
+        "Qu'est-ce qui te fait fondre chez quelqu'un ?",
+        "As-tu déjà écrit une lettre d'amour ?",
+        "Quel est ton plus beau souvenir avec quelqu'un ?",
+        "Que ferais-tu pour impressionner la personne qui te plaît ?",
+        "Caresse ou mot doux : tu préfères donner ou recevoir ?",
+        "Quelle est la chose la plus romantique qu'on t'ait offerte ?",
+        "As-tu déjà eu un coup de foudre ?",
+        "Qu'est-ce que l'amour pour toi ?",
+        "Où emmènerais-tu ton/ta partenaire pour un week-end parfait ?",
+        "Quel genre de câlin préfères-tu ?",
+        "Quelle chanson d'amour te fait pleurer ?",
+        "As-tu déjà dit 'je t'aime' sans le penser ?",
+        "Préfères-tu une soirée romantique ou une aventure spontanée ?",
+        "Quel détail chez quelqu'un te fait craquer instantanément ?",
+      ],
+    },
+    dares: {
+      fun: [
+        "Fais 10 sauts sur place.",
+        "Tourne sur toi-même 5 fois.",
+        "Imite un animal pendant 30 secondes.",
+        "Chante une chanson au hasard.",
+        "Danse sans musique pendant 20 secondes.",
+        "Fais une grimace très drôle.",
+        "Parle avec une voix bizarre pendant 1 minute.",
+        "Fais semblant d'être un présentateur télé.",
+        "Marche comme un robot pendant 30 secondes.",
+        "Fais le cri d'un animal choisi par le groupe.",
+        "Fais une déclaration d'amour à un objet.",
+        "Parle comme si tu étais très vieux/vieille.",
+        "Fais semblant de pleurer pendant 15 secondes.",
+        "Imite quelqu'un du groupe.",
+        "Fais une mini chorégraphie improvisée.",
+        "Raconte une blague.",
+        "Fais semblant d'être un influenceur.",
+        "Fais la statue pendant 30 secondes.",
+        "Chante l'alphabet à l'envers.",
+        "Fais 5 pompes (ou essaie).",
+      ],
+      hard: [
+        "Appelle un ami et dis-lui 'je pense à toi'.",
+        "Envoie un emoji au hasard à quelqu'un.",
+        "Lis le dernier message que tu as envoyé.",
+        "Parle sans fermer la bouche pendant 20 secondes.",
+        "Fais une imitation de bébé.",
+        "Fais semblant d'être un professeur strict.",
+        "Dis ton prénom comme si tu étais en colère.",
+        "Fais un bruit d'ambulance pendant 10 secondes.",
+        "Laisse le groupe choisir ton prochain défi.",
+        "Imite une célébrité.",
+        "Fais semblant d'être dans un film d'action.",
+        "Raconte une histoire inventée en 30 secondes.",
+        "Fais une pose de super-héros.",
+        "Parle avec un accent inventé.",
+        "Fais semblant de cuisiner sans rien.",
+        "Fais un discours de victoire.",
+        "Choisis une personne et fais-lui un compliment sincère.",
+        "Fais une déclaration dramatique comme dans un roman.",
+        "Fais semblant d'être un chat pendant 20 secondes.",
+        "Fais rire quelqu'un sans parler.",
+      ],
+      romantic: [
+        "Regarde la personne de gauche dans les yeux pendant 10 secondes sans sourire.",
+        "Dis un compliment personnalisé à chaque joueur.",
+        "Fais semblant de demander quelqu'un en mariage.",
+        "Récite un poème d'amour improvisé.",
+        "Fais une déclaration d'amour… à ton téléphone.",
+        "Mime un baiser au ralenti (à l'air).",
+        "Chante les 30 secondes les plus romantiques que tu connais.",
+        "Envoie un message mignon à un contact.",
+        "Fais un slow avec une chaise.",
+        "Complimente-toi devant le miroir comme si tu étais ton propre crush.",
+        "Fais une promesse romantique solennelle au groupe.",
+        "Imagine ton date parfait et décris-le en détails.",
+        "Fais le portrait chinois amoureux de la personne à ta droite.",
+        "Danse un slow tout(e) seul(e) en fermant les yeux.",
+        "Susurre un prénom de façon romantique.",
+      ],
+    },
+  },
+  en: {
+    name: 'English',
+    truths: {
+      fun: [
+        "What's your favorite food?",
+        "What's your favorite color?",
+        "What's your favorite movie?",
+        "What's your favorite song?",
+        "What's your biggest dream?",
+        "What's your biggest fear?",
+        "What's your worst flaw?",
+        "What's your best quality?",
+        "What's your full name?",
+        "How old are you?",
+        "What's the weirdest thing you ever ate?",
+        "What's the silliest thing you ever did?",
+        "Have you ever sung alone in front of a mirror?",
+        "What's your worst habit?",
+        "What's your worst haircut ever?",
+        "Have you ever laughed at the wrong moment?",
+        "Have you ever danced without music?",
+        "If you could change your name, what would it be?",
+        "What's the last lie you told?",
+        "Who did you text the most this week?",
+        "What childish thing do you still do?",
+        "Do you have a secret nobody knows?",
+        "Have you ever texted the wrong person?",
+        "Have you ever cried from laughter?",
+        "What's the strangest thing you do alone?",
+      ],
+      hard: [
+        "Who's your secret crush in this room?",
+        "Have you ever been in love?",
+        "Have you ever had your heart broken?",
+        "Have you ever loved someone in secret?",
+        "Have you ever been jealous of someone?",
+        "Who do you find the most attractive here?",
+        "Who's the funniest person here?",
+        "Have you ever regretted a sent message?",
+        "Have you ever been ashamed to admit your feelings?",
+        "Have you ever lied to your parents? About what?",
+        "Have you ever cheated on an exam?",
+        "Have you ever talked behind someone's back?",
+        "Have you ever stalked someone on social media?",
+        "Reveal the biggest lie you ever told.",
+        "What's your biggest regret?",
+        "Who inspires you the most?",
+        "What truly makes you happy?",
+        "If you could relive one day of your life?",
+        "Have you ever had a celebrity crush?",
+        "Have you ever wanted to disappear from embarrassment?",
+        "Have you ever regretted a friendship?",
+        "Have you ever been afraid of being rejected?",
+        "What's the craziest thing you did for love?",
+        "What's your biggest secret nobody knows?",
+        "What are you most proud of?",
+      ],
+      romantic: [
+        "What makes you fall in love?",
+        "Describe your perfect date.",
+        "What's the nicest compliment you ever received?",
+        "What do you notice first in someone?",
+        "Do you prefer grand gestures or small attentions?",
+        "What's your best love story?",
+        "What melts your heart in someone?",
+        "Have you ever written a love letter?",
+        "What's your best memory with someone special?",
+        "What would you do to impress your crush?",
+        "Do you prefer giving or receiving hugs?",
+        "What's the most romantic gift you ever got?",
+        "Have you ever had love at first sight?",
+        "What does love mean to you?",
+        "Where would you take your partner for a perfect weekend?",
+        "What kind of hug do you prefer?",
+        "Which love song makes you cry?",
+        "Have you ever said 'I love you' without meaning it?",
+        "Romantic evening or spontaneous adventure?",
+        "What small detail makes you instantly like someone?",
+      ],
+    },
+    dares: {
+      fun: [
+        "Do 10 jumps in place.",
+        "Spin around 5 times.",
+        "Mimic an animal for 30 seconds.",
+        "Sing a random song.",
+        "Dance without music for 20 seconds.",
+        "Make a funny face.",
+        "Speak with a weird voice for 1 minute.",
+        "Act like a TV host.",
+        "Walk like a robot for 30 seconds.",
+        "Make the sound of an animal chosen by the group.",
+        "Declare your love to an object.",
+        "Talk like you're very old.",
+        "Fake cry for 15 seconds.",
+        "Imitate someone in the group.",
+        "Do an improvised mini dance.",
+        "Tell a joke.",
+        "Act like an influencer.",
+        "Freeze like a statue for 30 seconds.",
+        "Sing the alphabet backwards.",
+        "Do 5 push-ups (or try).",
+      ],
+      hard: [
+        "Call a friend and say 'I'm thinking of you'.",
+        "Send a random emoji to someone.",
+        "Read the last message you sent.",
+        "Speak without closing your mouth for 20 seconds.",
+        "Do a baby impression.",
+        "Act like a strict teacher.",
+        "Say your name like you're angry.",
+        "Make an ambulance sound for 10 seconds.",
+        "Let the group choose your next dare.",
+        "Imitate a celebrity.",
+        "Act like you're in an action movie.",
+        "Tell an invented story in 30 seconds.",
+        "Strike a superhero pose.",
+        "Speak with a made-up accent.",
+        "Act like you're cooking with nothing.",
+        "Give a victory speech.",
+        "Choose someone and give them a sincere compliment.",
+        "Make a dramatic declaration like in a novel.",
+        "Act like a cat for 20 seconds.",
+        "Make someone laugh without speaking.",
+      ],
+      romantic: [
+        "Stare into the eyes of the person on your left for 10 seconds without smiling.",
+        "Give a personalized compliment to each player.",
+        "Pretend to propose to someone.",
+        "Recite an improvised love poem.",
+        "Confess your love… to your phone.",
+        "Mime a slow-motion kiss (in the air).",
+        "Sing the most romantic 30 seconds you know.",
+        "Send a cute message to a contact.",
+        "Slow dance with a chair.",
+        "Compliment yourself in the mirror like you're your own crush.",
+        "Make a solemn romantic promise to the group.",
+        "Describe your perfect date in detail.",
+        "Do a romantic Chinese portrait of the person on your right.",
+        "Slow dance alone with your eyes closed.",
+        "Whisper a name in a romantic way.",
+      ],
+    },
+  },
+};
 
-  const dares = [
-    "Fais 10 sauts sur place.",
-    "Tourne sur toi-même 5 fois.",
-    "Imite un animal pendant 30 secondes.",
-    "Chante une chanson au hasard.",
-    "Danse sans musique pendant 20 secondes.",
-    "Fais une grimace très drôle.",
-    "Parle avec une voix bizarre pendant 1 minute.",
-    "Fais semblant d'être un présentateur télé.",
-    "Marche comme un robot pendant 30 secondes.",
-    "Fais le cri d'un animal choisi par le groupe.",
-    "Fais une déclaration d'amour à un objet.",
-    "Parle comme si tu étais très vieux/vieille.",
-    "Fais semblant de pleurer pendant 15 secondes.",
-    "Imite quelqu'un du groupe.",
-    "Fais une mini chorégraphie improvisée.",
-    "Raconte une blague.",
-    "Fais semblant d'être un influenceur.",
-    "Fais 5 pompes ou essaie.",
-    "Fais la statue pendant 30 secondes.",
-    "Chante l'alphabet à l'envers si tu peux.",
-    "Appelle un ami et dis-lui 'je pense à toi'.",
-    "Envoie un emoji au hasard à quelqu'un.",
-    "Fais un compliment sincère à la personne de gauche.",
-    "Lis le dernier message que tu as envoyé.",
-    "Fais semblant de faire un défilé de mode.",
-    "Parle sans fermer la bouche pendant 20 secondes.",
-    "Fais une imitation de bébé.",
-    "Fais semblant d'être un professeur strict.",
-    "Dis ton prénom comme si tu étais en colère.",
-    "Fais un bruit d'ambulance pendant 10 secondes.",
-    "Laisse le groupe choisir ton prochain défi.",
-    "Fais 20 secondes de danse libre.",
-    "Imite une célébrité.",
-    "Fais semblant d'être dans un film d'action.",
-    "Raconte une histoire inventée en 30 secondes.",
-    "Fais une pose de super-héros.",
-    "Parle avec un accent inventé.",
-    "Fais semblant de cuisiner sans rien.",
-    "Fais un discours de victoire.",
-    "Fais semblant d'être un chat pendant 20 secondes.",
-    "Fais rire quelqu'un sans parler.",
-    "Choisis une personne et fais-lui un compliment.",
-    "Fais deviner un mot par mime.",
-    "Fais une battle de danse avec quelqu'un.",
-    "Imite la personne qui rit le plus fort.",
-    "Fais un selfie de groupe drôle.",
-    "Fais une chaîne de gestes avec le groupe.",
-    "Fais semblant d'être le chef du groupe.",
-    "Donne un surnom à chaque joueur.",
-    "Fais une révérence comme un roi ou une reine."
-  ];
+// ============================================================
+// STATE
+// ============================================================
+const state = {
+  players: [],
+  currentIndex: 0,
+  mode: 'multi',       // 'multi' | 'solo'
+  style: 'fun',        // 'fun' | 'hard' | 'romantic'
+  theme: 'default',
+  lang: 'fr',
+  gameName: '',
+  history: [],
+  historyEnabled: true,
+  animationsEnabled: true,
+  usedTruths: [],
+  usedDares: [],
+  truthHistory: [],
+  dareHistory: [],
+  lastTruthIdx: null,
+  lastDareIdx: null,
+  gameStarted: false,
+};
 
-  const players = [];
-  let currentIndex = 0;
-  let lastPick = null;
+// ============================================================
+// DOM REFS
+// ============================================================
+const $ = (id) => document.getElementById(id);
+const dom = {
+  toast: $('toast'),
+  subtitle: $('subtitle'),
+  themeBar: $('theme-bar'),
+  settingsTabs: $('settings-tabs'),
 
-  const nameInput = document.getElementById('player-name');
-  const addBtn = document.getElementById('add-player');
-  const playersList = document.getElementById('players-list');
-  const errorMsg = document.getElementById('error-msg');
-  const currentPlayerEl = document.getElementById('current-player');
-  const btnTruth = document.getElementById('btn-truth');
-  const btnDare = document.getElementById('btn-dare');
-  const btnNext = document.getElementById('btn-next');
-  const cardLabel = document.getElementById('card-label');
-  const cardText = document.getElementById('card-text');
+  // Home
+  screenHome: $('screen-home'),
+  playerInput: $('player-name-input'),
+  btnAddPlayer: $('btn-add-player'),
+  playersGrid: $('players-grid'),
+  homeError: $('home-error'),
+  modeOptions: $('mode-options'),
+  styleOptions: $('style-options'),
+  btnStart: $('btn-start'),
 
-  function renderPlayers() {
-    playersList.innerHTML = players.map((p, i) =>
-      `<span class="player-tag">${escapeHtml(p)} <span class="remove" data-index="${i}">✕</span></span>`
+  // Settings
+  screenSettings: $('screen-settings'),
+  themeOptions: $('theme-options'),
+  langOptions: $('lang-options'),
+  gameNameInput: $('game-name-input'),
+  chkHistory: $('chk-history'),
+  chkAnimations: $('chk-animations'),
+  btnSaveSettings: $('btn-save-settings'),
+
+  // Game
+  screenGame: $('screen-game'),
+  btnQuit: $('btn-quit-game'),
+  styleBadge: $('style-badge'),
+  modeBadge: $('mode-badge'),
+  activePlayer: $('active-player'),
+  playerCount: $('player-count'),
+  btnTruth: $('btn-truth'),
+  btnDare: $('btn-dare'),
+  card: $('card'),
+  cardLabel: $('card-label'),
+  cardText: $('card-text'),
+  btnNext: $('btn-next'),
+  btnResetGame: $('btn-reset-game'),
+  historySection: $('history-section'),
+  historyList: $('history-list'),
+  btnClearHistory: $('btn-clear-history'),
+  choiceArea: $('choice-area'),
+};
+
+// ============================================================
+// TRANSLATIONS
+// ============================================================
+const TR = {
+  fr: {
+    subtitle: 'Le jeu qui fait parler, rire et oser',
+    turnOf: 'Au tour de',
+    choose: 'Choisis Vérité ou Action',
+    clickToStart: 'Clique sur un bouton pour commencer',
+    truth: 'Vérité',
+    dare: 'Action',
+    nextPlayer: 'Joueur suivant →',
+    quit: '← Quitter',
+    playerCount: (i, n) => `Joueur ${i+1}/${n}`,
+    history: '📜 Historique',
+    clear: 'Effacer',
+    noHistory: 'Aucune question pour l\'instant',
+    playerAdded: (n) => `${n} ajouté !`,
+    playerExists: 'Ce joueur existe déjà.',
+    emptyName: 'Entre un prénom.',
+    needPlayers: 'Ajoute au moins 1 joueur.',
+    startDisabled: 'Ajoute au moins 1 joueur pour commencer',
+    gameReset: 'Partie réinitialisée !',
+    historyCleared: 'Historique effacé.',
+    settingsSaved: 'Réglages appliqués.',
+    soloLabel: '🤖 Mode Solo',
+    soloTurn: 'À toi de jouer !',
+    toastReset: '↺ Partie réinitialisée',
+  },
+  en: {
+    subtitle: 'The game that makes you talk, laugh and dare',
+    turnOf: "It's",
+    choose: 'Choose Truth or Dare',
+    clickToStart: 'Click a button to start',
+    truth: 'Truth',
+    dare: 'Dare',
+    nextPlayer: 'Next player →',
+    quit: '← Quit',
+    playerCount: (i, n) => `Player ${i+1}/${n}`,
+    history: '📜 History',
+    clear: 'Clear',
+    noHistory: 'No questions yet',
+    playerAdded: (n) => `${n} added!`,
+    playerExists: 'This player already exists.',
+    emptyName: 'Enter a name.',
+    needPlayers: 'Add at least 1 player.',
+    startDisabled: 'Add at least 1 player to start',
+    gameReset: 'Game reset!',
+    historyCleared: 'History cleared.',
+    settingsSaved: 'Settings applied.',
+    soloLabel: '🤖 Solo Mode',
+    soloTurn: 'Your turn!',
+    toastReset: '↺ Game reset',
+  },
+};
+
+function t(key, ...args) {
+  const val = TR[state.lang][key];
+  return typeof val === 'function' ? val(...args) : val;
+}
+
+// ============================================================
+// THEME
+// ============================================================
+function setTheme(theme) {
+  state.theme = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  document.querySelectorAll('[data-theme]').forEach(el => {
+    const t = el.dataset.theme;
+    el.classList.toggle('active', t === theme);
+  });
+  // Update theme-bar dots
+  document.querySelectorAll('.theme-dot').forEach(d => {
+    d.classList.toggle('active', d.dataset.theme === theme);
+  });
+  // Update theme option pills
+  document.querySelectorAll('#theme-options .option-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.theme === theme);
+  });
+}
+
+// ============================================================
+// PLAYERS
+// ============================================================
+function addPlayer(name) {
+  name = name.trim().charAt(0).toUpperCase() + name.trim().slice(1).toLowerCase();
+  dom.homeError.textContent = '';
+  if (!name) { dom.homeError.textContent = t('emptyName'); return false; }
+  if (state.players.includes(name)) { dom.homeError.textContent = t('playerExists'); return false; }
+  state.players.push(name);
+  renderPlayers();
+  dom.playerInput.value = '';
+  dom.playerInput.focus();
+  showToast(t('playerAdded', name));
+  return true;
+}
+
+function removePlayer(index) {
+  state.players.splice(index, 1);
+  if (state.currentIndex >= state.players.length) state.currentIndex = 0;
+  renderPlayers();
+}
+
+function renderPlayers() {
+  if (!state.players.length) {
+    dom.playersGrid.innerHTML = '<span style="color:var(--text-dim);font-size:0.85rem;">Aucun joueur pour l\'instant</span>';
+  } else {
+    dom.playersGrid.innerHTML = state.players.map((p, i) =>
+      `<span class="player-chip">${escapeHtml(p)} <span class="remove" data-index="${i}">✕</span></span>`
     ).join('');
-    document.querySelectorAll('.player-tag .remove').forEach(el => {
-      el.addEventListener('click', () => {
-        const idx = parseInt(el.dataset.index);
-        players.splice(idx, 1);
-        if (currentIndex >= players.length) currentIndex = 0;
-        updateGameState();
-        renderPlayers();
-      });
+    dom.playersGrid.querySelectorAll('.remove').forEach(el => {
+      el.addEventListener('click', () => removePlayer(parseInt(el.dataset.index)));
     });
-    updateGameState();
+  }
+  dom.btnStart.disabled = state.players.length === 0;
+  dom.btnStart.textContent = state.players.length === 0 ? t('startDisabled') : '🚀 ' + t('needPlayers').replace('Ajoute au moins 1 joueur', 'Lancer la partie');
+  if (state.players.length === 0) {
+    dom.btnStart.textContent = '🚀 ' + t('startDisabled');
+  } else {
+    dom.btnStart.textContent = `🚀 Lancer la partie (${state.players.length})`;
+  }
+}
+
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// ============================================================
+// GAME
+// ============================================================
+function startGame() {
+  if (state.players.length === 0) {
+    showToast(t('needPlayers'));
+    return;
+  }
+  state.gameStarted = true;
+  state.currentIndex = 0;
+  state.usedTruths = [];
+  state.usedDares = [];
+  state.history = [];
+  state.truthHistory = [];
+  state.dareHistory = [];
+  state.lastTruthIdx = null;
+  state.lastDareIdx = null;
+  renderHistory();
+  showScreen('game');
+  updateGameUI();
+}
+
+function updateGameUI() {
+  const p = state.players[state.currentIndex];
+  dom.activePlayer.textContent = p ? escapeHtml(p) : '―';
+  dom.playerCount.textContent = t('playerCount', state.currentIndex, state.players.length);
+  dom.styleBadge.textContent = state.style.charAt(0).toUpperCase() + state.style.slice(1);
+  dom.modeBadge.textContent = state.mode === 'solo' ? t('soloLabel') : '👥 Multi';
+
+  dom.btnTruth.disabled = false;
+  dom.dareBtn?.disabled && (dom.dareBtn.disabled = false);
+  dom.btnTruth.disabled = false;
+  dom.dareBtn = dom.btnDare;
+  dom.dareBtn.disabled = false;
+
+  dom.cardLabel.textContent = t('choose');
+  dom.cardText.textContent = t('clickToStart');
+  dom.cardText.className = 'card-text card-empty';
+  dom.card.classList.remove('pop');
+  dom.btnNext.textContent = t('nextPlayer');
+}
+
+function pickQuestion(type) {
+  const data = DATA[state.lang];
+  const pool = type === 'truth' ? data.truths[state.style] : data.dares[state.style];
+  if (!pool || pool.length === 0) return '…';
+
+  const usedKey = type === 'truth' ? 'usedTruths' : 'usedDares';
+  const lastKey = type === 'truth' ? 'lastTruthIdx' : 'lastDareIdx';
+  const used = state[usedKey];
+
+  let available = pool.filter((_, i) => !used.includes(i) && i !== state[lastKey]);
+  if (available.length === 0) {
+    // Reset used pool
+    state[usedKey] = [];
+    available = pool.filter((_, i) => i !== state[lastKey]);
+    if (available.length === 0) available = pool;
   }
 
-  function escapeHtml(s) {
-    const d = document.createElement('div');
-    d.textContent = s;
-    return d.innerHTML;
+  let idx;
+  let pick;
+  do {
+    idx = Math.floor(Math.random() * pool.length);
+  } while (used.includes(idx) || idx === state[lastKey]);
+
+  pick = pool[idx];
+  state[usedKey].push(idx);
+  state[lastKey] = idx;
+
+  // Add to history
+  state.history.push({
+    type,
+    player: state.players[state.currentIndex],
+    text: pick,
+    style: state.style,
+  });
+  renderHistory();
+
+  return pick;
+}
+
+function handleChoice(type) {
+  if (!state.gameStarted || state.players.length === 0) return;
+
+  const pick = pickQuestion(type);
+  const isTruth = type === 'truth';
+
+  dom.cardLabel.textContent = isTruth ? '☯ ' + t('truth') : '⚡ ' + t('dare');
+  dom.cardText.textContent = pick;
+  dom.cardText.className = 'card-text ' + (isTruth ? 'truth-color' : 'dare-color');
+
+  if (state.animationsEnabled) {
+    dom.card.classList.remove('pop');
+    void dom.card.offsetWidth;
+    dom.card.classList.add('pop');
   }
 
-  addBtn.addEventListener('click', () => {
-    const name = nameInput.value.trim();
-    errorMsg.textContent = '';
-    if (!name) { errorMsg.textContent = 'Entrez un nom.'; return; }
-    if (players.includes(name)) { errorMsg.textContent = 'Ce joueur existe déjà.'; return; }
-    players.push(name);
-    nameInput.value = '';
+  dom.btnTruth.disabled = true;
+  dom.btnDare.disabled = true;
+  dom.btnNext.textContent = t('nextPlayer');
+
+  // Solo mode auto-advance after delay
+  if (state.mode === 'solo') {
+    setTimeout(() => nextPlayer(), 3000);
+  }
+}
+
+function nextPlayer() {
+  if (state.players.length === 0) return;
+  state.currentIndex = (state.currentIndex + 1) % state.players.length;
+  updateGameUI();
+  if (state.animationsEnabled) {
+    dom.activePlayer.style.animation = 'none';
+    void dom.activePlayer.offsetWidth;
+    dom.activePlayer.style.animation = 'fadeSlideIn 0.3s ease-out';
+  }
+}
+
+function resetGame() {
+  state.gameStarted = false;
+  state.currentIndex = 0;
+  state.usedTruths = [];
+  state.usedDares = [];
+  state.history = [];
+  state.truthHistory = [];
+  state.dareHistory = [];
+  state.lastTruthIdx = null;
+  state.lastDareIdx = null;
+  renderHistory();
+  showScreen('home');
+  showToast(t('toastReset'));
+}
+
+function clearHistory() {
+  state.history = [];
+  renderHistory();
+  showToast(t('historyCleared'));
+}
+
+// ============================================================
+// HISTORY
+// ============================================================
+function renderHistory() {
+  if (!state.historyEnabled || state.history.length === 0) {
+    dom.historyList.innerHTML = state.history.length === 0
+      ? '<div style="color:var(--text-dim);font-size:0.8rem;text-align:center;padding:8px 0;">' + t('noHistory') + '</div>'
+      : '';
+    return;
+  }
+  const items = state.history.map((h, i) => {
+    const badge = h.type === 'truth' ? 'truth' : 'dare';
+    return `<div class="history-item">
+      <span class="history-badge ${badge}">${h.type === 'truth' ? 'V' : 'A'}</span>
+      <span class="history-player">${escapeHtml(h.player)}</span>
+      <span class="history-text">${escapeHtml(h.text)}</span>
+    </div>`;
+  }).reverse().join('');
+  dom.historyList.innerHTML = items;
+}
+
+// ============================================================
+// SCREEN MANAGEMENT
+// ============================================================
+function showScreen(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  if (screen === 'home') dom.screenHome.classList.add('active');
+  else if (screen === 'settings') dom.screenSettings.classList.add('active');
+  else if (screen === 'game') dom.screenGame.classList.add('active');
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+let toastTimer = null;
+function showToast(msg) {
+  dom.toast.textContent = msg;
+  dom.toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => dom.toast.classList.remove('show'), 2000);
+}
+
+// ============================================================
+// EVENT BINDING
+// ============================================================
+// Players
+dom.btnAddPlayer.addEventListener('click', () => addPlayer(dom.playerInput.value));
+dom.playerInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addPlayer(dom.playerInput.value); });
+
+// Mode options
+dom.modeOptions.querySelectorAll('.option-pill').forEach(p => {
+  p.addEventListener('click', () => {
+    dom.modeOptions.querySelectorAll('.option-pill').forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+    state.mode = p.dataset.mode;
+  });
+});
+
+// Style options
+dom.styleOptions.querySelectorAll('.option-pill').forEach(p => {
+  p.addEventListener('click', () => {
+    dom.styleOptions.querySelectorAll('.option-pill').forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+    state.style = p.dataset.style;
+    state.usedTruths = [];
+    state.usedDares = [];
+    state.lastTruthIdx = null;
+    state.lastDareIdx = null;
+  });
+});
+
+// Theme (settings)
+dom.themeOptions.querySelectorAll('.option-pill').forEach(p => {
+  p.addEventListener('click', () => setTheme(p.dataset.theme));
+});
+
+// Theme (top bar)
+dom.themeBar.querySelectorAll('.theme-dot').forEach(d => {
+  d.addEventListener('click', () => setTheme(d.dataset.theme));
+});
+
+// Language
+dom.langOptions.querySelectorAll('.option-pill').forEach(p => {
+  p.addEventListener('click', () => {
+    dom.langOptions.querySelectorAll('.option-pill').forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+    state.lang = p.dataset.lang;
+    updateUILang();
+  });
+});
+
+function updateUILang() {
+  dom.subtitle.textContent = TR[state.lang].subtitle;
+  updateGameUI();
+  if (!state.gameStarted) {
     renderPlayers();
-  });
-
-  nameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addBtn.click(); });
-
-  function updateGameState() {
-    if (players.length === 0) {
-      currentPlayerEl.textContent = 'Ajoutez des joueurs pour commencer';
-      btnTruth.disabled = true;
-      btnDare.disabled = true;
-      cardLabel.textContent = 'Cliquez sur Vérité ou Action';
-      cardText.textContent = '―';
-      btnNext.classList.add('hidden');
-      return;
-    }
-    btnTruth.disabled = false;
-    btnDare.disabled = false;
-    currentPlayerEl.textContent = `Au tour de ${escapeHtml(players[currentIndex % players.length])}`;
-    btnNext.classList.add('hidden');
-    lastPick = null;
   }
+}
 
-  function pick(arr) {
-    let idx;
-    do {
-      idx = Math.floor(Math.random() * arr.length);
-    } while (arr.length > 1 && idx === lastPick);
-    lastPick = idx;
-    return arr[idx];
-  }
-
-  btnTruth.addEventListener('click', () => {
-    if (players.length === 0) return;
-    cardLabel.textContent = '☯ VÉRITÉ';
-    cardText.textContent = pick(truths);
-    showNext();
+// Tabs
+dom.settingsTabs.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    dom.settingsTabs.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    showScreen(t.dataset.tab);
   });
+});
 
-  btnDare.addEventListener('click', () => {
-    if (players.length === 0) return;
-    cardLabel.textContent = '⚡ ACTION';
-    cardText.textContent = pick(dares);
-    showNext();
-  });
+// Start
+dom.btnStart.addEventListener('click', startGame);
 
-  function showNext() {
-    btnNext.classList.remove('hidden');
-    btnTruth.disabled = true;
-    btnDare.disabled = true;
-  }
+// Quit game
+dom.btnQuit.addEventListener('click', resetGame);
 
-  btnNext.addEventListener('click', () => {
-    currentIndex = (currentIndex + 1) % players.length;
-    updateGameState();
-  });
+// Choices
+dom.btnTruth.addEventListener('click', () => handleChoice('truth'));
+dom.btnDare.addEventListener('click', () => handleChoice('dare'));
 
-  updateGameState();
+// Next / Reset
+dom.btnNext.addEventListener('click', nextPlayer);
+dom.btnResetGame.addEventListener('click', resetGame);
+dom.btnClearHistory.addEventListener('click', clearHistory);
+
+// Settings save
+dom.btnSaveSettings.addEventListener('click', () => {
+  state.gameName = dom.gameNameInput.value.trim();
+  state.historyEnabled = dom.chkHistory.checked;
+  state.animationsEnabled = dom.chkAnimations.checked;
+  dom.historySection.style.display = state.historyEnabled ? 'block' : 'none';
+  showToast(t('settingsSaved'));
+  dom.settingsTabs.querySelector('[data-tab="home"]').click();
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (!state.gameStarted) return;
+  if (e.key === '1' || e.key === 't') { e.preventDefault(); dom.btnTruth.click(); }
+  if (e.key === '2' || e.key === 'd') { e.preventDefault(); dom.btnDare.click(); }
+  if (e.key === 'Enter' && !dom.btnTruth.disabled) { /* handled */ }
+  if (e.key === 'ArrowRight' || e.key === 'n') { e.preventDefault(); if (!dom.btnTruth.disabled) return; dom.btnNext.click(); }
+  if (e.key === 'Escape') { resetGame(); }
+});
+
+// ============================================================
+// INIT
+// ============================================================
+renderPlayers();
+dom.historySection.style.display = 'none';
+
+console.log('🎮 Action ou Vérité prêt !');
+console.log('Raccourcis : [T]ruth [D]are [N]ext [Esc]quit');
 </script>
 </body>
 </html>
