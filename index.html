@@ -565,9 +565,9 @@
     }
 
     .category-btn[data-cat="fun"].active{ background: linear-gradient(135deg, #d36d46, #ee8f61);}
-    .category-btn[data-cat="hard"].active{ background: linear-gradient(135deg, #7050bb, #8e6ae0);}
-    .category-btn[data-cat="romantique"].active{ background: linear-gradient(135deg, #c54f77, #e3759a);}
-    .category-btn[data-cat="ose"].active{ background: linear-gradient(135deg, #1f8a67, #39a67f);}
+    .category-btn[data-cat="amis"].active{ background: linear-gradient(135deg, #1f8a67, #39a67f);}
+    .category-btn[data-cat="soft"].active{ background: linear-gradient(135deg, #c54f77, #e3759a);}
+    .category-btn[data-cat="hot"].active{ background: linear-gradient(135deg, #d64045, #e8686d);}
 
     .quick-info{
       display:grid;
@@ -1020,16 +1020,16 @@
             <div class="eyebrow">Ambiance</div>
             <div class="category-strip" role="group" aria-label="Choix de catégorie">
               <button class="btn category-btn active" data-cat="fun" type="button">
-                <span><strong>FUN</strong><small>Léger, drôle, accessible</small></span>
+                <span><strong>FUN</strong><small>Léger, drôle, accessible à tous</small></span>
               </button>
-              <button class="btn category-btn" data-cat="hard" type="button">
-                <span><strong>HARD</strong><small>Plus intense, plus direct</small></span>
+              <button class="btn category-btn" data-cat="amis" type="button">
+                <span><strong>ENTRE AMIS</strong><small>Intense, challenge, franche rigolade</small></span>
               </button>
-              <button class="btn category-btn" data-cat="romantique" type="button">
-                <span><strong>ROMANTIQUE</strong><small>Doux, complice, charmeur</small></span>
+              <button class="btn category-btn" data-cat="soft" type="button">
+                <span><strong>SOFT</strong><small>Doux, complice, tendre ambiance</small></span>
               </button>
-              <button class="btn category-btn" data-cat="ose" type="button">
-                <span><strong>OSÉ</strong><small>Adulte, piquant, sans vulgarité</small></span>
+              <button class="btn category-btn" data-cat="hot" type="button">
+                <span><strong>HOT</strong><small>Piquant, audacieux, sans filtre</small></span>
               </button>
             </div>
           </div>
@@ -1064,6 +1064,10 @@
           <div class="settings-row">
             <span>⏭️ Auto-suivant</span>
             <button class="toggle-switch" id="toggleAutoNext" type="button" aria-label="Auto-suivant"></button>
+          </div>
+          <div class="settings-row">
+            <span>🏆 Mode Tournoi (3 passes = éliminé)</span>
+            <button class="toggle-switch" id="toggleTournament" type="button" aria-label="Mode Tournoi"></button>
           </div>
           <div class="settings-row">
             <span>⏱️ Minuteur (30s)</span>
@@ -1134,6 +1138,7 @@
             <div class="result-actions">
               <a class="btn btn-primary" id="shareWhatsapp" href="#" target="_blank" rel="noopener noreferrer">📤 Partager sur WhatsApp</a>
               <a class="btn" href="https://chat.whatsapp.com/FomycGrlXB52o9H5m13E0a" target="_blank" rel="noopener noreferrer" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.14);text-decoration:none;">💬 Rejoindre le groupe</a>
+              <button class="btn" id="btnPass" type="button" style="background:rgba(255,100,100,.2);">⏭️ Passer</button>
               <button class="btn" id="copyMessage" type="button">Copier</button>
               <button class="btn" id="newPrompt" type="button">Nouvelle</button>
             </div>
@@ -1230,7 +1235,7 @@
           "Fais une démonstration de ta meilleure danse en vocal (décris les mouvements)."
         ]
       },
-      hard: {
+      amis: {
         truth: [
           "Quelle vérité sur toi surprendrait vraiment le groupe ?",
           "Quel est le plus gros risque que tu n'as jamais osé prendre ?",
@@ -1296,7 +1301,7 @@
           "Fais un bilan honnête de ta vie actuelle en 30 secondes."
         ]
       },
-      romantique: {
+      soft: {
         truth: [
           "Quel geste romantique te ferait fondre instantanément ?",
           "Quel type de message te fait le plus plaisir à recevoir ?",
@@ -1362,7 +1367,7 @@
           "Fais un compliment unique et personnalisé à chaque joueur."
         ]
       },
-      ose: {
+      hot: {
         truth: [
           "Quel genre de message te fait rougir immédiatement ?",
           "As-tu déjà relu une conversation juste parce qu'elle te plaisait trop ?",
@@ -1430,6 +1435,24 @@
       }
     };
 
+    const gages = [
+      "Envoie un emoji de toi en train de faire n'importe quoi en vocal.",
+      "Change ton surnom dans le groupe en 'Le/La Boss' pour 10 min.",
+      "Poste une photo de ton réfrigérateur.",
+      "Chante la première ligne d'une chanson au hasard en vocal.",
+      "Écris un compliment à chaque personne du groupe.",
+      "Envoie une devinette débile et oblige quelqu'un à répondre.",
+      "Parle en verlan pendant 3 messages.",
+      "Fais une révérence ou un salut militaire en gif.",
+      "Invente un nouveau prénom pour toi et utilise-le tout le tour.",
+      "Laisse le groupe choisir une mission pour toi dans WhatsApp.",
+      "Poste un mème qui décrit ta vie actuelle.",
+      "Envoie un vocal de 15 secondes ou tu racontes ta journée en 5 mots max.",
+      "Enlève un accessoire (montre, bracelet, etc.) jusqu'au prochain tour.",
+      "Ta prochaine phrase doit être une question, quoi qu'il arrive.",
+      "Décris le dernier film que tu as vu en 3 emojis."
+    ];
+
     const state = {
       players: [],
       currentIndex: 0,
@@ -1439,6 +1462,8 @@
       lastPrompt: "",
       history: [],
       points: {},
+      passes: {},
+      eliminated: [],
       usedPrompts: {},
       settings: {
         autoNext: false,
@@ -1447,7 +1472,8 @@
         confetti: true,
         maxRounds: 0,
         darkMode: false,
-        timerSeconds: 30
+        timerSeconds: 30,
+        tournament: false
       }
     };
 
@@ -1483,6 +1509,8 @@
       toggleTimer: document.getElementById("toggleTimer"),
       toggleSound: document.getElementById("toggleSound"),
       toggleConfetti: document.getElementById("toggleConfetti"),
+      toggleTournament: document.getElementById("toggleTournament"),
+      btnPass: document.getElementById("btnPass"),
       newGameBtn: document.getElementById("newGameBtn"),
       exportHistory: document.getElementById("exportHistory"),
       timerDisplay: document.getElementById("timerDisplay"),
@@ -1508,9 +1536,9 @@
     function toLabel(cat){
       const map = {
         fun: "FUN",
-        hard: "HARD",
-        romantique: "ROMANTIQUE",
-        ose: "OSÉ"
+        amis: "ENTRE AMIS",
+        soft: "SOFT",
+        hot: "HOT"
       };
       return map[cat] || "FUN";
     }
@@ -1524,14 +1552,19 @@
       els.playersList.innerHTML = "";
       state.players.forEach((name, index) => {
         const pts = state.points[name] || 0;
+        const pss = state.passes[name] || 0;
+        const eliminated = state.eliminated.includes(name);
         const pill = document.createElement("div");
         pill.className = "player-pill";
         pill.style.cssText = "gap:.4rem;flex-wrap:wrap;";
-        pill.innerHTML = `
-          <span>${escapeHtml(name)}</span>
-          <span style="font-size:.78rem;color:var(--accent-2);font-weight:700;">${pts} pts</span>
-          <button type="button" aria-label="Supprimer ${escapeHtml(name)}" data-index="${index}">×</button>
-        `;
+        if (eliminated) pill.style.opacity = "0.45";
+        let info = `<span>${escapeHtml(name)}${eliminated ? " ❌" : ""}</span>`;
+        info += `<span style="font-size:.78rem;color:var(--accent-2);font-weight:700;">${pts} pts</span>`;
+        if (state.settings.tournament && pss > 0 && !eliminated) {
+          info += `<span style="font-size:.72rem;color:var(--accent-4);">${pss}/3 passes</span>`;
+        }
+        info += `<button type="button" aria-label="Supprimer ${escapeHtml(name)}" data-index="${index}">×</button>`;
+        pill.innerHTML = info;
         els.playersList.appendChild(pill);
       });
 
@@ -1556,20 +1589,23 @@
         state.currentIndex = 0;
       }
 
-      els.currentPlayer.textContent = getCurrentPlayer();
+      const active = getActivePlayers();
+      const current = getCurrentPlayer();
+      els.currentPlayer.textContent = current || "Ajoute des joueurs";
       els.playerPosition.textContent = `Joueur ${state.currentIndex + 1}/${state.players.length}`;
 
       const mr = state.settings.maxRounds;
       const roundsLeft = mr > 0 ? ` (${Math.max(0, mr - state.turnCount)} tours restants)` : "";
+      const tourneyInfo = state.settings.tournament && active.length > 0 ? ` | Actifs: ${active.length}/${state.players.length}` : "";
 
       if (state.players.length < 2){
         els.statusLine.textContent = "Ajoute encore au moins 1 joueur pour un vrai mode groupe.";
       } else if (!state.lastPrompt){
-        els.statusLine.textContent = "Choisis Vérité ou Action pour générer la manche." + roundsLeft;
+        els.statusLine.textContent = "Choisis Vérité ou Action pour générer la manche." + roundsLeft + tourneyInfo;
       } else {
         const pos = state.players.length < 2 ? "" : `. Prochain : ${state.players[(state.currentIndex + 1) % state.players.length]}`;
         if (state.lastPrompt) {
-          els.statusLine.textContent = `Message prêt pour WhatsApp.${pos}${roundsLeft}`;
+          els.statusLine.textContent = `Message prêt pour WhatsApp.${pos}${roundsLeft}${tourneyInfo}`;
         }
       }
     }
@@ -1630,6 +1666,12 @@
         state.currentIndex = Math.floor(Math.random() * state.players.length);
       } else {
         state.currentIndex = (state.currentIndex + 1) % state.players.length;
+      }
+      if (state.settings.tournament && state.eliminated.includes(getCurrentPlayer())) {
+        if (getActivePlayers().length > 0) {
+          nextPlayer(false);
+          return;
+        }
       }
       syncCurrentPlayer();
     }
@@ -1724,6 +1766,18 @@ ${GROUP_LINK}`;
       if (!state.players.length){
         showToast("Ajoute des joueurs d'abord.");
         return;
+      }
+
+      const active = getActivePlayers();
+      if (state.settings.tournament && active.length < 2) {
+        showToast("Pas assez de joueurs actifs ! Nouvelle partie ?");
+        fireConfetti();
+        return;
+      }
+
+      if (state.settings.tournament && active.length > 0 && !active.includes(getCurrentPlayer())) {
+        state.currentIndex = state.players.indexOf(active[0]);
+        syncCurrentPlayer();
       }
 
       const maxR = state.settings.maxRounds;
@@ -1850,7 +1904,9 @@ ${GROUP_LINK}`;
           playSound();
           els.timerDisplay.textContent = "0s";
           els.timerFill.style.width = "0%";
-          showToast("Temps écoulé !");
+          if (state.players.length) {
+            executeGage(getCurrentPlayer());
+          }
           return;
         }
         const pct = (timerRemaining / (state.settings.timerSeconds || 30)) * 100;
@@ -1908,7 +1964,7 @@ ${GROUP_LINK}`;
 
     function renderRanking(){
       els.rankingList.innerHTML = "";
-      const entries = state.players.map(name => ({name, pts: state.points[name] || 0}));
+      const entries = state.players.map(name => ({name, pts: state.points[name] || 0, eliminated: state.eliminated.includes(name)}));
       entries.sort((a, b) => b.pts - a.pts);
       if (!entries.length) {
         els.rankingList.innerHTML = '<div class="empty-state">Ajoute des joueurs.</div>';
@@ -1918,8 +1974,9 @@ ${GROUP_LINK}`;
       entries.forEach((e, i) => {
         const div = document.createElement("div");
         div.className = "rank-item";
-        const pos = i < 3 ? medals[i] : "#" + (i + 1);
-        div.innerHTML = `<span class="rank-pos">${pos}</span><span class="rank-name">${escapeHtml(e.name)}</span><span class="rank-pts">${e.pts} pts</span>`;
+        if (e.eliminated) div.style.opacity = "0.45";
+        const pos = e.eliminated ? "❌" : (i < 3 ? medals[i] : "#" + (i + 1));
+        div.innerHTML = `<span class="rank-pos">${pos}</span><span class="rank-name">${escapeHtml(e.name)}${e.eliminated ? " (éliminé)" : ""}</span><span class="rank-pts">${e.pts} pts</span>`;
         els.rankingList.appendChild(div);
       });
     }
@@ -1935,11 +1992,18 @@ ${GROUP_LINK}`;
           lastPrompt: state.lastPrompt,
           history: state.history.slice(0, 30),
           points: state.points,
+          passes: state.passes,
+          eliminated: state.eliminated,
           usedPrompts: state.usedPrompts,
           settings: state.settings
         };
         localStorage.setItem("actionVeriteState", JSON.stringify(data));
       } catch(e) {}
+    }
+
+    function migrateOldCategory(key){
+      const map = {hard: "amis", romantique: "soft", ose: "hot"};
+      return map[key] || key;
     }
 
     function loadState(){
@@ -1950,12 +2014,33 @@ ${GROUP_LINK}`;
         if (data.players) state.players = data.players;
         if (data.currentIndex >= 0) state.currentIndex = data.currentIndex;
         if (data.turnCount >= 0) state.turnCount = data.turnCount;
-        if (data.category) state.category = data.category;
+        if (data.category) state.category = migrateOldCategory(data.category);
         if (data.lastType) state.lastType = data.lastType;
         if (data.lastPrompt) state.lastPrompt = data.lastPrompt;
-        if (data.history) state.history = data.history;
+        if (data.history) {
+          state.history = data.history.map(h => ({
+            ...h,
+            category: migrateOldCategory(h.category ? h.category.toLowerCase() : h.category)
+          }));
+        }
         if (data.points) state.points = data.points;
-        if (data.usedPrompts) state.usedPrompts = data.usedPrompts;
+        if (data.passes) state.passes = data.passes;
+        if (data.eliminated) state.eliminated = data.eliminated;
+        if (data.usedPrompts) {
+          state.usedPrompts = {};
+          Object.entries(data.usedPrompts).forEach(([player, cats]) => {
+            state.usedPrompts[player] = {};
+            Object.entries(cats).forEach(([key, arr]) => {
+              const parts = key.split("_");
+              if (parts.length === 2) {
+                const newKey = migrateOldCategory(parts[0]) + "_" + parts[1];
+                state.usedPrompts[player][newKey] = arr;
+              } else {
+                state.usedPrompts[player][key] = arr;
+              }
+            });
+          });
+        }
         if (data.settings) {
           Object.assign(state.settings, data.settings);
         }
@@ -1971,6 +2056,7 @@ ${GROUP_LINK}`;
         els.themeToggle.textContent = "🌙";
       }
       els.toggleAutoNext.classList.toggle("on", state.settings.autoNext);
+      els.toggleTournament.classList.toggle("on", state.settings.tournament);
       els.toggleTimer.classList.toggle("on", state.settings.timer);
       els.toggleSound.classList.toggle("on", state.settings.sound);
       els.toggleConfetti.classList.toggle("on", state.settings.confetti);
@@ -2005,6 +2091,64 @@ ${GROUP_LINK}`;
       showToast("Historique exporté !");
     }
 
+    function getRandomGage(){
+      return gages[Math.floor(Math.random() * gages.length)];
+    }
+
+    function executeGage(player){
+      const gage = getRandomGage();
+      const message = `⚠️ *GAGE* — ${player}\n${gage}\n\n🔗 ${GROUP_LINK}`;
+      state.turnCount += 1;
+      els.turnCount.textContent = state.turnCount;
+      els.resultType.textContent = "GAGE";
+      els.resultCategory.textContent = toLabel(state.category);
+      els.resultQuestion.textContent = gage;
+      els.resultMessage.textContent = message;
+      els.statusLine.textContent = `${player} doit exécuter son gage !`;
+      updateShareLink(message);
+      addHistory({player, type: "GAGE", category: toLabel(state.category), prompt: gage});
+      playSound();
+      saveState();
+    }
+
+    function passTurn(){
+      if (!state.players.length){
+        showToast("Ajoute des joueurs d'abord.");
+        return;
+      }
+      const player = getCurrentPlayer();
+      if (state.settings.tournament) {
+        state.passes[player] = (state.passes[player] || 0) + 1;
+        const passCount = state.passes[player];
+        if (passCount >= 3) {
+          if (!state.eliminated.includes(player)) {
+            state.eliminated.push(player);
+          }
+          showToast(`${player} est éliminé(e) ! (3 passes)`);
+          fireConfetti();
+          nextPlayer(true);
+          return;
+        }
+      }
+      const msg = `⏭️ *${player}* a passé son tour.${state.settings.tournament ? ` (${(state.passes[player]||1)}/3 passes)` : ""}`;
+      els.resultType.textContent = "PASSÉ";
+      els.resultQuestion.textContent = `${player} a passé !`;
+      els.resultMessage.textContent = msg;
+      updateShareLink(msg);
+      addHistory({player, type: "PASSÉ", category: toLabel(state.category), prompt: `A passé son tour${state.settings.tournament ? ` (${state.passes[player]}/3)` : ""}`});
+      renderPlayers();
+      renderRanking();
+      saveState();
+      playSound();
+      if (state.settings.autoNext) {
+        setTimeout(() => { nextPlayer(false); resetTimer(); }, 800);
+      }
+    }
+
+    function getActivePlayers(){
+      return state.players.filter(p => !state.eliminated.includes(p));
+    }
+
     function newGame(){
       state.players = [];
       state.currentIndex = 0;
@@ -2013,6 +2157,8 @@ ${GROUP_LINK}`;
       state.lastPrompt = "";
       state.history = [];
       state.points = {};
+      state.passes = {};
+      state.eliminated = [];
       state.usedPrompts = {};
       resetTimer();
       renderPlayers();
@@ -2094,6 +2240,16 @@ ${GROUP_LINK}`;
       applySettings();
       saveState();
     });
+
+    els.toggleTournament.addEventListener("click", () => {
+      state.settings.tournament = !state.settings.tournament;
+      applySettings();
+      saveState();
+      renderPlayers();
+      showToast(state.settings.tournament ? "Mode Tournoi activé !" : "Mode Tournoi désactivé.");
+    });
+
+    els.btnPass.addEventListener("click", passTurn);
 
     els.toggleTimer.addEventListener("click", () => {
       state.settings.timer = !state.settings.timer;
