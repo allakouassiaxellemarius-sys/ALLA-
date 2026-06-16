@@ -837,6 +837,7 @@
           </div>
           <div style="margin-top:1rem;display:flex;gap:.7rem;flex-wrap:wrap;">
             <a class="btn btn-primary" href="https://chat.whatsapp.com/FomycGrlXB52o9H5m13E0a" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">💬 Rejoindre le groupe WhatsApp</a>
+            <a class="btn btn-secondary" id="shareGroupInvite" href="#" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">📤 Partager l'invitation</a>
             <span class="meta-chip" style="display:inline-flex;align-items:center;">🔗 allakouassiaxellemarius-sys.github.io/ALLA-/</span>
           </div>
         </article>
@@ -943,9 +944,10 @@
               Le message prêt pour WhatsApp apparaîtra ici. Tu pourras ensuite le partager ou le copier.
             </p>
             <div class="result-actions">
-              <a class="btn btn-primary" id="shareWhatsapp" href="#" target="_blank" rel="noopener noreferrer">Partager sur WhatsApp</a>
-              <button class="btn" id="copyMessage" type="button">Copier le message</button>
-              <button class="btn" id="newPrompt" type="button">Nouvelle proposition</button>
+              <a class="btn btn-primary" id="shareWhatsapp" href="#" target="_blank" rel="noopener noreferrer">📤 Partager sur WhatsApp</a>
+              <a class="btn" href="https://chat.whatsapp.com/FomycGrlXB52o9H5m13E0a" target="_blank" rel="noopener noreferrer" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.14);text-decoration:none;">💬 Rejoindre le groupe</a>
+              <button class="btn" id="copyMessage" type="button">Copier</button>
+              <button class="btn" id="newPrompt" type="button">Nouvelle</button>
             </div>
           </section>
         </div>
@@ -1225,17 +1227,32 @@
     const GROUP_LINK = 'https://chat.whatsapp.com/FomycGrlXB52o9H5m13E0a';
 
     function buildWhatsappMessage(player, typeLabel, prompt, category){
-      return `🎮 Action ou Vérité — ${category}
-👤 Au tour de: ${player}
-${typeLabel === "VÉRITÉ" ? "☯ Vérité" : "⚡ Action"}:
+      return `🎮 *Action ou Vérité — ${category}*
+👤 *${player}* doit répondre !
+${typeLabel === "VÉRITÉ" ? "☯ *Vérité*" : "⚡ *Action*"} :
 ${prompt}
 
-📲 Rejoins le groupe pour jouer : ${GROUP_LINK}`;
+🔗 *Rejoins le groupe pour jouer* :
+${GROUP_LINK}`;
+    }
+
+    function buildGroupInvite(){
+      return `🎮 *Action ou Vérité* — Viens jouer avec nous !
+
+🔗 Rejoins le groupe WhatsApp :
+${GROUP_LINK}`;
     }
 
     function updateShareLink(message){
       const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
       els.shareWhatsapp.href = url;
+    }
+
+    function updateGroupInviteLink(){
+      const msg = buildGroupInvite();
+      const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      const btn = document.getElementById('shareGroupInvite');
+      if (btn) btn.href = url;
     }
 
     function addHistory(entry){
@@ -1410,6 +1427,7 @@ ${prompt}
     setCategory(state.category);
     renderPlayers();
     renderHistory();
+    updateGroupInviteLink();
     updateShareLink("🎮 Action ou Vérité — On commence ?");
     initObserver();
   </script>
