@@ -1,613 +1,1410 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Action ou Vérité – Groupe WhatsApp</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#0f0c29;
-  --bg2:#302b63;
-  --surface:rgba(255,255,255,0.07);
-  --surface2:rgba(255,255,255,0.12);
-  --border:rgba(255,255,255,0.1);
-  --text:#fff;
-  --dim:#888;
-  --gold:#ffd200;
-  --truth:#7c3aed;
-  --truth-l:#a78bfa;
-  --dare:#ec4899;
-  --dare-l:#f472b6;
-  --whatsapp:#25D366;
-  --radius:16px;
-  --sm:10px;
-  --t:.3s cubic-bezier(.4,0,.2,1)
-}
-html,body{height:100%;overflow:hidden}
-body{
-  font-family:-apple-system,system-ui,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  background:linear-gradient(160deg,var(--bg),var(--bg2));
-  color:var(--text);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:12px
-}
-.app{
-  width:100%;max-width:430px;height:95vh;max-height:800px;
-  background:var(--surface);
-  backdrop-filter:blur(24px);
-  -webkit-backdrop-filter:blur(24px);
-  border-radius:28px;
-  border:1px solid var(--border);
-  box-shadow:0 20px 60px rgba(0,0,0,.5);
-  display:flex;flex-direction:column;
-  overflow:hidden;
-  position:relative
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Action ou Vérité — Groupe WhatsApp</title>
+  <meta name="description" content="Jeu Action ou Vérité pensé pour être joué dans un groupe WhatsApp. Ajoute des joueurs, lance des tours, partage directement dans WhatsApp." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: #f6efe3;
+      --paper: rgba(255,255,255,0.58);
+      --paper-strong: rgba(255,255,255,0.86);
+      --ink: #1b140f;
+      --muted: #6f6158;
+      --line: rgba(27,20,15,0.12);
+      --accent: #bf5a36;
+      --accent-2: #2e8b6a;
+      --accent-3: #7d4cc7;
+      --accent-4: #c2275d;
+      --shadow: 0 20px 60px rgba(73,40,20,0.14);
+      --radius: 24px;
+      --radius-sm: 16px;
+      --max: 1180px;
+      --hero-grad:
+        radial-gradient(circle at 12% 15%, rgba(191,90,54,.24), transparent 24%),
+        radial-gradient(circle at 85% 20%, rgba(46,139,106,.18), transparent 20%),
+        radial-gradient(circle at 74% 74%, rgba(125,76,199,.16), transparent 22%),
+        radial-gradient(circle at 22% 82%, rgba(194,39,93,.14), transparent 18%),
+        linear-gradient(180deg, #f8f1e6 0%, #f4ebdc 100%);
+    }
 
-/* HEADER */
-.header{
-  text-align:center;padding:18px 16px 10px;flex-shrink:0
-}
-.logo{
-  font-size:1.6rem;font-weight:900;letter-spacing:-.5px;
-  background:linear-gradient(135deg,var(--gold),var(--dare));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;background-clip:text
-}
-.logo span{color:var(--dim);-webkit-text-fill-color:var(--dim)}
-.tagline{font-size:.75rem;color:var(--dim);margin-top:2px}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:"Space Grotesk", sans-serif;
+      color:var(--ink);
+      background:var(--hero-grad);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
 
-/* SCREENS */
-.screen{display:none;flex-direction:column;flex:1;overflow:hidden;padding:0 16px 16px}
-.screen.active{display:flex}
-.screen-scroll{flex:1;overflow-y:auto;padding:4px 0;-webkit-overflow-scrolling:touch}
-.screen-scroll::-webkit-scrollbar{width:4px}
-.screen-scroll::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:4px}
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(27,20,15,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(27,20,15,.03) 1px, transparent 1px);
+      background-size: 24px 24px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,.25), transparent 70%);
+      z-index:-1;
+    }
 
-/* HOME */
-.input-row{display:flex;gap:8px;margin-bottom:4px}
-.input-row input{
-  flex:1;padding:12px 14px;border-radius:var(--sm);
-  border:1px solid var(--border);background:rgba(255,255,255,.07);
-  color:var(--text);font-size:.95rem;font-family:inherit;outline:none
-}
-.input-row input:focus{border-color:var(--gold)}
-.input-row input::placeholder{color:#555}
-.btn{
-  padding:12px 18px;border:none;border-radius:var(--sm);
-  font-family:inherit;font-weight:700;font-size:.9rem;cursor:pointer;
-  transition:all var(--t);white-space:nowrap
-}
-.btn:active{transform:scale(.96)}
-.btn-add{background:var(--gold);color:#000}
-.btn-add:hover{filter:brightness(1.1)}
+    .container{
+      width:min(calc(100% - 1.5rem), var(--max));
+      margin-inline:auto;
+    }
 
-.chips{display:flex;flex-wrap:wrap;gap:6px;min-height:32px;margin:8px 0}
-.chip{
-  background:var(--surface2);padding:5px 12px;border-radius:16px;
-  font-size:.8rem;display:flex;align-items:center;gap:5px;
-  animation:pop .25s ease-out
-}
-.chip .rm{cursor:pointer;color:var(--dare-l);font-weight:700;font-size:.7rem;padding:0 2px}
-@keyframes pop{0%{opacity:0;transform:scale(.8)}100%{opacity:1;transform:scale(1)}}
+    .site-header{
+      padding: 1rem 0 0;
+    }
 
-.lbl{font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim);font-weight:600;margin:10px 0 6px}
-.pills{display:flex;gap:6px;flex-wrap:wrap}
-.pill{
-  padding:7px 16px;border-radius:20px;border:1px solid var(--border);
-  background:transparent;color:var(--dim);font-family:inherit;font-size:.82rem;
-  cursor:pointer;transition:all var(--t)
-}
-.pill.active{background:var(--gold);color:#000;border-color:var(--gold)}
-.pill:hover{border-color:var(--gold);color:var(--text)}
+    .nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:1rem;
+      padding:.85rem 1rem;
+      background:var(--paper);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border:1px solid rgba(255,255,255,.45);
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      position:sticky;
+      top: .8rem;
+      z-index: 30;
+    }
 
-.btn-start{
-  width:100%;padding:16px;margin-top:14px;
-  background:linear-gradient(135deg,var(--gold),var(--dare));
-  color:#fff;font-size:1.1rem;font-weight:800;border:none;
-  border-radius:var(--radius);cursor:pointer;transition:all var(--t);
-  box-shadow:0 4px 20px rgba(236,72,153,.3)
-}
-.btn-start:hover{transform:translateY(-2px)}
-.btn-start:disabled{opacity:.4;cursor:not-allowed;transform:none}
-.err{color:var(--dare-l);font-size:.8rem;min-height:1.2em;margin:2px 0}
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:.85rem;
+      min-width:0;
+    }
 
-/* GAME */
-.game-top{display:flex;justify-content:space-between;align-items:center;padding:4px 0 8px;flex-shrink:0}
-.game-top button{
-  background:var(--surface2);border:1px solid var(--border);color:var(--dim);
-  padding:6px 12px;border-radius:8px;font-family:inherit;font-size:.75rem;cursor:pointer;transition:all var(--t)
-}
-.game-top button:hover{color:var(--text)}
-.badge{
-  font-size:.65rem;padding:4px 10px;border-radius:10px;
-  background:var(--surface2);color:var(--dim);text-transform:uppercase;letter-spacing:1px;font-weight:600
-}
+    .brand-mark{
+      width:44px;
+      height:44px;
+      border-radius:14px;
+      background:
+        linear-gradient(135deg, rgba(191,90,54,.95), rgba(194,39,93,.85));
+      display:grid;
+      place-items:center;
+      color:#fff;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 10px 30px rgba(191,90,54,.25);
+      font-size:1.2rem;
+    }
 
-.player-section{text-align:center;padding:6px 0 4px;flex-shrink:0}
-.turn-lbl{font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:var(--dim)}
-.player-name{
-  font-size:2rem;font-weight:800;color:var(--gold);
-  transition:color var(--t);min-height:2.6rem
-}
-.round-info{font-size:.75rem;color:var(--dim);margin-bottom:4px}
+    .brand-copy{
+      min-width:0;
+    }
 
-/* CHOICE BTNS */
-.choices{display:flex;gap:10px;padding:6px 0;flex-shrink:0}
-.choice{
-  flex:1;padding:18px;border:none;border-radius:var(--radius);
-  font-family:inherit;font-size:1.1rem;font-weight:800;cursor:pointer;
-  transition:all var(--t);color:#fff;letter-spacing:.5px
-}
-.choice:active{transform:scale(.95)}
-.choice:disabled{opacity:.25;cursor:not-allowed;transform:none}
-.choice-t{background:linear-gradient(135deg,var(--truth),var(--truth-l));box-shadow:0 4px 16px rgba(124,58,237,.3)}
-.choice-d{background:linear-gradient(135deg,var(--dare),var(--dare-l));box-shadow:0 4px 16px rgba(236,72,153,.3)}
+    .eyebrow{
+      font-size:.72rem;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin-bottom:.1rem;
+    }
 
-/* CARD */
-.card{
-  flex:1;min-height:0;
-  background:rgba(0,0,0,.2);border-radius:var(--radius);
-  border:1px solid var(--border);padding:20px 18px;
-  display:flex;flex-direction:column;justify-content:center;align-items:center;
-  text-align:center;position:relative;margin:6px 0;overflow-y:auto
-}
-.card-label{font-size:.65rem;text-transform:uppercase;letter-spacing:3px;opacity:.4;font-weight:600;margin-bottom:6px}
-.card-text{font-size:1.1rem;line-height:1.5;font-weight:500}
-.card-text.empty{opacity:.35;font-style:italic;font-size:.95rem}
-.card-text.t{color:var(--truth-l)}
-.card-text.d{color:var(--dare-l)}
-.card.pop{animation:cardPop .4s cubic-bezier(.34,1.56,.64,1)}
-@keyframes cardPop{0%{opacity:0;transform:scale(.85)}50%{transform:scale(1.02)}100%{opacity:1;transform:scale(1)}}
+    .brand-title{
+      font-family:"Bebas Neue", sans-serif;
+      font-size:1.5rem;
+      line-height:1;
+      letter-spacing:.04em;
+      margin:0;
+    }
 
-/* ANSWER */
-.ans-area{width:100%;margin-top:10px;display:flex;gap:6px;animation:fadeIn .3s}
-.ans-area input{
-  flex:1;padding:9px 12px;border-radius:var(--sm);
-  border:1px solid var(--border);background:rgba(255,255,255,.07);
-  color:var(--text);font-size:.85rem;font-family:inherit;outline:none
-}
-.ans-area input:focus{border-color:var(--gold)}
-.btn-ans{padding:9px 14px;background:var(--gold);color:#000;border:none;border-radius:var(--sm);font-weight:700;font-size:.82rem;cursor:pointer}
-.ans-show{width:100%;margin-top:8px;padding:8px 12px;border-radius:var(--sm);background:rgba(255,255,255,.05);border:1px solid var(--border);text-align:left;animation:fadeIn .3s}
-.ans-show .l{font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim)}
-.ans-show .v{color:var(--gold);font-weight:500;font-size:.9rem}
-@keyframes fadeIn{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
-.hide{display:none!important}
+    .nav-actions{
+      display:flex;
+      align-items:center;
+      gap:.6rem;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
 
-/* SHARE BAR */
-.share-bar{
-  display:flex;gap:8px;padding:6px 0 4px;flex-shrink:0;
-  animation:fadeIn .3s
-}
-.share-bar.hide{display:none}
-.share-btn{
-  flex:1;padding:12px;border:none;border-radius:var(--sm);
-  font-family:inherit;font-weight:700;font-size:.85rem;cursor:pointer;
-  transition:all var(--t);display:flex;align-items:center;justify-content:center;gap:6px
-}
-.share-btn:active{transform:scale(.96)}
-.share-btn.wa{background:var(--whatsapp);color:#fff}
-.share-btn.wa:hover{filter:brightness(1.1)}
-.share-btn.cp{background:var(--surface2);color:var(--dim);border:1px solid var(--border)}
-.share-btn.cp:hover{color:var(--text)}
+    .btn{
+      appearance:none;
+      border:none;
+      outline:none;
+      cursor:pointer;
+      font:inherit;
+      color:var(--ink);
+      background:var(--paper-strong);
+      border:1px solid rgba(27,20,15,.08);
+      border-radius:999px;
+      padding:.9rem 1.1rem;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:.55rem;
+      transition: transform .25s ease, box-shadow .25s ease, background .25s ease, color .25s ease, border-color .25s ease;
+      box-shadow: 0 8px 24px rgba(27,20,15,.08);
+      text-decoration:none;
+      min-height:48px;
+      white-space:nowrap;
+    }
 
-/* NEXT BAR */
-.next-bar{display:flex;gap:8px;padding:4px 0;flex-shrink:0}
-.next-bar.hide{display:none}
-.next-btn{
-  flex:1;padding:14px;border:none;border-radius:var(--sm);
-  font-family:inherit;font-weight:700;font-size:.9rem;cursor:pointer;transition:all var(--t)
-}
-.next-btn:active{transform:scale(.96)}
-.next-btn.nx{background:linear-gradient(135deg,#4facfe,#00f2fe);color:#fff}
-.next-btn.qt{background:var(--surface2);color:var(--dim);border:1px solid var(--border)}
-.next-btn.qt:hover{color:var(--text)}
+    .btn:hover{
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 16px 30px rgba(27,20,15,.12);
+    }
 
-/* HISTORY */
-.hist{flex-shrink:0;border-top:1px solid var(--border);padding:8px 0 0;margin-top:2px}
-.hist-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.hist-h h3{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim)}
-.hist-h button{background:none;border:none;color:var(--dare-l);font-size:.7rem;cursor:pointer;font-family:inherit}
-.hist-items{max-height:70px;overflow-y:auto;display:flex;flex-direction:column;gap:3px}
-.hist-item{font-size:.72rem;color:var(--dim);display:flex;gap:5px;padding:2px 0}
-.hist-item .b{font-size:.55rem;padding:1px 6px;border-radius:4px;font-weight:700;flex-shrink:0}
-.hist-item .b.t{background:rgba(124,58,237,.2);color:var(--truth-l)}
-.hist-item .b.d{background:rgba(236,72,153,.2);color:var(--dare-l)}
-.hist-item .p{color:var(--text);font-weight:600;flex-shrink:0}
-.hist-item .t{flex:1}
-.hist-item .a{color:var(--gold);font-size:.65rem;display:block}
+    .btn:active{
+      transform: translateY(0) scale(.98);
+    }
 
-/* OVERLAY */
-.overlay{
-  position:absolute;inset:0;background:rgba(0,0,0,.65);
-  border-radius:28px;display:flex;flex-direction:column;
-  justify-content:center;align-items:center;z-index:10;
-  opacity:0;pointer-events:none;transition:opacity .3s
-}
-.overlay.active{opacity:1;pointer-events:auto}
-.overlay .lbl{font-size:.8rem;margin-bottom:12px}
-.track{width:70%;max-width:240px;height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin-bottom:10px}
-.fill{height:100%;width:0%;border-radius:4px;background:linear-gradient(90deg,var(--truth),var(--dare),var(--gold));transition:width .05s linear}
-.cnt{font-size:2.5rem;font-weight:900;color:var(--gold);animation:pulse .5s ease-in-out}
-@keyframes pulse{0%{transform:scale(1.2);opacity:.6}50%{transform:scale(.9)}100%{transform:scale(1);opacity:1}}
+    .btn-primary{
+      background: linear-gradient(135deg, var(--accent), #dd7d4f);
+      color:#fff;
+      border-color: transparent;
+    }
 
-/* TOAST */
-.toast{
-  position:absolute;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);
-  background:var(--surface);backdrop-filter:blur(16px);
-  padding:10px 20px;border-radius:10px;border:1px solid var(--border);
-  font-size:.8rem;opacity:0;transition:all .4s;pointer-events:none;z-index:20;white-space:nowrap
-}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .btn-primary:hover{
+      background: linear-gradient(135deg, #aa4f30, #cf6f40);
+    }
 
-@media(max-height:640px){
-  .app{height:100vh;max-height:none;border-radius:18px}
-  .header{padding:12px 14px 6px}
-  .logo{font-size:1.3rem}
-  .player-name{font-size:1.5rem;min-height:2rem}
-  .choice{padding:14px;font-size:1rem}
-  .card{padding:14px 12px}
-  .card-text{font-size:1rem}
-}
-</style>
+    .btn-secondary{
+      background: rgba(255,255,255,.42);
+      backdrop-filter: blur(14px);
+    }
+
+    .btn-ghost{
+      background: transparent;
+      border-color: rgba(27,20,15,.12);
+      box-shadow:none;
+    }
+
+    .hero{
+      padding: 1rem 0 1.2rem;
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:1rem;
+    }
+
+    .hero-panel,
+    .play-panel,
+    .history-panel,
+    .setup-panel{
+      background: var(--paper);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border:1px solid rgba(255,255,255,.45);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .hero-panel{
+      padding: 1.25rem;
+      min-height: 320px;
+      display:grid;
+      align-content:space-between;
+      isolation:isolate;
+    }
+
+    .hero-panel::after{
+      content:"";
+      position:absolute;
+      inset:auto -10% -18% auto;
+      width:220px;
+      height:220px;
+      border-radius:50%;
+      background: radial-gradient(circle, rgba(191,90,54,.18), transparent 60%);
+      z-index:-1;
+    }
+
+    .hero-kicker{
+      display:flex;
+      align-items:center;
+      gap:.6rem;
+      flex-wrap:wrap;
+      color:var(--muted);
+      font-size:.78rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+
+    .dot{
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background: var(--accent-2);
+      box-shadow:0 0 0 6px rgba(46,139,106,.14);
+    }
+
+    .hero h1{
+      margin:.85rem 0 .7rem;
+      font-family:"Bebas Neue", sans-serif;
+      font-size: clamp(3.2rem, 10vw, 7.2rem);
+      line-height:.92;
+      letter-spacing:.03em;
+      max-width: 8ch;
+    }
+
+    .hero p{
+      margin:0;
+      max-width: 58ch;
+      color: var(--muted);
+      font-size: clamp(1rem, 2.4vw, 1.08rem);
+      line-height:1.6;
+    }
+
+    .hero-meta{
+      display:flex;
+      gap:.7rem;
+      flex-wrap:wrap;
+      margin-top:1rem;
+    }
+
+    .meta-chip{
+      padding:.65rem .85rem;
+      border-radius:999px;
+      background: rgba(255,255,255,.52);
+      border:1px solid rgba(27,20,15,.08);
+      font-size:.88rem;
+    }
+
+    .main-grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:1rem;
+      padding: 0 0 1.4rem;
+    }
+
+    .setup-panel{
+      padding: 1rem;
+      display:grid;
+      gap:1rem;
+    }
+
+    .panel-title{
+      display:flex;
+      align-items:end;
+      justify-content:space-between;
+      gap:.75rem;
+      flex-wrap:wrap;
+    }
+
+    .panel-title h2,
+    .panel-title h3{
+      margin:0;
+      font-family:"Bebas Neue", sans-serif;
+      letter-spacing:.04em;
+      line-height:1;
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+    }
+
+    .panel-title span{
+      color:var(--muted);
+      font-size:.92rem;
+    }
+
+    .field-row{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:.75rem;
+    }
+
+    .input-wrap{
+      display:flex;
+      gap:.65rem;
+      align-items:stretch;
+      flex-wrap:wrap;
+    }
+
+    input[type="text"]{
+      flex:1 1 220px;
+      min-width:0;
+      border-radius:18px;
+      border:1px solid rgba(27,20,15,.12);
+      background: rgba(255,255,255,.76);
+      padding:1rem 1rem;
+      font:inherit;
+      color:var(--ink);
+      outline:none;
+      transition:border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    }
+
+    input[type="text"]:focus{
+      border-color: rgba(191,90,54,.5);
+      box-shadow: 0 0 0 4px rgba(191,90,54,.12);
+      transform: translateY(-1px);
+    }
+
+    .tag-list{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.65rem;
+    }
+
+    .player-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:.6rem;
+      padding:.8rem .95rem;
+      border-radius:999px;
+      background: rgba(255,255,255,.66);
+      border:1px solid rgba(27,20,15,.08);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.4);
+      animation: popIn .35s ease both;
+    }
+
+    .player-pill button{
+      border:none;
+      background:transparent;
+      color:var(--muted);
+      cursor:pointer;
+      font-size:1rem;
+      padding:0;
+      line-height:1;
+      transition: transform .2s ease, color .2s ease;
+    }
+
+    .player-pill button:hover{
+      color:var(--accent-4);
+      transform: scale(1.15);
+    }
+
+    .category-strip{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:.7rem;
+    }
+
+    .category-btn{
+      border-radius: 20px;
+      min-height:72px;
+      padding: .95rem 1rem;
+      text-align:left;
+      align-items:flex-start;
+      justify-content:flex-start;
+      white-space:normal;
+      background: rgba(255,255,255,.56);
+    }
+
+    .category-btn strong{
+      display:block;
+      font-size:1rem;
+      margin-bottom:.2rem;
+    }
+
+    .category-btn small{
+      color: var(--muted);
+      line-height:1.3;
+    }
+
+    .category-btn.active{
+      color:#fff;
+      border-color: transparent;
+      box-shadow: 0 18px 36px rgba(27,20,15,.14);
+    }
+
+    .category-btn[data-cat="fun"].active{ background: linear-gradient(135deg, #d36d46, #ee8f61);}
+    .category-btn[data-cat="hard"].active{ background: linear-gradient(135deg, #7050bb, #8e6ae0);}
+    .category-btn[data-cat="romantique"].active{ background: linear-gradient(135deg, #c54f77, #e3759a);}
+    .category-btn[data-cat="ose"].active{ background: linear-gradient(135deg, #1f8a67, #39a67f);}
+
+    .quick-info{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:.75rem;
+    }
+
+    .info-bloc{
+      padding:1rem;
+      border-radius: 20px;
+      background: rgba(255,255,255,.5);
+      border:1px solid rgba(27,20,15,.08);
+    }
+
+    .info-bloc .label{
+      display:block;
+      color:var(--muted);
+      font-size:.78rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      margin-bottom:.45rem;
+    }
+
+    .info-bloc .value{
+      font-family:"Bebas Neue", sans-serif;
+      font-size: clamp(1.5rem, 5vw, 2.25rem);
+      letter-spacing:.04em;
+      line-height:1;
+    }
+
+    .play-panel{
+      padding: 1rem;
+      display:grid;
+      gap:1rem;
+    }
+
+    .play-top{
+      display:grid;
+      gap:1rem;
+    }
+
+    .turn-band{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:.8rem;
+      padding:1rem;
+      border-radius: 24px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.56), rgba(255,255,255,.34));
+      border:1px solid rgba(27,20,15,.08);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .turn-band::before{
+      content:"";
+      position:absolute;
+      inset:0 auto 0 0;
+      width:7px;
+      background: linear-gradient(180deg, var(--accent), var(--accent-4));
+    }
+
+    .turn-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:.75rem;
+      flex-wrap:wrap;
+    }
+
+    .turn-title{
+      color:var(--muted);
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      font-size:.76rem;
+      margin-bottom:.35rem;
+    }
+
+    .player-name{
+      font-family:"Bebas Neue", sans-serif;
+      font-size: clamp(2.4rem, 8vw, 4rem);
+      line-height:.95;
+      letter-spacing:.04em;
+      margin:0;
+    }
+
+    .turn-index{
+      padding:.55rem .8rem;
+      border-radius:999px;
+      background: rgba(255,255,255,.7);
+      font-size:.86rem;
+      border:1px solid rgba(27,20,15,.08);
+    }
+
+    .choice-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:.75rem;
+    }
+
+    .choice-btn{
+      min-height: 118px;
+      border-radius: 28px;
+      padding: 1rem;
+      font-size: 1rem;
+      display:grid;
+      justify-items:start;
+      align-content:space-between;
+      text-align:left;
+      white-space:normal;
+    }
+
+    .choice-btn em{
+      font-style:normal;
+      color:var(--muted);
+      font-size:.84rem;
+    }
+
+    .choice-btn strong{
+      font-family:"Bebas Neue", sans-serif;
+      font-size: clamp(2rem, 7vw, 3rem);
+      letter-spacing:.04em;
+      line-height:.9;
+    }
+
+    .choice-truth{
+      background: linear-gradient(135deg, rgba(125,76,199,.18), rgba(125,76,199,.07)), rgba(255,255,255,.58);
+    }
+
+    .choice-dare{
+      background: linear-gradient(135deg, rgba(191,90,54,.18), rgba(191,90,54,.08)), rgba(255,255,255,.58);
+    }
+
+    .result-stage{
+      display:grid;
+      gap:.85rem;
+      padding: 1rem;
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,.32), transparent 28%),
+        linear-gradient(135deg, rgba(27,20,15,.95), rgba(58,34,24,.92));
+      color:#f9f2ea;
+      min-height: 280px;
+    }
+
+    .badge-line{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:.75rem;
+      flex-wrap:wrap;
+    }
+
+    .type-badge,
+    .cat-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:.5rem;
+      border-radius:999px;
+      padding:.6rem .8rem;
+      font-size:.82rem;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      background: rgba(255,255,255,.1);
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .result-question{
+      margin:0;
+      font-family:"Bebas Neue", sans-serif;
+      font-size: clamp(2.1rem, 7.5vw, 4rem);
+      line-height: .95;
+      letter-spacing:.03em;
+      max-width: 14ch;
+    }
+
+    .result-copy{
+      color: rgba(249,242,234,.82);
+      max-width: 56ch;
+      line-height:1.55;
+      margin:0;
+    }
+
+    .result-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.7rem;
+      margin-top:auto;
+    }
+
+    .result-actions .btn{
+      background: rgba(255,255,255,.1);
+      color:#fff;
+      border-color: rgba(255,255,255,.14);
+    }
+
+    .result-actions .btn:hover{
+      background: rgba(255,255,255,.16);
+    }
+
+    .result-actions .btn-primary{
+      background: linear-gradient(135deg, #e87b51, #d64d77);
+      border-color: transparent;
+    }
+
+    .status-line{
+      font-size:.95rem;
+      color:var(--muted);
+      min-height:1.4em;
+    }
+
+    .history-panel{
+      padding: 1rem;
+      display:grid;
+      gap:1rem;
+    }
+
+    .history-list{
+      display:grid;
+      gap:.7rem;
+      max-height: 460px;
+      overflow:auto;
+      padding-right:.2rem;
+    }
+
+    .history-list::-webkit-scrollbar{
+      width:10px;
+    }
+
+    .history-list::-webkit-scrollbar-thumb{
+      background: rgba(27,20,15,.14);
+      border-radius:999px;
+    }
+
+    .history-item{
+      padding: .9rem .95rem;
+      border-radius: 20px;
+      background: rgba(255,255,255,.58);
+      border:1px solid rgba(27,20,15,.08);
+      display:grid;
+      gap:.4rem;
+      animation: slideUp .35s ease both;
+    }
+
+    .history-item-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:.75rem;
+      flex-wrap:wrap;
+      color:var(--muted);
+      font-size:.82rem;
+      text-transform:uppercase;
+      letter-spacing:.1em;
+    }
+
+    .history-item p{
+      margin:0;
+      line-height:1.45;
+    }
+
+    .empty-state{
+      padding:1.2rem;
+      border-radius:20px;
+      background: rgba(255,255,255,.45);
+      border:1px dashed rgba(27,20,15,.14);
+      color:var(--muted);
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 1rem;
+      transform: translateX(-50%) translateY(24px);
+      background: rgba(27,20,15,.92);
+      color:#fff;
+      padding:.85rem 1rem;
+      border-radius:999px;
+      box-shadow: 0 18px 50px rgba(27,20,15,.25);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .3s ease, transform .3s ease;
+      z-index:50;
+      font-size:.92rem;
+    }
+
+    .toast.show{
+      opacity:1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .reveal{
+      opacity:0;
+      transform: translateY(20px);
+    }
+
+    .reveal.visible{
+      animation: revealUp .65s cubic-bezier(.2,.8,.2,1) forwards;
+    }
+
+    .stagger-1{ animation-delay:.05s }
+    .stagger-2{ animation-delay:.12s }
+    .stagger-3{ animation-delay:.2s }
+    .stagger-4{ animation-delay:.28s }
+    .stagger-5{ animation-delay:.36s }
+
+    @keyframes revealUp{
+      from{opacity:0; transform:translateY(20px)}
+      to{opacity:1; transform:translateY(0)}
+    }
+
+    @keyframes slideUp{
+      from{opacity:0; transform:translateY(12px)}
+      to{opacity:1; transform:translateY(0)}
+    }
+
+    @keyframes popIn{
+      from{opacity:0; transform:scale(.94)}
+      to{opacity:1; transform:scale(1)}
+    }
+
+    @media (min-width: 760px){
+      .hero-grid{
+        grid-template-columns: 1.1fr .9fr;
+      }
+
+      .main-grid{
+        grid-template-columns: .94fr 1.06fr;
+        align-items:start;
+      }
+
+      .play-top{
+        grid-template-columns: 1fr;
+      }
+
+      .turn-band{
+        grid-template-columns: 1fr;
+      }
+
+      .quick-info{
+        grid-template-columns: repeat(4, minmax(0,1fr));
+      }
+    }
+
+    @media (min-width: 1080px){
+      .main-grid{
+        grid-template-columns: .78fr 1.22fr .72fr;
+      }
+
+      .setup-panel{
+        min-height: 100%;
+      }
+
+      .history-panel{
+        min-height: 100%;
+      }
+    }
+
+    @media (max-width: 520px){
+      .nav{
+        border-radius: 26px;
+        align-items:flex-start;
+      }
+
+      .choice-grid,
+      .category-strip{
+        grid-template-columns: 1fr;
+      }
+
+      .result-actions,
+      .nav-actions{
+        width:100%;
+      }
+
+      .result-actions .btn,
+      .nav-actions .btn{
+        flex:1 1 auto;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="app" id="app">
-  <div class="toast" id="toast"></div>
-
-  <!-- HEADER -->
-  <div class="header">
-    <div class="logo">ACTION <span>OU</span> VÉRITÉ</div>
-    <div class="tagline">Le jeu de groupe WhatsApp</div>
-  </div>
-
-  <!-- ===== HOME ===== -->
-  <div class="screen active" id="sc-home">
-    <div class="screen-scroll">
-      <div class="lbl">👥 Joueurs</div>
-      <div class="input-row">
-        <input type="text" id="inp-name" placeholder="Prénom" maxlength="20" autocomplete="off">
-        <button class="btn btn-add" id="btn-add">Ajouter</button>
-      </div>
-      <div class="err" id="err-home"></div>
-      <div class="chips" id="chips"></div>
-
-      <div class="lbl">🎮 Mode</div>
-      <div class="pills" id="mode-pills">
-        <button class="pill active" data-v="multi">Multijoueur</button>
-        <button class="pill" data-v="solo">Solo</button>
-      </div>
-
-      <div class="lbl">🎯 Catégorie</div>
-      <div class="pills" id="cat-pills">
-        <button class="pill active" data-v="fun">Fun</button>
-        <button class="pill" data-v="hard">Hard</button>
-        <button class="pill" data-v="romantic">Romantique</button>
-        <button class="pill" data-v="ose">Osé 🔞</button>
-      </div>
-
-      <div class="lbl">📤 Partager le jeu</div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn" style="flex:1;background:#25D366;color:#fff;" id="btn-home-wa">💬 WhatsApp</button>
-        <button class="btn" style="flex:1;background:var(--surface2);color:var(--dim);border:1px solid var(--border);" id="btn-home-copy">🔗 Copier lien</button>
-      </div>
-    </div>
-    <button class="btn-start" id="btn-start">🚀 Lancer la partie</button>
-  </div>
-
-  <!-- ===== GAME ===== -->
-  <div class="screen" id="sc-game">
-    <div class="game-top">
-      <button id="btn-quit">← Quitter</button>
-      <span class="badge" id="mode-badge">Fun</span>
-    </div>
-
-    <div class="player-section">
-      <div class="turn-lbl">Au tour de</div>
-      <div class="player-name" id="player-name">―</div>
-      <div class="round-info" id="round-info"></div>
-    </div>
-
-    <div class="choices" id="choices">
-      <button class="choice choice-t" id="btn-t">☯ Vérité</button>
-      <button class="choice choice-d" id="btn-d">⚡ Action</button>
-    </div>
-
-    <div class="card" id="card">
-      <div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;">
-        <div class="card-label" id="card-label">Choisis Vérité ou Action</div>
-        <div class="card-text empty" id="card-text">Appuie sur un bouton</div>
-
-        <div class="ans-area hide" id="ans-area">
-          <input type="text" id="ans-inp" placeholder="Ta réponse..." maxlength="100" autocomplete="off">
-          <button class="btn-ans" id="btn-ans">💬</button>
-        </div>
-        <div class="ans-show hide" id="ans-show">
-          <span class="l">Réponse :</span>
-          <span class="v" id="ans-txt"></span>
-        </div>
-
-        <div class="overlay" id="overlay">
-          <div class="lbl" id="ov-lbl">Prépare-toi...</div>
-          <div class="track"><div class="fill" id="ov-fill"></div></div>
-          <div class="cnt" id="ov-cnt">3</div>
+  <header class="site-header container">
+    <nav class="nav reveal visible stagger-1" aria-label="Navigation principale">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">⚡</div>
+        <div class="brand-copy">
+          <div class="eyebrow">Jeu de groupe WhatsApp</div>
+          <p class="brand-title">Action ou Vérité</p>
         </div>
       </div>
-    </div>
-
-    <div class="share-bar hide" id="share-bar">
-      <button class="share-btn wa" id="btn-share-wa">💬 WhatsApp</button>
-      <button class="share-btn cp" id="btn-share-cp">📋 Copier</button>
-    </div>
-
-    <div class="next-bar hide" id="next-bar">
-      <button class="next-btn nx" id="btn-next">Joueur suivant →</button>
-      <button class="next-btn qt" id="btn-reset">↺</button>
-    </div>
-
-    <div class="hist" id="hist">
-      <div class="hist-h">
-        <h3>📜 Tours</h3>
-        <button id="btn-clear-hist">Effacer</button>
+      <div class="nav-actions">
+        <button class="btn btn-secondary" id="btnRandomPlayer" type="button">🎲 Joueur au hasard</button>
+        <button class="btn btn-primary" id="btnNextTurn" type="button">Lancer un tour</button>
       </div>
-      <div class="hist-items" id="hist-list"></div>
-    </div>
-  </div>
-</div>
+    </nav>
+  </header>
 
-<script>
-// ===== DATA =====
-const TR = {
-  fr:{
-    truths:{
-      fun:["Quel est ton plat préféré ?","Ta couleur préférée ?","Ton film préféré ?","Ton plus grand rêve ?","Ta plus grande peur ?","Ton plus gros défaut ?","Ta plus grande qualité ?","La chose la plus bizarre que tu aies mangée ?","Ta pire habitude ?","As-tu déjà ri au mauvais moment ?","As-tu déjà dansé sans musique ?","Quel est le dernier mensonge que tu as dit ?","As-tu déjà eu un secret inavouable ?","As-tu déjà pleuré de rire ?","La chose la plus enfantine que tu fais encore ?"],
-      hard:["As-tu déjà été amoureux(se) ?","Qui est ton crush secret ici ?","As-tu déjà eu le cœur brisé ?","As-tu déjà aimé quelqu'un en secret ?","Qui trouves-tu le plus beau/belle ici ?","As-tu déjà menti à tes parents ?","As-tu déjà triché à un examen ?","As-tu déjà stalké quelqu'un ?","Quel est ton plus grand regret ?","De quoi es-tu le plus fier/fière ?","Qu'est-ce qui te rend vraiment heureux ?","As-tu déjà regretté une amitié ?","As-tu déjà eu peur d'être rejeté(e) ?","La chose la plus folle par amour ?","Le plus gros mensonge que tu aies raconté ?"],
-      romantic:["Qu'est-ce qui te fait tomber amoureux(se) ?","Décris ton rendez-vous parfait.","Le plus beau compliment reçu ?","Que regardes-tu en premier chez quelqu'un ?","Ta plus belle histoire d'amour ?","As-tu déjà écrit une lettre d'amour ?","As-tu déjà eu un coup de foudre ?","Qu'est-ce que l'amour pour toi ?","Préfères-tu les gestes romantiques ou les petites attentions ?","Où irais-tu pour un week-end parfait ?","Quelle chanson d'amour te fait pleurer ?","As-tu déjà dit 'je t'aime' sans le penser ?"],
-      ose:["Combien de relations as-tu eues ?","As-tu déjà embrassé quelqu'un ?","Es-tu vierge/puceau ?","Donne le nom de ton amoureux(se).","As-tu déjà regardé des vidéos X ?","As-tu des nudes dans ton téléphone ?","As-tu déjà envoyé des nudes ?","T'es-tu déjà masturbé(e) ?","Décris ton premier baiser.","Décris ta première expérience sexuelle.","Quel est ton fantasme secret ?","As-tu déjà trompé quelqu'un ?","As-tu déjà eu un plan à trois ?","La chose la plus coquine que tu aies faite ?","Quel truc n'as-tu jamais fait et aimerais essayer ?"]
-    },
-    dares:{
-      fun:["Fais 10 sauts sur place.","Imite une célébrité 30s.","Chante un refrain.","Danse sans musique 20s.","Fais rire tout le monde sans parler.","Tourne 5 fois sur toi-même.","Parle avec un accent 1 min.","Fais 5 pompes ou 10 squats.","Envoie un message gentil à un ami.","Fais une grimace 15s.","Raconte une blague.","Ferme les yeux, devine un objet.","Fais une pose de mannequin.","Laisse le groupe choisir ton pseudo 5 min.","Fais semblant d'être un présentateur télé."],
-      hard:["Appelle un ami et dis 'je pense à toi'.","Envoie un emoji au hasard.","Lis le dernier message envoyé.","Imite un bébé.","Fais semblant d'être un prof strict.","Fais un bruit d'ambulance 10s.","Imite une célébrité.","Raconte une histoire inventée en 30s.","Fais une pose de super-héros.","Parle avec un accent inventé.","Fais un discours de victoire.","Fais une déclaration dramatique.","Fais semblant d'être un chat 20s.","Fais rire quelqu'un sans parler.","Choisis une personne, compliment sincère."],
-      romantic:["Regarde la personne à gauche dans les yeux 10s sans sourire.","Compliment personnalisé à chaque joueur.","Fais semblant de demander en mariage.","Récite un poème d'amour improvisé.","Fais une déclaration d'amour à ton téléphone.","Mime un baiser au ralenti.","Chante 30s les plus romantiques.","Fais un slow avec une chaise.","Complimente-toi devant le miroir.","Fais une promesse romantique au groupe.","Danse un slow seul(e) yeux fermés.","Susurre un prénom de façon romantique."],
-      ose:["Mime un acte sexuel, les autres devinent.","Fais un massage à la personne de ton choix.","Choisis la personne la plus sexy du groupe.","Danse sensuelle 20s.","Embrasse l'air passionnément.","Raconte ton expérience la plus chaude.","Mime une position du Kama Sutra.","Fais un strip-tease… de la veste.","Susurre un truc coquin à l'oreille du voisin.","Décris ton scénario chaud idéal.","Joue l'orgasme 10s.","Regarde la personne la plus sexy sans sourire."]
-    },
-    reactions:["Ouch ! 🔥","Bien joué ! 👏","Trop fort ! 💪","Osé ! 😏","No way ! 😱","Savage ! 🐉","Respect ! 🫡","Incroyable ! 🤯","GG ! 🎮"]
-  }
-};
+  <main>
+    <section class="hero container">
+      <div class="hero-grid">
+        <article class="hero-panel reveal stagger-2">
+          <div>
+            <div class="hero-kicker">
+              <span class="dot" aria-hidden="true"></span>
+              <span>Conçu pour jouer dans un groupe</span>
+            </div>
+            <h1>ACTION OU VÉRITÉ, VERSION WHATSAPP</h1>
+            <p>
+              Ajoute les joueurs, choisis l'ambiance, lance une manche puis partage le tour
+              directement dans WhatsApp avec un message prêt à envoyer.
+            </p>
+          </div>
+          <div class="hero-meta" aria-label="Résumé du jeu">
+            <span class="meta-chip">📱 Mobile-first</span>
+            <span class="meta-chip">👥 Multijoueur</span>
+            <span class="meta-chip">💬 Partage WhatsApp</span>
+            <span class="meta-chip">🕘 Historique des tours</span>
+          </div>
+        </article>
 
-const gameUrl = 'https://allakouassiaxellemarius-sys.github.io/ALLA-/';
+        <aside class="setup-panel reveal stagger-3" aria-labelledby="setup-title">
+          <div class="panel-title">
+            <div>
+              <h2 id="setup-title">Préparer la partie</h2>
+              <span>Ajoute au moins 2 joueurs pour démarrer</span>
+            </div>
+          </div>
 
-// ===== STATE =====
-const S = {
-  players: [], idx: 0, mode: 'multi', cat: 'fun',
-  usedT: [], usedD: [], lastT: null, lastD: null,
-  history: [], started: false
-};
+          <div class="field-row">
+            <label class="eyebrow" for="playerName">Ajouter un joueur</label>
+            <div class="input-wrap">
+              <input id="playerName" type="text" maxlength="24" placeholder="Ex : Alla, Marius, Sarah..." autocomplete="off" />
+              <button class="btn btn-primary" id="btnAddPlayer" type="button">+ Ajouter</button>
+            </div>
+          </div>
 
-// ===== DOM =====
-const $ = id => document.getElementById(id);
-const D = {
-  toast: $('toast'), scHome: $('sc-home'), scGame: $('sc-game'),
-  inpName: $('inp-name'), btnAdd: $('btn-add'), chips: $('chips'), errHome: $('err-home'),
-  modePills: $('mode-pills'), catPills: $('cat-pills'),
-  btnStart: $('btn-start'), btnHomeWa: $('btn-home-wa'), btnHomeCopy: $('btn-home-copy'),
-  playerName: $('player-name'), roundInfo: $('round-info'), modeBadge: $('mode-badge'),
-  btnT: $('btn-t'), btnD: $('btn-d'), card: $('card'),
-  cardLabel: $('card-label'), cardText: $('card-text'),
-  ansArea: $('ans-area'), ansInp: $('ans-inp'), btnAns: $('btn-ans'),
-  ansShow: $('ans-show'), ansTxt: $('ans-txt'),
-  shareBar: $('share-bar'), btnShareWa: $('btn-share-wa'), btnShareCp: $('btn-share-cp'),
-  nextBar: $('next-bar'), btnNext: $('btn-next'), btnReset: $('btn-reset'),
-  histList: $('hist-list'), btnClearHist: $('btn-clear-hist'),
-  btnQuit: $('btn-quit'),
-  overlay: $('overlay'), ovLbl: $('ov-lbl'), ovFill: $('ov-fill'), ovCnt: $('ov-cnt')
-};
+          <div>
+            <div class="eyebrow">Joueurs</div>
+            <div class="tag-list" id="playersList" aria-live="polite"></div>
+          </div>
 
-// ===== HELPERS =====
-function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
-function toast(m){D.toast.textContent=m;D.toast.classList.add('show');setTimeout(()=>D.toast.classList.remove('show'),2000)}
+          <div>
+            <div class="eyebrow">Ambiance</div>
+            <div class="category-strip" role="group" aria-label="Choix de catégorie">
+              <button class="btn category-btn active" data-cat="fun" type="button">
+                <span><strong>FUN</strong><small>Léger, drôle, accessible</small></span>
+              </button>
+              <button class="btn category-btn" data-cat="hard" type="button">
+                <span><strong>HARD</strong><small>Plus intense, plus direct</small></span>
+              </button>
+              <button class="btn category-btn" data-cat="romantique" type="button">
+                <span><strong>ROMANTIQUE</strong><small>Doux, complice, charmeur</small></span>
+              </button>
+              <button class="btn category-btn" data-cat="ose" type="button">
+                <span><strong>OSÉ</strong><small>Adulte, piquant, sans vulgarité</small></span>
+              </button>
+            </div>
+          </div>
 
-function pick(cat,type){
-  const key = type==='truth'?'truths':'dares';
-  const pool = TR.fr[key][cat];
-  if(!pool||!pool.length)return'…';
-  const usedKey = type==='truth'?'usedT':'usedD';
-  const lastKey = type==='truth'?'lastT':'lastD';
-  let avail = pool.filter((_,i)=>!S[usedKey].includes(i)&&i!==S[lastKey]);
-  if(!avail.length){S[usedKey]=[];avail = pool.filter((_,i)=>i!==S[lastKey]);if(!avail.length)avail=pool}
-  let idx;do{idx=Math.floor(Math.random()*pool.length)}while(S[usedKey].includes(idx)||idx===S[lastKey]);
-  S[usedKey].push(idx);S[lastKey]=idx;
-  return pool[idx]
-}
+          <div class="quick-info">
+            <div class="info-bloc">
+              <span class="label">Joueurs</span>
+              <span class="value" id="playersCount">0</span>
+            </div>
+            <div class="info-bloc">
+              <span class="label">Catégorie</span>
+              <span class="value" id="categoryLabel">FUN</span>
+            </div>
+            <div class="info-bloc">
+              <span class="label">Tours</span>
+              <span class="value" id="turnCount">0</span>
+            </div>
+            <div class="info-bloc">
+              <span class="label">Mode</span>
+              <span class="value">GROUPE</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
 
-// ===== PLAYERS =====
-function addPlayer(){
-  const n = D.inpName.value.trim();
-  D.errHome.textContent='';
-  if(!n){D.errHome.textContent='Entre un prénom.';return}
-  const nn = n.charAt(0).toUpperCase()+n.slice(1).toLowerCase();
-  if(S.players.includes(nn)){D.errHome.textContent='Ce joueur existe déjà.';return}
-  S.players.push(nn);renderChips();D.inpName.value='';D.inpName.focus();toast(`${nn} ajouté !`)
-}
-function removePlayer(i){S.players.splice(i,1);if(S.idx>=S.players.length)S.idx=0;renderChips()}
-function renderChips(){
-  D.chips.innerHTML=S.players.length
-    ? S.players.map((p,i)=>`<span class="chip">${esc(p)} <span class="rm" data-i="${i}">✕</span></span>`).join('')
-    : '<span style="color:var(--dim);font-size:.82rem;">Aucun joueur</span>';
-  D.chips.querySelectorAll('.rm').forEach(el=>el.addEventListener('click',()=>removePlayer(parseInt(el.dataset.i))));
-  updateStart()
-}
-function updateStart(){
-  const ok = S.players.length>0;
-  D.btnStart.disabled=!ok;
-  D.btnStart.textContent=ok?`🚀 Lancer (${S.players.length})`:'🚀 Ajoute des joueurs'
-}
+    <section class="container main-grid">
+      <article class="play-panel reveal stagger-4" aria-labelledby="play-title">
+        <div class="panel-title">
+          <div>
+            <h2 id="play-title">Au tour de</h2>
+            <span>Choisis Vérité ou Action pour générer la manche</span>
+          </div>
+        </div>
 
-// ===== GAME =====
-function startGame(){
-  if(!S.players.length){toast('Ajoute au moins 1 joueur.');return}
-  S.started=true;S.idx=0;S.usedT=[];S.usedD=[];S.history=[];S.lastT=null;S.lastD=null;
-  D.scHome.classList.remove('active');D.scGame.classList.add('active');
-  renderHist();updateUI()
-}
+        <div class="play-top">
+          <div class="turn-band">
+            <div class="turn-head">
+              <div>
+                <div class="turn-title">Joueur sélectionné</div>
+                <p class="player-name" id="currentPlayer">Ajoute des joueurs</p>
+              </div>
+              <div class="turn-index" id="playerPosition">Joueur 0/0</div>
+            </div>
 
-function updateUI(){
-  const p=S.players[S.idx];
-  D.playerName.textContent=p?esc(p):'―';
-  D.roundInfo.textContent=`Joueur ${S.idx+1}/${S.players.length}`;
-  D.modeBadge.textContent=S.cat.charAt(0).toUpperCase()+S.cat.slice(1);
-  D.btnT.disabled=false;D.btnD.disabled=false;
-  D.cardLabel.textContent='Choisis Vérité ou Action';
-  D.cardText.textContent='Appuie sur un bouton';
-  D.cardText.className='card-text empty';
-  D.card.classList.remove('pop');
-  D.ansArea.classList.add('hide');
-  D.ansShow.classList.add('hide');
-  D.shareBar.classList.add('hide');
-  D.nextBar.classList.add('hide');
-}
+            <div class="choice-grid">
+              <button class="btn choice-btn choice-truth" id="btnTruth" type="button">
+                <em>☯ Vérité</em>
+                <strong>VÉRITÉ</strong>
+              </button>
+              <button class="btn choice-btn choice-dare" id="btnDare" type="button">
+                <em>⚡ Action</em>
+                <strong>ACTION</strong>
+              </button>
+            </div>
+          </div>
 
-function handleChoice(type){
-  if(!S.started||!S.players.length)return;
-  D.btnT.disabled=true;D.btnD.disabled=true;
-  showTension(type,()=>{
-    const q=pick(S.cat,type);const isT=type==='truth';
-    D.cardLabel.textContent=isT?'☯ Vérité':'⚡ Action';
-    D.cardText.textContent=q;D.cardText.className='card-text '+(isT?'t':'d');
-    D.card.classList.remove('pop');void D.card.offsetWidth;D.card.classList.add('pop');
-    S.history.push({type,player:S.players[S.idx],text:q,cat:S.cat});
-    renderHist();
-    if(isT){D.ansArea.classList.remove('hide');D.ansInp.value='';D.ansInp.focus()}
-    D.shareBar.classList.remove('hide');
-    D.nextBar.classList.remove('hide');
-    if(S.mode==='solo')setTimeout(nextPlayer,4000)
-  })
-}
+          <section class="result-stage" aria-live="polite" aria-atomic="true">
+            <div class="badge-line">
+              <span class="type-badge" id="resultType">En attente</span>
+              <span class="cat-badge" id="resultCategory">Fun</span>
+            </div>
+            <h3 class="result-question" id="resultQuestion">Appuie sur Vérité ou Action pour commencer.</h3>
+            <p class="result-copy" id="resultMessage">
+              Le message prêt pour WhatsApp apparaîtra ici. Tu pourras ensuite le partager ou le copier.
+            </p>
+            <div class="result-actions">
+              <a class="btn btn-primary" id="shareWhatsapp" href="#" target="_blank" rel="noopener noreferrer">Partager sur WhatsApp</a>
+              <button class="btn" id="copyMessage" type="button">Copier le message</button>
+              <button class="btn" id="newPrompt" type="button">Nouvelle proposition</button>
+            </div>
+          </section>
+        </div>
 
-function submitAns(){
-  const a=D.ansInp.value.trim();
-  if(!a){toast('Écris ta réponse.');return}
-  const h=S.history[S.history.length-1];
-  if(h&&!h.answer)h.answer=a;
-  D.ansTxt.textContent=a;D.ansArea.classList.add('hide');D.ansShow.classList.remove('hide');
-  renderHist();toast('✅ Réponse enregistrée')
-}
+        <div class="status-line" id="statusLine">Ajoute des joueurs pour lancer la partie.</div>
+      </article>
 
-function nextPlayer(){
-  if(!S.players.length)return;
-  S.idx=(S.idx+1)%S.players.length;
-  D.ansArea.classList.add('hide');D.ansShow.classList.add('hide');
-  updateUI()
-}
+      <aside class="history-panel reveal stagger-5" aria-labelledby="history-title">
+        <div class="panel-title">
+          <div>
+            <h3 id="history-title">📜 Tours</h3>
+            <span>Historique des manches générées</span>
+          </div>
+          <button class="btn btn-ghost" id="clearHistory" type="button">Effacer</button>
+        </div>
+        <div class="history-list" id="historyList">
+          <div class="empty-state" id="emptyHistory">Aucun tour pour le moment.</div>
+        </div>
+      </aside>
+    </section>
+  </main>
 
-function resetGame(){
-  S.started=false;S.history=[];
-  D.scGame.classList.remove('active');D.scHome.classList.add('active');
-  renderHist();toast('↺ Partie réinitialisée')
-}
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-// ===== TENSION =====
-function showTension(type,cb){
-  const ov=D.overlay,fl=D.ovFill,cn=D.ovCnt,lb=D.ovLbl;
-  lb.textContent=type==='truth'?'☯ Vérité...':'⚡ Action...';
-  cn.textContent='';fl.style.width='0%';ov.classList.add('active');
-  const dur=1600;const start=Date.now();let lastSec=4;cn.textContent='3';
-  function tick(){
-    const e=Date.now()-start,p=Math.min(e/dur,1);
-    fl.style.width=(p*100)+'%';
-    const sec=Math.max(Math.ceil((dur-e)/1000),1);
-    if(sec!==lastSec){lastSec=sec;cn.textContent=sec;cn.style.animation='none';void cn.offsetWidth;cn.style.animation='pulse .5s'}
-    if(p<1)requestAnimationFrame(tick);
-    else{cn.textContent='GO!';setTimeout(()=>{ov.classList.remove('active');cb()},350)}
-  }
-  tick()
-}
+  <script>
+    const prompts = {
+      fun: {
+        truth: [
+          "Quel message gênant as-tu déjà envoyé par erreur ?",
+          "Qui dans ce groupe te fait le plus rire ?",
+          "Quel est ton talent inutile le plus bizarre ?",
+          "Quelle est la chose la plus enfantine que tu fais encore ?",
+          "Quel est ton dernier petit mensonge ?",
+          "Si tu pouvais échanger ta vie avec quelqu'un pendant 24h, qui choisirais-tu ?",
+          "Quel emoji te représente le mieux et pourquoi ?",
+          "Quel est ton pire souvenir de honte en public ?"
+        ],
+        dare: [
+          "Envoie un vocal de 5 secondes où tu chantes ton prénom.",
+          "Change ta photo de profil pendant 10 minutes avec un emoji de ton choix.",
+          "Écris un compliment exagéré à la personne de ton choix dans le groupe.",
+          "Parle uniquement avec des emojis pendant 3 messages.",
+          "Envoie une phrase dramatique comme si tu jouais dans une série.",
+          "Fais une déclaration d'amitié ultra solennelle dans le groupe.",
+          "Imite un animateur radio dans un message vocal.",
+          "Décris ton humeur du moment comme un bulletin météo."
+        ]
+      },
+      hard: {
+        truth: [
+          "Quelle vérité sur toi surprendrait vraiment le groupe ?",
+          "Quel est le plus gros risque que tu n'as jamais osé prendre ?",
+          "As-tu déjà ignoré quelqu'un exprès ici ou ailleurs ?",
+          "Quelle est la critique qu'on te fait souvent et qui te touche ?",
+          "Quel est ton plus grand regret récent ?",
+          "Qu'est-ce que tu caches souvent derrière l'humour ?",
+          "Quelle est la dernière fois où tu t'es senti vraiment jaloux ?",
+          "Quelle peur te bloque encore aujourd'hui ?"
+        ],
+        dare: [
+          "Envoie un vocal où tu te vends comme une star pendant 10 secondes.",
+          "Écris une phrase honnête sur ton défaut principal.",
+          "Laisse le groupe choisir ton prochain statut WhatsApp.",
+          "Raconte une anecdote embarrassante en 2 lignes maximum.",
+          "Envoie un message en mode motivation extrême comme un coach.",
+          "Fais une mini-confession que tu n'aurais pas dite spontanément.",
+          "Choisis quelqu'un dans le groupe et donne-lui une vérité brutale mais gentille.",
+          "Écris une phrase sur ce que tu dois améliorer chez toi."
+        ]
+      },
+      romantique: {
+        truth: [
+          "Quel geste romantique te ferait fondre instantanément ?",
+          "Quel type de message te fait le plus plaisir à recevoir ?",
+          "Quelle est ta définition d'une vraie complicité ?",
+          "As-tu déjà eu un crush secret sur quelqu'un de ton entourage ?",
+          "Quel détail chez une personne t'attire en premier ?",
+          "Quel souvenir tendre te revient souvent ?",
+          "Tu préfères une grande déclaration ou des petites attentions ?",
+          "Quel serait ton rendez-vous idéal ?"
+        ],
+        dare: [
+          "Écris une phrase romantique comme dans un film.",
+          "Envoie un compliment sincère à la personne de ton choix.",
+          "Décris ton rendez-vous parfait en une seule phrase.",
+          "Écris une déclaration poétique avec au moins 3 emojis.",
+          "Rédige un mini-message doux que quelqu'un aimerait recevoir.",
+          "Dis quel trait rend une personne irrésistible selon toi.",
+          "Écris une phrase de séduction élégante et drôle.",
+          "Fais un top 3 de ce qui te touche le plus chez quelqu'un."
+        ]
+      },
+      ose: {
+        truth: [
+          "Quel genre de message te fait rougir immédiatement ?",
+          "As-tu déjà relu une conversation juste parce qu'elle te plaisait trop ?",
+          "Qu'est-ce qui te rend le plus attirant selon toi ?",
+          "Quel compliment un peu osé aimerais-tu recevoir ?",
+          "Quelle situation te fait perdre tes moyens ?",
+          "Quel est ton plus gros point faible en séduction ?",
+          "As-tu déjà laissé planer un flirt sans l'avouer ?",
+          "Quel regard ou attitude te déstabilise le plus ?"
+        ],
+        dare: [
+          "Écris une phrase de flirt soft mais assumée.",
+          "Décris ton énergie de séduction en 3 mots.",
+          "Envoie un vocal avec une voix ultra confiante pendant 5 secondes.",
+          "Fais une phrase mystérieuse qui pourrait intriguer quelqu'un.",
+          "Écris le compliment le plus audacieux mais classe que tu peux imaginer.",
+          "Décris ton type idéal en une ligne percutante.",
+          "Écris une phrase qui donne envie de répondre tout de suite.",
+          "Rédige une mini-intro de DM parfaite."
+        ]
+      }
+    };
 
-// ===== SHARE =====
-function shareWa(){
-  const t=D.cardText.textContent,lb=D.cardLabel.textContent,p=D.playerName.textContent;
-  if(!t||t==='Appuie sur un bouton'||t==='―'){toast('Tire une question d\'abord !');return}
-  const a = D.ansTxt.textContent&&!D.ansShow.classList.contains('hide')?`\n💬 Réponse : ${D.ansTxt.textContent}`:'';
-  const msg=encodeURIComponent(
-    `🎮 *Action ou Vérité*\n👤 *${p}*\n${lb}\n❓ ${t}${a}\n\n📱 Rejoins la partie : ${gameUrl}`
-  );
-  window.open(`https://wa.me/?text=${msg}`,'_blank');toast('💬 WhatsApp ouvert !')
-}
+    const state = {
+      players: [],
+      currentIndex: 0,
+      turnCount: 0,
+      category: "fun",
+      lastType: null,
+      lastPrompt: "",
+      history: []
+    };
 
-function shareCp(){
-  const t=D.cardText.textContent,lb=D.cardLabel.textContent,p=D.playerName.textContent;
-  if(!t||t==='Appuie sur un bouton'||t==='―'){toast('Tire une question d\'abord !');return}
-  const a = D.ansTxt.textContent&&!D.ansShow.classList.contains('hide')?`\n💬 Réponse : ${D.ansTxt.textContent}`:'';
-  const msg=`🎮 Action ou Vérité\n👤 ${p}\n${lb}\n❓ ${t}${a}\n\n📱 Rejoins la partie : ${gameUrl}`;
-  if(navigator.clipboard) navigator.clipboard.writeText(msg).then(()=>toast('📋 Copié !'));
-  else prompt('Copie ce message :',msg)
-}
+    const els = {
+      playerName: document.getElementById("playerName"),
+      btnAddPlayer: document.getElementById("btnAddPlayer"),
+      playersList: document.getElementById("playersList"),
+      playersCount: document.getElementById("playersCount"),
+      categoryLabel: document.getElementById("categoryLabel"),
+      turnCount: document.getElementById("turnCount"),
+      currentPlayer: document.getElementById("currentPlayer"),
+      playerPosition: document.getElementById("playerPosition"),
+      resultType: document.getElementById("resultType"),
+      resultCategory: document.getElementById("resultCategory"),
+      resultQuestion: document.getElementById("resultQuestion"),
+      resultMessage: document.getElementById("resultMessage"),
+      statusLine: document.getElementById("statusLine"),
+      historyList: document.getElementById("historyList"),
+      emptyHistory: document.getElementById("emptyHistory"),
+      shareWhatsapp: document.getElementById("shareWhatsapp"),
+      copyMessage: document.getElementById("copyMessage"),
+      newPrompt: document.getElementById("newPrompt"),
+      clearHistory: document.getElementById("clearHistory"),
+      btnTruth: document.getElementById("btnTruth"),
+      btnDare: document.getElementById("btnDare"),
+      btnNextTurn: document.getElementById("btnNextTurn"),
+      btnRandomPlayer: document.getElementById("btnRandomPlayer"),
+      toast: document.getElementById("toast"),
+      categoryBtns: document.querySelectorAll(".category-btn")
+    };
 
-function shareHomeWa(){
-  const msg=encodeURIComponent(`🎮 *Action ou Vérité*\nViens jouer avec moi !\n${gameUrl}`);
-  window.open(`https://wa.me/?text=${msg}`,'_blank')
-}
-function shareHomeCp(){
-  if(navigator.clipboard)navigator.clipboard.writeText(gameUrl).then(()=>toast('🔗 Lien copié !'));
-  else prompt('Copie le lien :',gameUrl)
-}
+    function showToast(message){
+      els.toast.textContent = message;
+      els.toast.classList.add("show");
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => {
+        els.toast.classList.remove("show");
+      }, 2200);
+    }
 
-// ===== HISTORY =====
-function renderHist(){
-  if(!S.history.length){D.histList.innerHTML='<span style="color:var(--dim);font-size:.7rem;">Aucun tour</span>';return}
-  D.histList.innerHTML=S.history.slice().reverse().map(h=>{
-    const b=h.type==='truth'?'t':'d';
-    const a=h.answer?`<span class="a">→ ${esc(h.answer)}</span>`:'';
-    return `<div class="hist-item"><span class="b ${b}">${h.type==='truth'?'V':'A'}</span><span class="p">${esc(h.player)}</span><span class="t">${esc(h.text)}${a}</span></div>`
-  }).join('')
-}
+    function sanitizeName(name){
+      return name.replace(/\s+/g, " ").trim().slice(0, 24);
+    }
 
-// ===== EVENTS =====
-D.btnAdd.addEventListener('click',addPlayer);
-D.inpName.addEventListener('keydown',e=>{if(e.key==='Enter')addPlayer()});
+    function toLabel(cat){
+      const map = {
+        fun: "FUN",
+        hard: "HARD",
+        romantique: "ROMANTIQUE",
+        ose: "OSÉ"
+      };
+      return map[cat] || "FUN";
+    }
 
-D.modePills.querySelectorAll('.pill').forEach(p=>{
-  p.addEventListener('click',()=>{
-    D.modePills.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));
-    p.classList.add('active');S.mode=p.dataset.v
-  })
-});
-D.catPills.querySelectorAll('.pill').forEach(p=>{
-  p.addEventListener('click',()=>{
-    D.catPills.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));
-    p.classList.add('active');S.cat=p.dataset.v;S.usedT=[];S.usedD=[];S.lastT=null;S.lastD=null
-  })
-});
-D.btnStart.addEventListener('click',startGame);
-D.btnHomeWa.addEventListener('click',shareHomeWa);
-D.btnHomeCopy.addEventListener('click',shareHomeCp);
-D.btnQuit.addEventListener('click',resetGame);
-D.btnT.addEventListener('click',()=>handleChoice('truth'));
-D.btnD.addEventListener('click',()=>handleChoice('dare'));
-D.btnAns.addEventListener('click',submitAns);
-D.ansInp.addEventListener('keydown',e=>{if(e.key==='Enter')submitAns()});
-D.btnNext.addEventListener('click',nextPlayer);
-D.btnReset.addEventListener('click',resetGame);
-D.btnClearHist.addEventListener('click',()=>{S.history=[];renderHist();toast('🗑️ Effacé')});
-D.btnShareWa.addEventListener('click',shareWa);
-D.btnShareCp.addEventListener('click',shareCp);
+    function getCurrentPlayer(){
+      if (!state.players.length) return "";
+      return state.players[state.currentIndex] || state.players[0];
+    }
 
-// ===== KEYBOARD =====
-document.addEventListener('keydown',e=>{
-  if(!S.started)return
-  if(e.key==='t'||e.key==='1'){e.preventDefault();D.btnT.click()}
-  if(e.key==='d'||e.key==='2'){e.preventDefault();D.btnD.click()}
-  if(e.key==='n'||e.key==='ArrowRight'){e.preventDefault();D.btnNext.click()}
-  if(e.key==='Escape')resetGame()
-});
+    function renderPlayers(){
+      els.playersList.innerHTML = "";
+      state.players.forEach((name, index) => {
+        const pill = document.createElement("div");
+        pill.className = "player-pill";
+        pill.innerHTML = `
+          <span>${escapeHtml(name)}</span>
+          <button type="button" aria-label="Supprimer ${escapeHtml(name)}" data-index="${index}">×</button>
+        `;
+        els.playersList.appendChild(pill);
+      });
 
-// ===== INIT =====
-renderChips();
-console.log('🎮 Action ou Vérité WhatsApp prêt !')
-</script>
+      if (!state.players.length) {
+        els.playersList.innerHTML = `<div class="empty-state">Aucun joueur ajouté.</div>`;
+      }
+
+      els.playersCount.textContent = state.players.length;
+      syncCurrentPlayer();
+    }
+
+    function syncCurrentPlayer(){
+      if (!state.players.length){
+        els.currentPlayer.textContent = "Ajoute des joueurs";
+        els.playerPosition.textContent = "Joueur 0/0";
+        els.statusLine.textContent = "Ajoute des joueurs pour lancer la partie.";
+        return;
+      }
+
+      if (state.currentIndex > state.players.length - 1) {
+        state.currentIndex = 0;
+      }
+
+      els.currentPlayer.textContent = getCurrentPlayer();
+      els.playerPosition.textContent = `Joueur ${state.currentIndex + 1}/${state.players.length}`;
+
+      if (state.players.length < 2){
+        els.statusLine.textContent = "Ajoute encore au moins 1 joueur pour un vrai mode groupe.";
+      } else if (!state.lastPrompt){
+        els.statusLine.textContent = "Choisis Vérité ou Action pour générer la manche.";
+      }
+    }
+
+    function addPlayer(name){
+      const clean = sanitizeName(name);
+      if (!clean) {
+        showToast("Entre un prénom valide.");
+        return;
+      }
+      if (state.players.some(p => p.toLowerCase() === clean.toLowerCase())){
+        showToast("Ce joueur existe déjà.");
+        return;
+      }
+      state.players.push(clean);
+      renderPlayers();
+      els.playerName.value = "";
+      showToast(`${clean} ajouté !`);
+    }
+
+    function removePlayer(index){
+      const removed = state.players[index];
+      state.players.splice(index, 1);
+      if (state.currentIndex >= state.players.length) {
+        state.currentIndex = 0;
+      }
+      renderPlayers();
+      showToast(`${removed} supprimé.`);
+    }
+
+    function setCategory(cat){
+      state.category = cat;
+      els.categoryLabel.textContent = toLabel(cat);
+      els.resultCategory.textContent = toLabel(cat);
+      els.categoryBtns.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.cat === cat);
+      });
+    }
+
+    function randomItem(arr){
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function nextPlayer(random = false){
+      if (!state.players.length){
+        syncCurrentPlayer();
+        return;
+      }
+      if (random) {
+        state.currentIndex = Math.floor(Math.random() * state.players.length);
+      } else {
+        state.currentIndex = (state.currentIndex + 1) % state.players.length;
+      }
+      syncCurrentPlayer();
+    }
+
+    function buildWhatsappMessage(player, typeLabel, prompt, category){
+      return `🎮 Action ou Vérité — ${category}
+👤 Au tour de: ${player}
+${typeLabel === "VÉRITÉ" ? "☯ Vérité" : "⚡ Action"}:
+${prompt}
+
+Réponds dans le groupe 👇`;
+    }
+
+    function updateShareLink(message){
+      const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+      els.shareWhatsapp.href = url;
+    }
+
+    function addHistory(entry){
+      state.history.unshift(entry);
+      if (state.history.length > 30) state.history.pop();
+      renderHistory();
+    }
+
+    function renderHistory(){
+      els.historyList.innerHTML = "";
+      if (!state.history.length){
+        els.historyList.innerHTML = `<div class="empty-state">Aucun tour pour le moment.</div>`;
+        return;
+      }
+
+      state.history.forEach(item => {
+        const row = document.createElement("article");
+        row.className = "history-item";
+        row.innerHTML = `
+          <div class="history-item-top">
+            <span>${escapeHtml(item.player)}</span>
+            <span>${escapeHtml(item.type)} • ${escapeHtml(item.category)}</span>
+          </div>
+          <p>${escapeHtml(item.prompt)}</p>
+        `;
+        els.historyList.appendChild(row);
+      });
+    }
+
+    function generateTurn(type){
+      if (!state.players.length){
+        showToast("Ajoute des joueurs d'abord.");
+        return;
+      }
+
+      const categoryPool = prompts[state.category];
+      const list = type === "truth" ? categoryPool.truth : categoryPool.dare;
+      const prompt = randomItem(list);
+      const player = getCurrentPlayer();
+      const typeLabel = type === "truth" ? "VÉRITÉ" : "ACTION";
+      const message = buildWhatsappMessage(player, typeLabel, prompt, toLabel(state.category));
+
+      state.lastType = type;
+      state.lastPrompt = prompt;
+      state.turnCount += 1;
+
+      els.turnCount.textContent = state.turnCount;
+      els.resultType.textContent = typeLabel;
+      els.resultCategory.textContent = toLabel(state.category);
+      els.resultQuestion.textContent = prompt;
+      els.resultMessage.textContent = message;
+      els.statusLine.textContent = `Message prêt pour WhatsApp pour ${player}.`;
+
+      updateShareLink(message);
+
+      addHistory({
+        player,
+        type: typeLabel,
+        category: toLabel(state.category),
+        prompt
+      });
+    }
+
+    function regeneratePrompt(){
+      if (!state.lastType){
+        showToast("Aucune manche à régénérer.");
+        return;
+      }
+      generateTurn(state.lastType);
+    }
+
+    async function copyCurrentMessage(){
+      const text = els.resultMessage.textContent.trim();
+      if (!text || text.includes("Le message prêt")) {
+        showToast("Aucun message à copier.");
+        return;
+      }
+
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast("Message copié.");
+      } catch {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        showToast("Message copié.");
+      }
+    }
+
+    function clearHistory(){
+      state.history = [];
+      renderHistory();
+      showToast("Historique effacé.");
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function initObserver(){
+      const items = document.querySelectorAll(".reveal:not(.visible)");
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting){
+            entry.target.classList.add("visible");
+            io.unobserve(entry.target);
+          }
+        });
+      }, {threshold: 0.18});
+      items.forEach(el => io.observe(el));
+    }
+
+    els.btnAddPlayer.addEventListener("click", () => addPlayer(els.playerName.value));
+    els.playerName.addEventListener("keydown", (e) => {
+      if (e.key === "Enter"){
+        e.preventDefault();
+        addPlayer(els.playerName.value);
+      }
+    });
+
+    els.playersList.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-index]");
+      if (!btn) return;
+      removePlayer(Number(btn.dataset.index));
+    });
+
+    els.categoryBtns.forEach(btn => {
+      btn.addEventListener("click", () => setCategory(btn.dataset.cat));
+    });
+
+    els.btnTruth.addEventListener("click", () => generateTurn("truth"));
+    els.btnDare.addEventListener("click", () => generateTurn("dare"));
+
+    els.btnNextTurn.addEventListener("click", () => {
+      if (!state.players.length) {
+        showToast("Ajoute des joueurs.");
+        return;
+      }
+      nextPlayer(false);
+      showToast(`Au tour de ${getCurrentPlayer()}.`);
+    });
+
+    els.btnRandomPlayer.addEventListener("click", () => {
+      if (!state.players.length) {
+        showToast("Ajoute des joueurs.");
+        return;
+      }
+      nextPlayer(true);
+      showToast(`Joueur choisi : ${getCurrentPlayer()}.`);
+    });
+
+    els.copyMessage.addEventListener("click", copyCurrentMessage);
+    els.newPrompt.addEventListener("click", regeneratePrompt);
+    els.clearHistory.addEventListener("click", clearHistory);
+
+    els.shareWhatsapp.addEventListener("click", (e) => {
+      const href = els.shareWhatsapp.getAttribute("href");
+      if (!href || href === "#"){
+        e.preventDefault();
+        showToast("Génère d'abord une manche.");
+      }
+    });
+
+    setCategory(state.category);
+    renderPlayers();
+    renderHistory();
+    updateShareLink("🎮 Action ou Vérité — On commence ?");
+    initObserver();
+  </script>
 </body>
 </html>
