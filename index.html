@@ -807,6 +807,7 @@
         </div>
       </div>
       <div class="nav-actions">
+        <a class="btn btn-secondary" href="https://chat.whatsapp.com/FomycGrlXB52o9H5m13E0a" target="_blank" rel="noopener noreferrer">💬 Rejoindre le groupe</a>
         <button class="btn btn-secondary" id="btnRandomPlayer" type="button">🎲 Joueur au hasard</button>
         <button class="btn btn-primary" id="btnNextTurn" type="button">Lancer un tour</button>
       </div>
@@ -833,6 +834,10 @@
             <span class="meta-chip">👥 Multijoueur</span>
             <span class="meta-chip">💬 Partage WhatsApp</span>
             <span class="meta-chip">🕘 Historique des tours</span>
+          </div>
+          <div style="margin-top:1rem;display:flex;gap:.7rem;flex-wrap:wrap;">
+            <a class="btn btn-primary" href="https://chat.whatsapp.com/FomycGrlXB52o9H5m13E0a" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">💬 Rejoindre le groupe WhatsApp</a>
+            <span class="meta-chip" style="display:inline-flex;align-items:center;">🔗 allakouassiaxellemarius-sys.github.io/ALLA-/</span>
           </div>
         </article>
 
@@ -1147,7 +1152,7 @@
       if (!state.players.length){
         els.currentPlayer.textContent = "Ajoute des joueurs";
         els.playerPosition.textContent = "Joueur 0/0";
-        els.statusLine.textContent = "Ajoute des joueurs pour lancer la partie.";
+        els.statusLine.innerHTML = 'Ajoute des joueurs pour lancer la partie. <a href="https://chat.whatsapp.com/FomycGrlXB52o9H5m13E0a" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:underline;">Rejoindre le groupe WhatsApp</a>';
         return;
       }
 
@@ -1217,13 +1222,15 @@
       syncCurrentPlayer();
     }
 
+    const GROUP_LINK = 'https://chat.whatsapp.com/FomycGrlXB52o9H5m13E0a';
+
     function buildWhatsappMessage(player, typeLabel, prompt, category){
       return `🎮 Action ou Vérité — ${category}
 👤 Au tour de: ${player}
 ${typeLabel === "VÉRITÉ" ? "☯ Vérité" : "⚡ Action"}:
 ${prompt}
 
-Réponds dans le groupe 👇`;
+📲 Rejoins le groupe pour jouer : ${GROUP_LINK}`;
     }
 
     function updateShareLink(message){
