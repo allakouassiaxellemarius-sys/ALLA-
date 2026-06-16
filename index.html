@@ -412,7 +412,8 @@ function esc(s){const d=document.createElement('div');d.textContent=s;return d.i
 function toast(m){D.toast.textContent=m;D.toast.classList.add('show');setTimeout(()=>D.toast.classList.remove('show'),2000)}
 
 function pick(cat,type){
-  const pool = TR.fr[type][cat];
+  const key = type==='truth'?'truths':'dares';
+  const pool = TR.fr[key][cat];
   if(!pool||!pool.length)return'…';
   const usedKey = type==='truth'?'usedT':'usedD';
   const lastKey = type==='truth'?'lastT':'lastD';
