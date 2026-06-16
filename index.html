@@ -32,6 +32,159 @@
         linear-gradient(180deg, #f8f1e6 0%, #f4ebdc 100%);
     }
 
+    [data-theme="dark"]{
+      --bg: #1a1512;
+      --paper: rgba(30,25,22,.75);
+      --paper-strong: rgba(45,38,32,.9);
+      --ink: #efe6dd;
+      --muted: #a6958a;
+      --line: rgba(239,230,221,.12);
+      --hero-grad:
+        radial-gradient(circle at 12% 15%, rgba(191,90,54,.18), transparent 28%),
+        radial-gradient(circle at 85% 20%, rgba(46,139,106,.14), transparent 24%),
+        radial-gradient(circle at 74% 74%, rgba(125,76,199,.12), transparent 26%),
+        radial-gradient(circle at 22% 82%, rgba(194,39,93,.12), transparent 22%),
+        linear-gradient(180deg, #1a1512 0%, #221c17 100%);
+      --shadow: 0 20px 60px rgba(0,0,0,.5);
+    }
+    [data-theme="dark"] input[type="text"]{
+      background: rgba(30,25,22,.9);
+      color:var(--ink);
+      border-color: rgba(239,230,221,.15);
+    }
+    [data-theme="dark"] .result-stage{
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,.08), transparent 28%),
+        linear-gradient(135deg, rgba(239,230,221,.95), rgba(200,180,165,.92));
+      color:#1a1512;
+    }
+    [data-theme="dark"] .result-copy{ color: rgba(26,21,18,.75); }
+    [data-theme="dark"] .result-actions .btn{
+      background: rgba(26,21,18,.12);
+      color:#1a1512;
+      border-color: rgba(26,21,18,.14);
+    }
+    [data-theme="dark"] .result-actions .btn-primary{
+      background: linear-gradient(135deg, var(--accent), #dd7d4f);
+      color:#fff;
+    }
+    [data-theme="dark"] .result-actions .btn{color:#1a1512;}
+    [data-theme="dark"] .toast{background: rgba(239,230,221,.92); color:#1a1512;}
+    .theme-toggle{
+      background:var(--paper);
+      border:1px solid var(--line);
+      border-radius:999px;
+      width:44px;
+      height:44px;
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      font-size:1.2rem;
+      transition: transform .25s ease, background .25s ease;
+      min-height:auto;
+      padding:0;
+    }
+    .theme-toggle:hover{transform:scale(1.08);}
+    .timer-wrap{
+      width:100%;
+      height:6px;
+      border-radius:999px;
+      background:rgba(27,20,15,.1);
+      overflow:hidden;
+      margin-top:.5rem;
+    }
+    [data-theme="dark"] .timer-wrap{background:rgba(239,230,221,.12);}
+    .timer-fill{
+      height:100%;
+      width:100%;
+      border-radius:999px;
+      background:linear-gradient(90deg, var(--accent), var(--accent-4));
+      transition: width .1s linear;
+    }
+    .timer-text{
+      font-size:.82rem;
+      color:var(--muted);
+      text-align:right;
+    }
+    .ranking-list{
+      display:grid;
+      gap:.45rem;
+    }
+    .rank-item{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:.55rem .75rem;
+      border-radius:14px;
+      background:rgba(255,255,255,.45);
+      border:1px solid var(--line);
+      font-size:.9rem;
+    }
+    [data-theme="dark"] .rank-item{background:rgba(30,25,22,.7);}
+    .rank-pos{
+      font-weight:700;
+      color:var(--muted);
+      margin-right:.5rem;
+      min-width:1.5rem;
+    }
+    .rank-name{flex:1;min-width:0;}
+    .rank-pts{
+      font-weight:700;
+      color:var(--accent-2);
+      font-size:.82rem;
+    }
+    .settings-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:.75rem;
+      padding:.6rem 0;
+      border-bottom:1px solid var(--line);
+    }
+    .settings-row:last-child{border-bottom:none;}
+    .toggle-switch{
+      position:relative;
+      width:48px;
+      height:28px;
+      flex-shrink:0;
+      background:rgba(27,20,15,.15);
+      border-radius:999px;
+      cursor:pointer;
+      transition:background .3s ease;
+      border:none;
+      padding:0;
+    }
+    [data-theme="dark"] .toggle-switch{background:rgba(239,230,221,.15);}
+    .toggle-switch.on{background:var(--accent-2);}
+    .toggle-switch::after{
+      content:"";
+      position:absolute;
+      top:3px;left:3px;
+      width:22px;height:22px;
+      border-radius:50%;
+      background:#fff;
+      box-shadow:0 2px 6px rgba(0,0,0,.15);
+      transition:transform .3s ease;
+    }
+    .toggle-switch.on::after{transform:translateX(20px);}
+    .confetti-container{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:100;
+      overflow:hidden;
+    }
+    .confetti-piece{
+      position:absolute;
+      width:10px;
+      height:10px;
+      opacity:0;
+      animation: confettiFall 2.2s ease-out forwards;
+    }
+    @keyframes confettiFall{
+      0%{opacity:1;transform:translateY(-20px) rotate(0deg) scale(1)}
+      100%{opacity:0;transform:translateY(100vh) rotate(720deg) scale(.3)}
+    }
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
     body{
@@ -807,7 +960,7 @@
         </div>
       </div>
       <div class="nav-actions">
-        <a class="btn btn-secondary" href="https://chat.whatsapp.com/FomycGrlXB52o9H5m13E0a" target="_blank" rel="noopener noreferrer">💬 Rejoindre le groupe</a>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Changer le thème">🌙</button>
         <button class="btn btn-secondary" id="btnRandomPlayer" type="button">🎲 Joueur au hasard</button>
         <button class="btn btn-primary" id="btnNextTurn" type="button">Lancer un tour</button>
       </div>
@@ -881,25 +1034,56 @@
             </div>
           </div>
 
-          <div class="quick-info">
-            <div class="info-bloc">
-              <span class="label">Joueurs</span>
-              <span class="value" id="playersCount">0</span>
-            </div>
-            <div class="info-bloc">
-              <span class="label">Catégorie</span>
-              <span class="value" id="categoryLabel">FUN</span>
-            </div>
-            <div class="info-bloc">
-              <span class="label">Tours</span>
-              <span class="value" id="turnCount">0</span>
-            </div>
-            <div class="info-bloc">
-              <span class="label">Mode</span>
-              <span class="value">GROUPE</span>
-            </div>
+      <div class="quick-info">
+        <div class="info-bloc">
+          <span class="label">Joueurs</span>
+          <span class="value" id="playersCount">0</span>
+        </div>
+        <div class="info-bloc">
+          <span class="label">Catégorie</span>
+          <span class="value" id="categoryLabel">FUN</span>
+        </div>
+        <div class="info-bloc">
+          <span class="label">Tours</span>
+          <span class="value" id="turnCount">0</span>
+        </div>
+        <div class="info-bloc">
+          <span class="label">Max tours</span>
+          <span class="value" id="maxRoundsDisplay">∞</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="eyebrow">Classement</div>
+        <div class="ranking-list" id="rankingList"><div class="empty-state">Ajoute des joueurs.</div></div>
+      </div>
+
+      <div>
+        <div class="eyebrow">Réglages</div>
+        <div class="info-bloc" style="border-radius:20px;padding:0;">
+          <div class="settings-row">
+            <span>⏭️ Auto-suivant</span>
+            <button class="toggle-switch" id="toggleAutoNext" type="button" aria-label="Auto-suivant"></button>
           </div>
-        </aside>
+          <div class="settings-row">
+            <span>⏱️ Minuteur (30s)</span>
+            <button class="toggle-switch" id="toggleTimer" type="button" aria-label="Minuteur"></button>
+          </div>
+          <div class="settings-row">
+            <span>🔊 Son</span>
+            <button class="toggle-switch on" id="toggleSound" type="button" aria-label="Son"></button>
+          </div>
+          <div class="settings-row">
+            <span>🎊 Confettis</span>
+            <button class="toggle-switch on" id="toggleConfetti" type="button" aria-label="Confettis"></button>
+          </div>
+          <div class="settings-row">
+            <span>🔄 Nouvelle partie</span>
+            <button class="btn btn-ghost" id="newGameBtn" type="button" style="padding:.5rem .8rem;font-size:.82rem;min-height:auto;">Réinitialiser</button>
+          </div>
+        </div>
+      </div>
+    </aside>
       </div>
     </section>
 
@@ -935,11 +1119,15 @@
           </div>
 
           <section class="result-stage" aria-live="polite" aria-atomic="true">
-            <div class="badge-line">
-              <span class="type-badge" id="resultType">En attente</span>
-              <span class="cat-badge" id="resultCategory">Fun</span>
-            </div>
-            <h3 class="result-question" id="resultQuestion">Appuie sur Vérité ou Action pour commencer.</h3>
+      <div class="badge-line">
+        <span class="type-badge" id="resultType">En attente</span>
+        <span class="cat-badge" id="resultCategory">Fun</span>
+        <span class="timer-text" id="timerDisplay" style="margin-left:auto;"></span>
+      </div>
+      <div class="timer-wrap" id="timerWrap" style="display:none;">
+        <div class="timer-fill" id="timerFill"></div>
+      </div>
+      <h3 class="result-question" id="resultQuestion">Appuie sur Vérité ou Action pour commencer.</h3>
             <p class="result-copy" id="resultMessage">
               Le message prêt pour WhatsApp apparaîtra ici. Tu pourras ensuite le partager ou le copier.
             </p>
@@ -961,6 +1149,7 @@
             <h3 id="history-title">📜 Tours</h3>
             <span>Historique des manches générées</span>
           </div>
+          <button class="btn btn-ghost" id="exportHistory" type="button">📤 Exporter</button>
           <button class="btn btn-ghost" id="clearHistory" type="button">Effacer</button>
         </div>
         <div class="history-list" id="historyList">
@@ -971,6 +1160,7 @@
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="confetti-container" id="confettiContainer"></div>
 
   <script>
     const prompts = {
@@ -983,7 +1173,29 @@
           "Quel est ton dernier petit mensonge ?",
           "Si tu pouvais échanger ta vie avec quelqu'un pendant 24h, qui choisirais-tu ?",
           "Quel emoji te représente le mieux et pourquoi ?",
-          "Quel est ton pire souvenir de honte en public ?"
+          "Quel est ton pire souvenir de honte en public ?",
+          "Quelle est la série que tu peux regarder en boucle sans t'en lasser ?",
+          "Quel est le surnom le plus ridicule qu'on t'ait donné ?",
+          "Quel est ton plus grand guilty pleasure ?",
+          "Si tu devais manger un seul plat pour le reste de ta vie, lequel ?",
+          "Quelle est la dernière bêtise que tu as faite ?",
+          "Quel film d'animation est ton préféré et pourquoi ?",
+          "Quel est ton souvenir d'enfance le plus drôle ?",
+          "Si tu gagnais au loto demain, quelle est la première chose que tu ferais ?",
+          "Quel est ton plus grand talent caché ?",
+          "Quelle est la chose la plus étrange que tu aies déjà mangée ?",
+          "Quel est ton animal totem et pourquoi ?",
+          "As-tu déjà eu une obsession bizarre étant petit ?",
+          "Quel est le truc le plus idiot que tu aies fait pour impressionner quelqu'un ?",
+          "Quelle est ta phobie la plus ridicule ?",
+          "Quel est ton plus grand luxe quotidien ?",
+          "Si tu pouvais être invisible pendant une heure, que ferais-tu ?",
+          "Quelle est la pire mode que tu aies suivie ?",
+          "Quel est le compliment le plus étrange que tu aies reçu ?",
+          "Si tu étais un personnage de fiction, qui serais-tu ?",
+          "Quel est le rêve le plus bizarre dont tu te souviennes ?",
+          "Qu'est-ce que tu fais quand personne ne te regarde ?",
+          "Quelle est ta chanson préférée à chanter sous la douche ?"
         ],
         dare: [
           "Envoie un vocal de 5 secondes où tu chantes ton prénom.",
@@ -993,7 +1205,29 @@
           "Envoie une phrase dramatique comme si tu jouais dans une série.",
           "Fais une déclaration d'amitié ultra solennelle dans le groupe.",
           "Imite un animateur radio dans un message vocal.",
-          "Décris ton humeur du moment comme un bulletin météo."
+          "Décris ton humeur du moment comme un bulletin météo.",
+          "Envoie une photo de ton frigo actuel (pas de triche).",
+          "Invente un slogan pour le groupe et poste-le.",
+          "Fais deviner un film en 3 emojis seulement.",
+          "Raconte une blague nulle en message vocal.",
+          "Écris un mini-poireau (message vide) mais avec un effet dramatique.",
+          "Partage ton dernier mème enregistré.",
+          "Prends un selfie avec une expression la plus bizarre possible et poste-le.",
+          "Réponds au prochain message de quelqu'un uniquement avec des gifs.",
+          "Invente un nouveau prénom pour chaque membre du groupe.",
+          "Envoie un message en parlant de toi à la troisième personne.",
+          "Choisis un mot au hasard et utilise-le 5 fois dans la conversation.",
+          "Poste un statut WhatsApp absurde pendant 5 minutes.",
+          "Fais une imitation d'un membre du groupe en vocal.",
+          "Écris une critique de film imaginaire de 2 lignes.",
+          "Envoie un message avec une police bizarre (style générateur en ligne).",
+          "Fais un top 3 des pires tenues que tu aies portées.",
+          "Décris ton matin comme si c'était le script d'un film d'action.",
+          "Envoie la première photo de ta galerie (sans regarder).",
+          "Fais une déclaration d'amour à un objet du quotidien.",
+          "Poste un mème que toi seul trouves drôle.",
+          "Écris une règle absurde que tout le groupe doit suivre pour ce soir.",
+          "Fais une démonstration de ta meilleure danse en vocal (décris les mouvements)."
         ]
       },
       hard: {
@@ -1005,7 +1239,29 @@
           "Quel est ton plus grand regret récent ?",
           "Qu'est-ce que tu caches souvent derrière l'humour ?",
           "Quelle est la dernière fois où tu t'es senti vraiment jaloux ?",
-          "Quelle peur te bloque encore aujourd'hui ?"
+          "Quelle peur te bloque encore aujourd'hui ?",
+          "As-tu déjà dit 'je t'aime' sans le penser vraiment ?",
+          "Quel est le plus gros mensonge que tu aies raconté à tes parents ?",
+          "As-tu déjà trahi la confiance de quelqu'un ?",
+          "Qu'est-ce que tu n'as jamais avoué à personne ?",
+          "Quelle est la chose que tu fais quand tu es seul et que tu cacherais ?",
+          "As-tu déjà pleuré devant un film et lequel ?",
+          "Quelle est la plus grande pression que tu ressens en ce moment ?",
+          "As-tu déjà eu honte de quelqu'un dans ta vie ?",
+          "Quelle est ta plus grande insécurité ?",
+          "As-tu déjà espionné quelqu'un sur les réseaux ?",
+          "Quel est le pire conseil que tu aies donné ?",
+          "As-tu déjà volé quelque chose ?",
+          "Qu'est-ce qui te réveille la nuit ?",
+          "As-tu déjà fait semblant d'être quelqu'un d'autre en ligne ?",
+          "Quel est le secret que tu gardes depuis le plus longtemps ?",
+          "As-tu déjà été jaloux de la réussite de quelqu'un ?",
+          "Quelle est la chose la plus dure qu'on t'ait dite ?",
+          "As-tu déjà fait du mal à quelqu'un volontairement ?",
+          "Qu'est-ce que tu changeras chez toi si tu pouvais ?",
+          "As-tu déjà été toxique dans une relation ?",
+          "Quel est le plus grand sacrifice que tu aies fait ?",
+          "As-tu déjà regretté d'avoir été honnête ?"
         ],
         dare: [
           "Envoie un vocal où tu te vends comme une star pendant 10 secondes.",
@@ -1015,7 +1271,29 @@
           "Envoie un message en mode motivation extrême comme un coach.",
           "Fais une mini-confession que tu n'aurais pas dite spontanément.",
           "Choisis quelqu'un dans le groupe et donne-lui une vérité brutale mais gentille.",
-          "Écris une phrase sur ce que tu dois améliorer chez toi."
+          "Écris une phrase sur ce que tu dois améliorer chez toi.",
+          "Envoie une photo de toi à 13 ans (moche ou pas, on assume).",
+          "Fais une liste de 3 choses que tu détestes chez toi.",
+          "Envoie un vocal où tu cries un mot au hasard.",
+          "Écris un message que tu n'enverrais jamais à ton crush.",
+          "Raconte ton pire échec en 3 phrases.",
+          "Fais le portrait chinois de toi-même (si j'étais...).",
+          "Écris une lettre d'excuses à quelqu'un que tu as blessé.",
+          "Poste une story WhatsApp qui restera 10 minutes.",
+          "Envoie un audax (audio maximum) de 30 secondes sur un sujet imposé.",
+          "Fais une critique honnête de toi-même en 5 points.",
+          "Écris ce que tu penses vraiment du groupe en général (honnêteté totale).",
+          "Choisis entre deux options que le groupe te donnera.",
+          "Envoie le screen de ta dernière conversation avec ta mère.",
+          "Fais un classement des membres du groupe du plus au moins mature.",
+          "Révèle le montant de ton dernier achat impulsif.",
+          "Écris un défaut de chaque membre du groupe (constructif).",
+          "Envoie un message que tu as envoyé par erreur un jour.",
+          "Chante une chanson triste en vocal de 10 secondes.",
+          "Fais une confession sur un crush passé ou présent.",
+          "Écris ton plus grand regret en une phrase.",
+          "Poste quelque chose que tu n'as jamais dit à personne.",
+          "Fais un bilan honnête de ta vie actuelle en 30 secondes."
         ]
       },
       romantique: {
@@ -1027,7 +1305,29 @@
           "Quel détail chez une personne t'attire en premier ?",
           "Quel souvenir tendre te revient souvent ?",
           "Tu préfères une grande déclaration ou des petites attentions ?",
-          "Quel serait ton rendez-vous idéal ?"
+          "Quel serait ton rendez-vous idéal ?",
+          "Quel est le mot le plus doux de la langue française selon toi ?",
+          "As-tu déjà été amoureux en secret longtemps ?",
+          "Quel est le plus beau compliment que tu aies reçu ?",
+          "Qu'est-ce qui te fait fondre chez quelqu'un ?",
+          "Quelle chanson d'amour te touche le plus ?",
+          "Décris ta définition du couple parfait.",
+          "Quel est ton plus beau souvenir de Saint-Valentin ?",
+          "Que ferais-tu pour impressionner quelqu'un qui te plaît ?",
+          "As-tu déjà écrit une lettre d'amour ?",
+          "Quel est ton film romantique préféré ?",
+          "Qu'est-ce que l'amour pour toi en une phrase ?",
+          "Quel défaut deviens-tu supportable chez quelqu'un que tu aimes ?",
+          "As-tu déjà eu le cœur brisé ?",
+          "Quel est le plus beau prénom que tu donnerais à ton enfant ?",
+          "Préfères-tu la douceur ou la passion ?",
+          "Quel est ton plus grand rêve en amour ?",
+          "As-tu déjà fait le premier pas ?",
+          "Que penses-tu des relations à distance ?",
+          "Quel est le message le plus touchant que tu aies reçu ?",
+          "Décris ta pire expérience en amour.",
+          "Quel est le petit geste qui te fait craquer ?",
+          "À quoi ressemble ta journée parfaite en amoureux ?"
         ],
         dare: [
           "Écris une phrase romantique comme dans un film.",
@@ -1037,7 +1337,29 @@
           "Rédige un mini-message doux que quelqu'un aimerait recevoir.",
           "Dis quel trait rend une personne irrésistible selon toi.",
           "Écris une phrase de séduction élégante et drôle.",
-          "Fais un top 3 de ce qui te touche le plus chez quelqu'un."
+          "Fais un top 3 de ce qui te touche le plus chez quelqu'un.",
+          "Envoie une voix douce de 10 secondes avec un message tendre.",
+          "Écris un haïku d'amour original.",
+          "Fais une déclaration à la personne de ton choix (même pour rire).",
+          "Décris ton coup de foudre idéal.",
+          "Écris un petit mot que quelqu'un aimerait trouver dans sa poche.",
+          "Invente un surnom mignon pour chaque membre du groupe.",
+          "Rédige un message de bonne nuit ultra romantique.",
+          "Fais une promesse solennelle d'amitié ou d'amour.",
+          "Écris un poème de 4 lignes sur l'amour.",
+          "Décris la plus belle preuve d'amour que tu connaisses.",
+          "Choisis quelqu'un du groupe et dis pourquoi cette personne est spéciale.",
+          "Écris une définition de l'amour comme si tu écrivais un dictionnaire.",
+          "Envoie un vocal en chuchotant une phrase douce.",
+          "Fais une liste de 5 choses que tu veux vivre en amour.",
+          "Écris un message que tu aimerais recevoir un jour.",
+          "Décris ton âme sœur en 5 adjectifs.",
+          "Rédige une invitation à un rendez-vous imaginaire parfait.",
+          "Envoie une citation d'amour qui te correspond.",
+          "Fais une déclaration d'amour à la vie en général.",
+          "Écris un micro-scénario de rencontre romantique.",
+          "Dis la chose la plus douce que tu aies dite à quelqu'un.",
+          "Fais un compliment unique et personnalisé à chaque joueur."
         ]
       },
       ose: {
@@ -1049,7 +1371,29 @@
           "Quelle situation te fait perdre tes moyens ?",
           "Quel est ton plus gros point faible en séduction ?",
           "As-tu déjà laissé planer un flirt sans l'avouer ?",
-          "Quel regard ou attitude te déstabilise le plus ?"
+          "Quel regard ou attitude te déstabilise le plus ?",
+          "Quel est le message le plus coquin que tu aies envoyé ?",
+          "As-tu déjà flirté avec quelqu'un présent dans ce groupe ?",
+          "Qu'est-ce qui te rend le plus charmant séducteur ?",
+          "Quel est ton pire défaut en séduction ?",
+          "As-tu déjà embrassé quelqu'un par défi ?",
+          "Quel est le compliment le plus efficace selon toi ?",
+          "As-tu déjà dragué quelqu'un sans t'en rendre compte ?",
+          "Quelle est la chose la plus audacieuse que tu aies faite par amour ?",
+          "Qu'est-ce qui te fait craquer physiquement en premier ?",
+          "As-tu déjà eu un plan cul ou une relation sans lendemain ?",
+          "Quel est ton plus grand fantasme (soft) ?",
+          "As-tu déjà envoyé une photo osée ?",
+          "Quelle est la pire tentative de drague que tu aies vue ?",
+          "As-tu déjà eu un coup d'un soir ?",
+          "Quel est ton plus gros turn-on ?",
+          "As-tu déjà espionné le téléphone de quelqu'un ?",
+          "Quel est le surnom le plus hot qu'on t'ait donné ?",
+          "Décris ton plus beau baiser.",
+          "As-tu déjà regretté un flirt ?",
+          "Qu'est-ce que tu ferais si personne ne te jugeait ?",
+          "As-tu déjà eu une aventure avec un ou une collègue ?",
+          "Quel est le message que tu aimerais recevoir en secret ?"
         ],
         dare: [
           "Écris une phrase de flirt soft mais assumée.",
@@ -1059,7 +1403,29 @@
           "Écris le compliment le plus audacieux mais classe que tu peux imaginer.",
           "Décris ton type idéal en une ligne percutante.",
           "Écris une phrase qui donne envie de répondre tout de suite.",
-          "Rédige une mini-intro de DM parfaite."
+          "Rédige une mini-intro de DM parfaite.",
+          "Envoie une question piège à quelqu'un du groupe.",
+          "Décris ton regard séduction en 3 adjectifs.",
+          "Écris un message que tu enverrais à 2h du matin.",
+          "Fais une déclaration en mode mauvais garçon ou fille fatale.",
+          "Envoie un vocal avec un ton de voix qui fait craquer.",
+          "Invente un jeu de mots osé mais élégant.",
+          "Écris une phrase de rapprochement progressive en 3 étapes.",
+          "Décris ton attitude en soirée en mode séduction.",
+          "Choisis quelqu'un dans le groupe et invente son alter ego séducteur.",
+          "Envoie une phrase d'accroche originale pour un DM.",
+          "Fais une proposition en mode 'à moitié sérieux, à moitié pour rire'.",
+          "Écris un compliment sur le sourire de quelqu'un du groupe.",
+          "Décris ton parfum ou l'odeur que tu préfères chez quelqu'un.",
+          "Envoie une invitation mystérieuse à boire un verre.",
+          "Fais une déclaration visuelle avec une emoji composition.",
+          "Écris une phrase qui pourrait être une légende Instagram parfaite.",
+          "Décris ce que tu portes en ce moment de manière suggestive.",
+          "Envoie un message en mode 'je pense à toi' sans dire à qui.",
+          "Fais un compliment décalé mais bien senti à un membre.",
+          "Écris une phrase de rupture fictive ultra dramatique.",
+          "Invente un challenge pour le groupe à faire en privé.",
+          "Rédige une bio Tinder pour un membre du groupe."
         ]
       }
     };
@@ -1071,7 +1437,18 @@
       category: "fun",
       lastType: null,
       lastPrompt: "",
-      history: []
+      history: [],
+      points: {},
+      usedPrompts: {},
+      settings: {
+        autoNext: false,
+        timer: true,
+        sound: true,
+        confetti: true,
+        maxRounds: 0,
+        darkMode: false,
+        timerSeconds: 30
+      }
     };
 
     const els = {
@@ -1099,7 +1476,20 @@
       btnNextTurn: document.getElementById("btnNextTurn"),
       btnRandomPlayer: document.getElementById("btnRandomPlayer"),
       toast: document.getElementById("toast"),
-      categoryBtns: document.querySelectorAll(".category-btn")
+      categoryBtns: document.querySelectorAll(".category-btn"),
+      themeToggle: document.getElementById("themeToggle"),
+      rankingList: document.getElementById("rankingList"),
+      toggleAutoNext: document.getElementById("toggleAutoNext"),
+      toggleTimer: document.getElementById("toggleTimer"),
+      toggleSound: document.getElementById("toggleSound"),
+      toggleConfetti: document.getElementById("toggleConfetti"),
+      newGameBtn: document.getElementById("newGameBtn"),
+      exportHistory: document.getElementById("exportHistory"),
+      timerDisplay: document.getElementById("timerDisplay"),
+      timerWrap: document.getElementById("timerWrap"),
+      timerFill: document.getElementById("timerFill"),
+      confettiContainer: document.getElementById("confettiContainer"),
+      maxRoundsDisplay: document.getElementById("maxRoundsDisplay")
     };
 
     function showToast(message){
@@ -1133,10 +1523,13 @@
     function renderPlayers(){
       els.playersList.innerHTML = "";
       state.players.forEach((name, index) => {
+        const pts = state.points[name] || 0;
         const pill = document.createElement("div");
         pill.className = "player-pill";
+        pill.style.cssText = "gap:.4rem;flex-wrap:wrap;";
         pill.innerHTML = `
           <span>${escapeHtml(name)}</span>
+          <span style="font-size:.78rem;color:var(--accent-2);font-weight:700;">${pts} pts</span>
           <button type="button" aria-label="Supprimer ${escapeHtml(name)}" data-index="${index}">×</button>
         `;
         els.playersList.appendChild(pill);
@@ -1148,6 +1541,7 @@
 
       els.playersCount.textContent = state.players.length;
       syncCurrentPlayer();
+      renderRanking();
     }
 
     function syncCurrentPlayer(){
@@ -1165,11 +1559,24 @@
       els.currentPlayer.textContent = getCurrentPlayer();
       els.playerPosition.textContent = `Joueur ${state.currentIndex + 1}/${state.players.length}`;
 
+      const mr = state.settings.maxRounds;
+      const roundsLeft = mr > 0 ? ` (${Math.max(0, mr - state.turnCount)} tours restants)` : "";
+
       if (state.players.length < 2){
         els.statusLine.textContent = "Ajoute encore au moins 1 joueur pour un vrai mode groupe.";
       } else if (!state.lastPrompt){
-        els.statusLine.textContent = "Choisis Vérité ou Action pour générer la manche.";
+        els.statusLine.textContent = "Choisis Vérité ou Action pour générer la manche." + roundsLeft;
+      } else {
+        const pos = state.players.length < 2 ? "" : `. Prochain : ${state.players[(state.currentIndex + 1) % state.players.length]}`;
+        if (state.lastPrompt) {
+          els.statusLine.textContent = `Message prêt pour WhatsApp.${pos}${roundsLeft}`;
+        }
       }
+    }
+
+    function initPlayerData(name){
+      if (!state.points[name]) state.points[name] = 0;
+      if (!state.usedPrompts[name]) state.usedPrompts[name] = {};
     }
 
     function addPlayer(name){
@@ -1183,8 +1590,10 @@
         return;
       }
       state.players.push(clean);
+      initPlayerData(clean);
       renderPlayers();
       els.playerName.value = "";
+      saveState();
       showToast(`${clean} ajouté !`);
     }
 
@@ -1195,6 +1604,7 @@
         state.currentIndex = 0;
       }
       renderPlayers();
+      saveState();
       showToast(`${removed} supprimé.`);
     }
 
@@ -1222,6 +1632,34 @@
         state.currentIndex = (state.currentIndex + 1) % state.players.length;
       }
       syncCurrentPlayer();
+    }
+
+    function getUnusedPrompt(cat, type, player){
+      const pool = prompts[cat][type];
+      const used = state.usedPrompts[player] || {};
+      const key = cat + "_" + type;
+      const usedSet = used[key] || [];
+      const available = pool.filter((_, i) => !usedSet.includes(i));
+      if (available.length === 0) {
+        used[key] = [];
+        saveState();
+        return randomItem(pool);
+      }
+      const idx = available[Math.floor(Math.random() * available.length)];
+      const prompt = pool[idx];
+      return prompt;
+    }
+
+    function markPromptUsed(cat, type, prompt, player){
+      const pool = prompts[cat][type];
+      const idx = pool.indexOf(prompt);
+      if (idx === -1) return;
+      if (!state.usedPrompts[player]) state.usedPrompts[player] = {};
+      const key = cat + "_" + type;
+      if (!state.usedPrompts[player][key]) state.usedPrompts[player][key] = [];
+      if (!state.usedPrompts[player][key].includes(idx)){
+        state.usedPrompts[player][key].push(idx);
+      }
     }
 
     const GROUP_LINK = 'https://chat.whatsapp.com/FomycGrlXB52o9H5m13E0a';
@@ -1288,16 +1726,24 @@ ${GROUP_LINK}`;
         return;
       }
 
-      const categoryPool = prompts[state.category];
-      const list = type === "truth" ? categoryPool.truth : categoryPool.dare;
-      const prompt = randomItem(list);
+      const maxR = state.settings.maxRounds;
+      if (maxR > 0 && state.turnCount >= maxR) {
+        showToast("Nombre max de tours atteint !");
+        playSound();
+        fireConfetti();
+        return;
+      }
+
       const player = getCurrentPlayer();
+      const prompt = getUnusedPrompt(state.category, type, player);
+      markPromptUsed(state.category, type, prompt, player);
       const typeLabel = type === "truth" ? "VÉRITÉ" : "ACTION";
       const message = buildWhatsappMessage(player, typeLabel, prompt, toLabel(state.category));
 
       state.lastType = type;
       state.lastPrompt = prompt;
       state.turnCount += 1;
+      state.points[player] = (state.points[player] || 0) + 1;
 
       els.turnCount.textContent = state.turnCount;
       els.resultType.textContent = typeLabel;
@@ -1314,6 +1760,18 @@ ${GROUP_LINK}`;
         category: toLabel(state.category),
         prompt
       });
+
+      renderPlayers();
+      saveState();
+      playSound();
+      if (state.settings.confetti) fireConfetti();
+      if (state.settings.timer) startTimer();
+      if (state.settings.autoNext) {
+        setTimeout(() => {
+          nextPlayer(false);
+          resetTimer();
+        }, 1500);
+      }
     }
 
     function regeneratePrompt(){
@@ -1348,6 +1806,7 @@ ${GROUP_LINK}`;
     function clearHistory(){
       state.history = [];
       renderHistory();
+      saveState();
       showToast("Historique effacé.");
     }
 
@@ -1371,6 +1830,204 @@ ${GROUP_LINK}`;
         });
       }, {threshold: 0.18});
       items.forEach(el => io.observe(el));
+    }
+
+    let timerInterval = null;
+    let timerRemaining = 0;
+
+    function startTimer(){
+      stopTimer();
+      if (!state.settings.timer) return;
+      timerRemaining = state.settings.timerSeconds || 30;
+      els.timerWrap.style.display = "block";
+      els.timerFill.style.width = "100%";
+      els.timerDisplay.textContent = timerRemaining + "s";
+      timerInterval = setInterval(() => {
+        timerRemaining -= 0.1;
+        if (timerRemaining <= 0) {
+          timerRemaining = 0;
+          stopTimer();
+          playSound();
+          els.timerDisplay.textContent = "0s";
+          els.timerFill.style.width = "0%";
+          showToast("Temps écoulé !");
+          return;
+        }
+        const pct = (timerRemaining / (state.settings.timerSeconds || 30)) * 100;
+        els.timerFill.style.width = pct + "%";
+        els.timerDisplay.textContent = Math.ceil(timerRemaining) + "s";
+      }, 100);
+    }
+
+    function stopTimer(){
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+
+    function resetTimer(){
+      stopTimer();
+      els.timerWrap.style.display = "none";
+      els.timerFill.style.width = "100%";
+      els.timerDisplay.textContent = "";
+    }
+
+    function fireConfetti(){
+      if (!state.settings.confetti) return;
+      const container = els.confettiContainer;
+      const colors = ["#bf5a36","#2e8b6a","#7d4cc7","#c2275d","#e8b840","#3b82f6"];
+      for (let i = 0; i < 50; i++) {
+        const piece = document.createElement("div");
+        piece.className = "confetti-piece";
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const left = Math.random() * 100;
+        const size = 6 + Math.random() * 10;
+        const delay = Math.random() * 1.2;
+        const dur = 1.8 + Math.random() * 1.4;
+        piece.style.cssText = `left:${left}%;width:${size}px;height:${size}px;background:${color};border-radius:${Math.random()>.5?'50%':'2px'};animation-delay:${delay}s;animation-duration:${dur}s;`;
+        container.appendChild(piece);
+        setTimeout(() => piece.remove(), (delay + dur) * 1000 + 100);
+      }
+    }
+
+    function playSound(){
+      if (!state.settings.sound) return;
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = 660;
+        osc.type = "sine";
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.2);
+      } catch(e) {}
+    }
+
+    function renderRanking(){
+      els.rankingList.innerHTML = "";
+      const entries = state.players.map(name => ({name, pts: state.points[name] || 0}));
+      entries.sort((a, b) => b.pts - a.pts);
+      if (!entries.length) {
+        els.rankingList.innerHTML = '<div class="empty-state">Ajoute des joueurs.</div>';
+        return;
+      }
+      const medals = ["🥇","🥈","🥉"];
+      entries.forEach((e, i) => {
+        const div = document.createElement("div");
+        div.className = "rank-item";
+        const pos = i < 3 ? medals[i] : "#" + (i + 1);
+        div.innerHTML = `<span class="rank-pos">${pos}</span><span class="rank-name">${escapeHtml(e.name)}</span><span class="rank-pts">${e.pts} pts</span>`;
+        els.rankingList.appendChild(div);
+      });
+    }
+
+    function saveState(){
+      try {
+        const data = {
+          players: state.players,
+          currentIndex: state.currentIndex,
+          turnCount: state.turnCount,
+          category: state.category,
+          lastType: state.lastType,
+          lastPrompt: state.lastPrompt,
+          history: state.history.slice(0, 30),
+          points: state.points,
+          usedPrompts: state.usedPrompts,
+          settings: state.settings
+        };
+        localStorage.setItem("actionVeriteState", JSON.stringify(data));
+      } catch(e) {}
+    }
+
+    function loadState(){
+      try {
+        const raw = localStorage.getItem("actionVeriteState");
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (data.players) state.players = data.players;
+        if (data.currentIndex >= 0) state.currentIndex = data.currentIndex;
+        if (data.turnCount >= 0) state.turnCount = data.turnCount;
+        if (data.category) state.category = data.category;
+        if (data.lastType) state.lastType = data.lastType;
+        if (data.lastPrompt) state.lastPrompt = data.lastPrompt;
+        if (data.history) state.history = data.history;
+        if (data.points) state.points = data.points;
+        if (data.usedPrompts) state.usedPrompts = data.usedPrompts;
+        if (data.settings) {
+          Object.assign(state.settings, data.settings);
+        }
+      } catch(e) {}
+    }
+
+    function applySettings(){
+      if (state.settings.darkMode) {
+        document.documentElement.setAttribute("data-theme", "dark");
+        els.themeToggle.textContent = "☀️";
+      } else {
+        document.documentElement.removeAttribute("data-theme");
+        els.themeToggle.textContent = "🌙";
+      }
+      els.toggleAutoNext.classList.toggle("on", state.settings.autoNext);
+      els.toggleTimer.classList.toggle("on", state.settings.timer);
+      els.toggleSound.classList.toggle("on", state.settings.sound);
+      els.toggleConfetti.classList.toggle("on", state.settings.confetti);
+      const mr = state.settings.maxRounds;
+      els.maxRoundsDisplay.textContent = mr > 0 ? mr : "∞";
+    }
+
+    function exportHistoryAsText(){
+      if (!state.history.length) {
+        showToast("Aucun historique à exporter.");
+        return;
+      }
+      let txt = "🎮 Action ou Vérité - Historique des tours\n";
+      txt += "==============================\n\n";
+      state.history.forEach((item, i) => {
+        txt += `Tour ${state.history.length - i}\n`;
+        txt += `Joueur : ${item.player}\n`;
+        txt += `Type : ${item.type}\n`;
+        txt += `Catégorie : ${item.category}\n`;
+        txt += `Question : ${item.prompt}\n\n`;
+      });
+      txt += `Généré sur : https://allakouassiaxellemarius-sys.github.io/ALLA-/\n`;
+      const blob = new Blob([txt], {type: "text/plain;charset=utf-8"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "action-verite-historique.txt";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast("Historique exporté !");
+    }
+
+    function newGame(){
+      state.players = [];
+      state.currentIndex = 0;
+      state.turnCount = 0;
+      state.lastType = null;
+      state.lastPrompt = "";
+      state.history = [];
+      state.points = {};
+      state.usedPrompts = {};
+      resetTimer();
+      renderPlayers();
+      renderHistory();
+      renderRanking();
+      els.turnCount.textContent = "0";
+      els.resultType.textContent = "En attente";
+      els.resultQuestion.textContent = "Appuie sur Vérité ou Action pour commencer.";
+      els.resultMessage.textContent = "Le message prêt pour WhatsApp apparaîtra ici.";
+      els.currentPlayer.textContent = "Ajoute des joueurs";
+      els.playerPosition.textContent = "Joueur 0/0";
+      els.statusLine.innerHTML = 'Ajoute des joueurs pour lancer la partie. <a href="https://chat.whatsapp.com/FomycGrlXB52o9H5m13E0a" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:underline;">Rejoindre le groupe WhatsApp</a>';
+      updateShareLink("🎮 Action ou Vérité — On commence ?");
+      saveState();
+      showToast("Nouvelle partie !");
     }
 
     els.btnAddPlayer.addEventListener("click", () => addPlayer(els.playerName.value));
@@ -1400,6 +2057,7 @@ ${GROUP_LINK}`;
         return;
       }
       nextPlayer(false);
+      resetTimer();
       showToast(`Au tour de ${getCurrentPlayer()}.`);
     });
 
@@ -1409,6 +2067,7 @@ ${GROUP_LINK}`;
         return;
       }
       nextPlayer(true);
+      resetTimer();
       showToast(`Joueur choisi : ${getCurrentPlayer()}.`);
     });
 
@@ -1424,11 +2083,51 @@ ${GROUP_LINK}`;
       }
     });
 
+    els.themeToggle.addEventListener("click", () => {
+      state.settings.darkMode = !state.settings.darkMode;
+      applySettings();
+      saveState();
+    });
+
+    els.toggleAutoNext.addEventListener("click", () => {
+      state.settings.autoNext = !state.settings.autoNext;
+      applySettings();
+      saveState();
+    });
+
+    els.toggleTimer.addEventListener("click", () => {
+      state.settings.timer = !state.settings.timer;
+      applySettings();
+      if (!state.settings.timer) resetTimer();
+      saveState();
+    });
+
+    els.toggleSound.addEventListener("click", () => {
+      state.settings.sound = !state.settings.sound;
+      applySettings();
+      saveState();
+    });
+
+    els.toggleConfetti.addEventListener("click", () => {
+      state.settings.confetti = !state.settings.confetti;
+      applySettings();
+      saveState();
+    });
+
+    els.newGameBtn.addEventListener("click", newGame);
+
+    els.exportHistory.addEventListener("click", exportHistoryAsText);
+
+    loadState();
+    applySettings();
     setCategory(state.category);
     renderPlayers();
     renderHistory();
+    renderRanking();
     updateGroupInviteLink();
-    updateShareLink("🎮 Action ou Vérité — On commence ?");
+    updateShareLink(state.lastPrompt
+      ? buildWhatsappMessage(getCurrentPlayer(), state.lastType === "truth" ? "VÉRITÉ" : "ACTION", state.lastPrompt, toLabel(state.category))
+      : "🎮 Action ou Vérité — On commence ?");
     initObserver();
   </script>
 </body>
