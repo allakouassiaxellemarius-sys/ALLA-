@@ -26,7 +26,7 @@ def new_game_state():
         "index": 0, "turn": 0, "active": False,
         "category": "fun", "last_type": None, "last_prompt": "",
         "history": [],
-        "settings": {"tournament": False, "timer": True}
+        "settings": {"tournament": False, "timer": True, "auto_next": False, "max_rounds": 0}
     }
 
 def active_players(g):
@@ -93,12 +93,21 @@ async def cmd_start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     g = load_game(update.effective_chat.id) or new_game_state()
     if len(g["players"]) < 2:
         return await update.message.reply_text(
-            "Ajoute des joueurs avec /ajouter Nom\n"
-            "Puis /lancer pour démarrer.\n\n"
-            "/ajouter Nom - ajouter\n/supprimer Nom - retirer\n"
-            "/joueurs - lister\n/fun, /amis, /soft, /hot - ambiance\n"
-            "/scores - classement\n/tournoi - mode tournoi\n"
-            "/regles - règles\n/fin - terminer"
+            "🎮 *Action ou Vérité — Bot WhatsApp*\n\n"
+            "Ajoute des joueurs avec /ajouter Nom puis /lancer\n\n"
+            "📋 *Commandes :*\n"
+            "/ajouter Nom — ajouter un joueur\n"
+            "/supprimer Nom — retirer un joueur\n"
+            "/joueurs — lister les joueurs\n"
+            "/lancer — démarrer la partie\n"
+            "/fun, /amis, /soft, /hot — changer l'ambiance\n"
+            "/scores — classement et scores\n"
+            "/stats — stats détaillées par joueur\n"
+            "/tournoi — activer/désactiver le mode tournoi\n"
+            "/autonext — activer le passage automatique\n"
+            "/maxrounds N — limiter le nombre de tours\n"
+            "/regles — voir les règles\n"
+            "/fin — terminer la partie"
         )
     g["active"] = True
     g["turn"] = 0
@@ -178,14 +187,55 @@ async def cmd_tournoi(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 
 async def cmd_regles(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "📖 *Règles*\n1. /ajouter Nom (min 2)\n"
-        "2. Choisir ambiance: /fun, /amis, /soft, /hot\n"
-        "3. /lancer → cliquer Vérité ou Action\n"
-        "4. Répondre puis Next\n5. /passer = 0 pt\n"
-        "6. 3 passes en tournoi = élimination\n"
-        "7. Timer → gage\n8. /tournoi pour activer",
+        "📖 *Règles du jeu*\n\n"
+        "1. /ajouter Nom — ajouter (min 2)\n"
+        "2. Choisir l'ambiance : /fun, /amis, /soft, /hot\n"
+        "3. /lancer pour démarrer\n"
+        "4. Cliquer 🎯Vérité ou ⚡Action\n"
+        "5. Répondre puis ➡️Next pour passer au suivant\n"
+        "6. ⏭️ Passer = 0 point\n"
+        "7. 🏆 Mode Tournoi : 3 passes = élimination\n"
+        "   Activer avec /tournoi\n"
+        "8. ➡️ Passage auto avec /autonext\n"
+        "9. 🔢 Limiter les tours avec /maxrounds N\n"
+        "10. 📊 Voir les stats avec /stats\n\n"
+        "Le dernier joueur en tournoi gagne ! 🎉",
         parse_mode="Markdown"
     )
+
+async def cmd_stats(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    g = load_game(update.effective_chat.id)
+    if not g or not g["players"]:
+        return await update.message.reply_text("Aucun joueur.")
+    lines = ["📊 *Stats détaillées*\n"]
+    for p in g["players"]:
+        pts = g["scores"].get(p, 0)
+        pss = g["passes"].get(p, 0)
+        elim = " ❌" if p in g["eliminated"] else ""
+        truths = sum(1 for h in g["history"] if h["player"] == p and h["type"] == "VÉRITÉ")
+        dares = sum(1 for h in g["history"] if h["player"] == p and h["type"] == "ACTION")
+        lines.append(f"• {p}{elim}\n  🏆 {pts} pts | 🎯 {truths} V | ⚡ {dares} A | ⏭️ {pss} passes")
+    await update.message.reply_text("\n".join(lines), parse_mode="Markdown")
+
+async def cmd_autonext(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    g = load_game(update.effective_chat.id) or new_game_state()
+    g["settings"]["auto_next"] = not g["settings"]["auto_next"]
+    save_game(update.effective_chat.id, g)
+    s = "✅ Activé" if g["settings"]["auto_next"] else "❌ Désactivé"
+    await update.message.reply_text(f"➡️ Passage automatique {s}")
+
+async def cmd_maxrounds(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    g = load_game(update.effective_chat.id) or new_game_state()
+    if not ctx.args:
+        cur = g["settings"]["max_rounds"]
+        return await update.message.reply_text(f"Tours max : {cur if cur else 'Illimité'}\nUsage : /maxrounds N")
+    try:
+        n = int(ctx.args[0])
+        g["settings"]["max_rounds"] = n
+        save_game(update.effective_chat.id, g)
+        await update.message.reply_text(f"🔢 Tours max fixé à {n}" if n else "🔢 Tours max : Illimité")
+    except ValueError:
+        await update.message.reply_text("Usage : /maxrounds N (nombre de tours)")
 
 async def cmd_fin(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     delete_game(update.effective_chat.id)
@@ -210,9 +260,27 @@ async def handle_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         tl = "VÉRITÉ" if query.data == "truth" else "ACTION"
         add_history(g, p, tl, to_label(g["category"]), prompt)
         save_game(cid, g)
-        await query.edit_message_text(
-            f"🎯 *{tl} pour {p}*\n\n*{prompt}*\n\nRéponds puis Next 👇",
-            parse_mode="Markdown", reply_markup=keyboard())
+        if g["settings"]["max_rounds"] and g["turn"] >= g["settings"]["max_rounds"]:
+            save_game(cid, g)
+            await query.edit_message_text("🔢 *Tours max atteint !*\n\n" + format_scores(g), parse_mode="Markdown")
+            return delete_game(cid)
+        save_game(cid, g)
+        if g["settings"]["auto_next"]:
+            g["turn"] += 1; next_player(g, False); p2 = get_player(g)
+            if g["settings"]["tournament"] and p2 in g["eliminated"]:
+                if len(active_players(g)) < 2:
+                    save_game(cid, g)
+                    await query.edit_message_text("🎉 *Fin !*\n" + format_scores(g), parse_mode="Markdown")
+                    return delete_game(cid)
+                next_player(g, False); p2 = get_player(g)
+            save_game(cid, g)
+            await query.edit_message_text(
+                f"🎯 *{tl} pour {p}*\n\n*{prompt}*\n\n✅ Réponse donnée ! Au tour de *{p2}* 👇",
+                parse_mode="Markdown", reply_markup=keyboard())
+        else:
+            await query.edit_message_text(
+                f"🎯 *{tl} pour {p}*\n\n*{prompt}*\n\nRéponds puis Next 👇",
+                parse_mode="Markdown", reply_markup=keyboard())
     elif query.data == "pass":
         if g["settings"]["tournament"]:
             g["passes"][p] = g["passes"].get(p, 0) + 1
@@ -249,6 +317,10 @@ application.add_handler(CommandHandler("soft", cmd_soft))
 application.add_handler(CommandHandler("hot", cmd_hot))
 application.add_handler(CommandHandler("tournoi", cmd_tournoi))
 application.add_handler(CommandHandler("regles", cmd_regles))
+application.add_handler(CommandHandler("aide", cmd_regles))
+application.add_handler(CommandHandler("stats", cmd_stats))
+application.add_handler(CommandHandler("autonext", cmd_autonext))
+application.add_handler(CommandHandler("maxrounds", cmd_maxrounds))
 application.add_handler(CommandHandler("fin", cmd_fin))
 application.add_handler(CallbackQueryHandler(handle_callback))
 
