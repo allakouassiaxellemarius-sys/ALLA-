@@ -1,11 +1,14 @@
 {
-  "functions": {
-    "api/index.py": {
-      "maxDuration": 10,
-      "memory": 256
+  "builds": [
+    {
+      "src": "app.py",
+      "use": "@vercel/python",
+      "config": { "maxLambdaSize": "15mb" }
     }
-  },
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/api/index" }
+  ],
+  "routes": [
+    { "src": "/api/set_webhook", "dest": "app.py" },
+    { "src": "/api/webhook", "dest": "app.py" },
+    { "src": "/(.*)", "dest": "app.py" }
   ]
 }
