@@ -2,2246 +2,611 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Action ou Vérité</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Action ou Vérité – Groupe WhatsApp</title>
 <style>
-:root {
-  --bg1: #0f0c29;
-  --bg2: #302b63;
-  --bg3: #24243e;
-  --surface: rgba(255,255,255,0.07);
-  --surface-hover: rgba(255,255,255,0.12);
-  --border: rgba(255,255,255,0.08);
-  --text: #fff;
-  --text-dim: #999;
-  --accent: #f7971e;
-  --accent2: #ffd200;
-  --truth: #667eea;
-  --truth-light: #8b9cf7;
-  --dare: #f5576c;
-  --dare-light: #f7798b;
-  --shadow: 0 8px 32px rgba(0,0,0,0.4);
-  --radius: 16px;
-  --radius-sm: 10px;
-  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0f0c29;
+  --bg2:#302b63;
+  --surface:rgba(255,255,255,0.07);
+  --surface2:rgba(255,255,255,0.12);
+  --border:rgba(255,255,255,0.1);
+  --text:#fff;
+  --dim:#888;
+  --gold:#ffd200;
+  --truth:#7c3aed;
+  --truth-l:#a78bfa;
+  --dare:#ec4899;
+  --dare-l:#f472b6;
+  --whatsapp:#25D366;
+  --radius:16px;
+  --sm:10px;
+  --t:.3s cubic-bezier(.4,0,.2,1)
+}
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:-apple-system,system-ui,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:linear-gradient(160deg,var(--bg),var(--bg2));
+  color:var(--text);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:12px
+}
+.app{
+  width:100%;max-width:430px;height:95vh;max-height:800px;
+  background:var(--surface);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border-radius:28px;
+  border:1px solid var(--border);
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  position:relative
+}
+
+/* HEADER */
+.header{
+  text-align:center;padding:18px 16px 10px;flex-shrink:0
+}
+.logo{
+  font-size:1.6rem;font-weight:900;letter-spacing:-.5px;
+  background:linear-gradient(135deg,var(--gold),var(--dare));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text
+}
+.logo span{color:var(--dim);-webkit-text-fill-color:var(--dim)}
+.tagline{font-size:.75rem;color:var(--dim);margin-top:2px}
+
+/* SCREENS */
+.screen{display:none;flex-direction:column;flex:1;overflow:hidden;padding:0 16px 16px}
+.screen.active{display:flex}
+.screen-scroll{flex:1;overflow-y:auto;padding:4px 0;-webkit-overflow-scrolling:touch}
+.screen-scroll::-webkit-scrollbar{width:4px}
+.screen-scroll::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:4px}
+
+/* HOME */
+.input-row{display:flex;gap:8px;margin-bottom:4px}
+.input-row input{
+  flex:1;padding:12px 14px;border-radius:var(--sm);
+  border:1px solid var(--border);background:rgba(255,255,255,.07);
+  color:var(--text);font-size:.95rem;font-family:inherit;outline:none
+}
+.input-row input:focus{border-color:var(--gold)}
+.input-row input::placeholder{color:#555}
+.btn{
+  padding:12px 18px;border:none;border-radius:var(--sm);
+  font-family:inherit;font-weight:700;font-size:.9rem;cursor:pointer;
+  transition:all var(--t);white-space:nowrap
+}
+.btn:active{transform:scale(.96)}
+.btn-add{background:var(--gold);color:#000}
+.btn-add:hover{filter:brightness(1.1)}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;min-height:32px;margin:8px 0}
+.chip{
+  background:var(--surface2);padding:5px 12px;border-radius:16px;
+  font-size:.8rem;display:flex;align-items:center;gap:5px;
+  animation:pop .25s ease-out
+}
+.chip .rm{cursor:pointer;color:var(--dare-l);font-weight:700;font-size:.7rem;padding:0 2px}
+@keyframes pop{0%{opacity:0;transform:scale(.8)}100%{opacity:1;transform:scale(1)}}
+
+.lbl{font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim);font-weight:600;margin:10px 0 6px}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{
+  padding:7px 16px;border-radius:20px;border:1px solid var(--border);
+  background:transparent;color:var(--dim);font-family:inherit;font-size:.82rem;
+  cursor:pointer;transition:all var(--t)
+}
+.pill.active{background:var(--gold);color:#000;border-color:var(--gold)}
+.pill:hover{border-color:var(--gold);color:var(--text)}
+
+.btn-start{
+  width:100%;padding:16px;margin-top:14px;
+  background:linear-gradient(135deg,var(--gold),var(--dare));
+  color:#fff;font-size:1.1rem;font-weight:800;border:none;
+  border-radius:var(--radius);cursor:pointer;transition:all var(--t);
+  box-shadow:0 4px 20px rgba(236,72,153,.3)
+}
+.btn-start:hover{transform:translateY(-2px)}
+.btn-start:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.err{color:var(--dare-l);font-size:.8rem;min-height:1.2em;margin:2px 0}
+
+/* GAME */
+.game-top{display:flex;justify-content:space-between;align-items:center;padding:4px 0 8px;flex-shrink:0}
+.game-top button{
+  background:var(--surface2);border:1px solid var(--border);color:var(--dim);
+  padding:6px 12px;border-radius:8px;font-family:inherit;font-size:.75rem;cursor:pointer;transition:all var(--t)
+}
+.game-top button:hover{color:var(--text)}
+.badge{
+  font-size:.65rem;padding:4px 10px;border-radius:10px;
+  background:var(--surface2);color:var(--dim);text-transform:uppercase;letter-spacing:1px;font-weight:600
+}
+
+.player-section{text-align:center;padding:6px 0 4px;flex-shrink:0}
+.turn-lbl{font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:var(--dim)}
+.player-name{
+  font-size:2rem;font-weight:800;color:var(--gold);
+  transition:color var(--t);min-height:2.6rem
+}
+.round-info{font-size:.75rem;color:var(--dim);margin-bottom:4px}
+
+/* CHOICE BTNS */
+.choices{display:flex;gap:10px;padding:6px 0;flex-shrink:0}
+.choice{
+  flex:1;padding:18px;border:none;border-radius:var(--radius);
+  font-family:inherit;font-size:1.1rem;font-weight:800;cursor:pointer;
+  transition:all var(--t);color:#fff;letter-spacing:.5px
+}
+.choice:active{transform:scale(.95)}
+.choice:disabled{opacity:.25;cursor:not-allowed;transform:none}
+.choice-t{background:linear-gradient(135deg,var(--truth),var(--truth-l));box-shadow:0 4px 16px rgba(124,58,237,.3)}
+.choice-d{background:linear-gradient(135deg,var(--dare),var(--dare-l));box-shadow:0 4px 16px rgba(236,72,153,.3)}
+
+/* CARD */
+.card{
+  flex:1;min-height:0;
+  background:rgba(0,0,0,.2);border-radius:var(--radius);
+  border:1px solid var(--border);padding:20px 18px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;position:relative;margin:6px 0;overflow-y:auto
+}
+.card-label{font-size:.65rem;text-transform:uppercase;letter-spacing:3px;opacity:.4;font-weight:600;margin-bottom:6px}
+.card-text{font-size:1.1rem;line-height:1.5;font-weight:500}
+.card-text.empty{opacity:.35;font-style:italic;font-size:.95rem}
+.card-text.t{color:var(--truth-l)}
+.card-text.d{color:var(--dare-l)}
+.card.pop{animation:cardPop .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes cardPop{0%{opacity:0;transform:scale(.85)}50%{transform:scale(1.02)}100%{opacity:1;transform:scale(1)}}
+
+/* ANSWER */
+.ans-area{width:100%;margin-top:10px;display:flex;gap:6px;animation:fadeIn .3s}
+.ans-area input{
+  flex:1;padding:9px 12px;border-radius:var(--sm);
+  border:1px solid var(--border);background:rgba(255,255,255,.07);
+  color:var(--text);font-size:.85rem;font-family:inherit;outline:none
+}
+.ans-area input:focus{border-color:var(--gold)}
+.btn-ans{padding:9px 14px;background:var(--gold);color:#000;border:none;border-radius:var(--sm);font-weight:700;font-size:.82rem;cursor:pointer}
+.ans-show{width:100%;margin-top:8px;padding:8px 12px;border-radius:var(--sm);background:rgba(255,255,255,.05);border:1px solid var(--border);text-align:left;animation:fadeIn .3s}
+.ans-show .l{font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim)}
+.ans-show .v{color:var(--gold);font-weight:500;font-size:.9rem}
+@keyframes fadeIn{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
+.hide{display:none!important}
+
+/* SHARE BAR */
+.share-bar{
+  display:flex;gap:8px;padding:6px 0 4px;flex-shrink:0;
+  animation:fadeIn .3s
+}
+.share-bar.hide{display:none}
+.share-btn{
+  flex:1;padding:12px;border:none;border-radius:var(--sm);
+  font-family:inherit;font-weight:700;font-size:.85rem;cursor:pointer;
+  transition:all var(--t);display:flex;align-items:center;justify-content:center;gap:6px
+}
+.share-btn:active{transform:scale(.96)}
+.share-btn.wa{background:var(--whatsapp);color:#fff}
+.share-btn.wa:hover{filter:brightness(1.1)}
+.share-btn.cp{background:var(--surface2);color:var(--dim);border:1px solid var(--border)}
+.share-btn.cp:hover{color:var(--text)}
+
+/* NEXT BAR */
+.next-bar{display:flex;gap:8px;padding:4px 0;flex-shrink:0}
+.next-bar.hide{display:none}
+.next-btn{
+  flex:1;padding:14px;border:none;border-radius:var(--sm);
+  font-family:inherit;font-weight:700;font-size:.9rem;cursor:pointer;transition:all var(--t)
+}
+.next-btn:active{transform:scale(.96)}
+.next-btn.nx{background:linear-gradient(135deg,#4facfe,#00f2fe);color:#fff}
+.next-btn.qt{background:var(--surface2);color:var(--dim);border:1px solid var(--border)}
+.next-btn.qt:hover{color:var(--text)}
+
+/* HISTORY */
+.hist{flex-shrink:0;border-top:1px solid var(--border);padding:8px 0 0;margin-top:2px}
+.hist-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.hist-h h3{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim)}
+.hist-h button{background:none;border:none;color:var(--dare-l);font-size:.7rem;cursor:pointer;font-family:inherit}
+.hist-items{max-height:70px;overflow-y:auto;display:flex;flex-direction:column;gap:3px}
+.hist-item{font-size:.72rem;color:var(--dim);display:flex;gap:5px;padding:2px 0}
+.hist-item .b{font-size:.55rem;padding:1px 6px;border-radius:4px;font-weight:700;flex-shrink:0}
+.hist-item .b.t{background:rgba(124,58,237,.2);color:var(--truth-l)}
+.hist-item .b.d{background:rgba(236,72,153,.2);color:var(--dare-l)}
+.hist-item .p{color:var(--text);font-weight:600;flex-shrink:0}
+.hist-item .t{flex:1}
+.hist-item .a{color:var(--gold);font-size:.65rem;display:block}
+
+/* OVERLAY */
+.overlay{
+  position:absolute;inset:0;background:rgba(0,0,0,.65);
+  border-radius:28px;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;z-index:10;
+  opacity:0;pointer-events:none;transition:opacity .3s
+}
+.overlay.active{opacity:1;pointer-events:auto}
+.overlay .lbl{font-size:.8rem;margin-bottom:12px}
+.track{width:70%;max-width:240px;height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin-bottom:10px}
+.fill{height:100%;width:0%;border-radius:4px;background:linear-gradient(90deg,var(--truth),var(--dare),var(--gold));transition:width .05s linear}
+.cnt{font-size:2.5rem;font-weight:900;color:var(--gold);animation:pulse .5s ease-in-out}
+@keyframes pulse{0%{transform:scale(1.2);opacity:.6}50%{transform:scale(.9)}100%{transform:scale(1);opacity:1}}
+
+/* TOAST */
+.toast{
+  position:absolute;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);
+  background:var(--surface);backdrop-filter:blur(16px);
+  padding:10px 20px;border-radius:10px;border:1px solid var(--border);
+  font-size:.8rem;opacity:0;transition:all .4s;pointer-events:none;z-index:20;white-space:nowrap
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-height:640px){
+  .app{height:100vh;max-height:none;border-radius:18px}
+  .header{padding:12px 14px 6px}
+  .logo{font-size:1.3rem}
+  .player-name{font-size:1.5rem;min-height:2rem}
+  .choice{padding:14px;font-size:1rem}
+  .card{padding:14px 12px}
+  .card-text{font-size:1rem}
 }
-
-[data-theme="fire"] {
-  --bg1: #1a0a00;
-  --bg2: #4a1a00;
-  --bg3: #2d1000;
-  --accent: #ff4500;
-  --accent2: #ff8c00;
-  --truth: #ff6347;
-  --truth-light: #ff7f6e;
-  --dare: #ffd700;
-  --dare-light: #ffe44d;
-}
-
-[data-theme="ocean"] {
-  --bg1: #001220;
-  --bg2: #003355;
-  --bg3: #002244;
-  --accent: #00bcd4;
-  --accent2: #4dd0e1;
-  --truth: #26a69a;
-  --truth-light: #4db6ac;
-  --dare: #ff7043;
-  --dare-light: #ff8a65;
-}
-
-[data-theme="neon"] {
-  --bg1: #0a0a0a;
-  --bg2: #1a1a2e;
-  --bg3: #12121a;
-  --accent: #00ff88;
-  --accent2: #00ffcc;
-  --truth: #7c3aed;
-  --truth-light: #a78bfa;
-  --dare: #ec4899;
-  --dare-light: #f472b6;
-  --border: rgba(0,255,136,0.15);
-  --surface: rgba(0,255,136,0.05);
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-  font-family: 'Inter', -apple-system, sans-serif;
-  background: linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: var(--text);
-  padding: 16px;
-  transition: background var(--transition);
-  overflow-x: hidden;
-}
-
-.container {
-  background: var(--surface);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 24px;
-  padding: 32px;
-  width: 100%;
-  max-width: 520px;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
-  position: relative;
-  transition: background var(--transition), border var(--transition);
-}
-
-/* ========== HEADER ========== */
-.header {
-  text-align: center;
-  margin-bottom: 24px;
-  position: relative;
-}
-
-.logo {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 4px;
-}
-
-.logo span {
-  display: inline-block;
-  font-size: 2.2rem;
-  font-weight: 900;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: -1px;
-  animation: logoPop 0.6s ease-out;
-}
-
-.logo .ou {
-  background: linear-gradient(135deg, var(--truth), var(--dare));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-@keyframes logoPop {
-  0% { opacity: 0; transform: scale(0.5) translateY(20px); }
-  60% { transform: scale(1.05) translateY(-2px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-.subtitle {
-  font-size: 0.9rem;
-  color: var(--text-dim);
-  font-weight: 400;
-  margin-top: 2px;
-}
-
-/* ========== THEME SELECTOR ========== */
-.theme-bar {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-
-.theme-dot {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: all var(--transition);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-}
-
-.theme-dot:hover { transform: scale(1.15); }
-.theme-dot.active { border-color: var(--text); transform: scale(1.1); box-shadow: 0 0 12px rgba(255,255,255,0.2); }
-.theme-dot[data-theme="default"] { background: linear-gradient(135deg, #667eea, #f5576c); }
-.theme-dot[data-theme="fire"] { background: linear-gradient(135deg, #ff4500, #ffd700); }
-.theme-dot[data-theme="ocean"] { background: linear-gradient(135deg, #003355, #00bcd4); }
-.theme-dot[data-theme="neon"] { background: linear-gradient(135deg, #7c3aed, #00ff88); }
-
-/* ========== TABS ========== */
-.settings-tabs {
-  display: flex;
-  gap: 4px;
-  background: rgba(255,255,255,0.05);
-  border-radius: var(--radius-sm);
-  padding: 4px;
-  margin-bottom: 20px;
-}
-
-.tab {
-  flex: 1;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 8px;
-  font-family: inherit;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  background: transparent;
-  color: var(--text-dim);
-  transition: all var(--transition);
-}
-
-.tab.active { background: var(--surface-hover); color: var(--text); }
-.tab:hover { color: var(--text); }
-
-/* ========== SCREENS ========== */
-.screen { display: none; animation: fadeSlideIn 0.35s ease-out; }
-.screen.active { display: block; }
-
-@keyframes fadeSlideIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ========== SETTINGS (HOME) ========== */
-.settings-group {
-  margin-bottom: 18px;
-}
-
-.settings-group label {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-dim);
-  margin-bottom: 8px;
-}
-
-.player-input-row {
-  display: flex;
-  gap: 8px;
-}
-
-.player-input-row input {
-  flex: 1;
-  padding: 12px 16px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  background: rgba(255,255,255,0.06);
-  color: var(--text);
-  font-family: inherit;
-  font-size: 0.95rem;
-  outline: none;
-  transition: border var(--transition);
-}
-
-.player-input-row input:focus { border-color: var(--accent); }
-.player-input-row input::placeholder { color: #666; }
-
-.btn-icon {
-  padding: 12px 18px;
-  border: none;
-  border-radius: var(--radius-sm);
-  background: var(--accent);
-  color: #fff;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all var(--transition);
-  white-space: nowrap;
-}
-
-.btn-icon:hover { background: var(--accent2); transform: translateY(-1px); }
-.btn-icon:active { transform: scale(0.97); }
-
-.players-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
-  min-height: 36px;
-}
-
-.player-chip {
-  background: var(--surface-hover);
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  animation: chipIn 0.25s ease-out;
-  border: 1px solid var(--border);
-}
-
-@keyframes chipIn {
-  from { opacity: 0; transform: scale(0.8); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-.player-chip .remove {
-  cursor: pointer;
-  color: var(--dare);
-  font-weight: 700;
-  font-size: 0.8rem;
-  line-height: 1;
-  padding: 0 2px;
-  transition: transform var(--transition);
-}
-
-.player-chip .remove:hover { transform: scale(1.3); }
-
-.error-msg {
-  color: var(--dare-light);
-  font-size: 0.8rem;
-  margin-top: 6px;
-  min-height: 1.2em;
-}
-
-/* ========== GAME MODE & STYLE ========== */
-.option-row {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.option-pill {
-  padding: 8px 18px;
-  border-radius: 20px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text-dim);
-  font-family: inherit;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-
-.option-pill:hover { border-color: var(--accent); color: var(--text); }
-.option-pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-.btn-start {
-  display: block;
-  width: 100%;
-  padding: 16px;
-  margin-top: 20px;
-  border: none;
-  border-radius: var(--radius);
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  color: #fff;
-  font-family: inherit;
-  font-size: 1.1rem;
-  font-weight: 800;
-  cursor: pointer;
-  transition: all var(--transition);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  letter-spacing: 0.5px;
-}
-
-.btn-start:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.4); }
-.btn-start:active { transform: scale(0.98); }
-.btn-start:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-/* ========== GAME SCREEN ========== */
-.game-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.game-header-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.btn-back {
-  background: var(--surface-hover);
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-family: inherit;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-
-.btn-back:hover { color: var(--text); background: var(--surface); }
-
-.game-style-badge {
-  font-size: 0.7rem;
-  padding: 4px 12px;
-  border-radius: 12px;
-  background: var(--surface-hover);
-  color: var(--text-dim);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 600;
-}
-
-.player-indicator {
-  text-align: center;
-  margin: 12px 0 8px;
-}
-
-.player-turn-label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: var(--text-dim);
-  margin-bottom: 2px;
-}
-
-.player-name-display {
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: var(--accent2);
-  transition: color var(--transition);
-  min-height: 2.4rem;
-}
-
-.player-count {
-  font-size: 0.8rem;
-  color: var(--text-dim);
-  margin-bottom: 16px;
-  text-align: center;
-}
-
-/* ========== CHOICE BUTTONS ========== */
-.choice-area {
-  display: flex;
-  gap: 12px;
-  margin: 16px 0;
-}
-
-.btn-choice {
-  flex: 1;
-  padding: 20px;
-  border: none;
-  border-radius: var(--radius);
-  font-family: inherit;
-  font-size: 1.2rem;
-  font-weight: 800;
-  cursor: pointer;
-  transition: all var(--transition);
-  position: relative;
-  overflow: hidden;
-  letter-spacing: 0.5px;
-}
-
-.btn-choice::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
-  pointer-events: none;
-}
-
-.btn-choice:hover { transform: translateY(-3px); }
-.btn-choice:active { transform: scale(0.96); }
-.btn-choice:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
-
-.btn-truth {
-  background: linear-gradient(135deg, var(--truth), var(--truth-light));
-  color: #fff;
-  box-shadow: 0 6px 24px rgba(102,126,234,0.35);
-}
-
-.btn-dare {
-  background: linear-gradient(135deg, var(--dare), var(--dare-light));
-  color: #fff;
-  box-shadow: 0 6px 24px rgba(245,87,108,0.35);
-}
-
-/* ========== CARD ========== */
-.card {
-  background: rgba(0,0,0,0.25);
-  border-radius: var(--radius);
-  padding: 28px 24px;
-  min-height: 120px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  margin: 8px 0;
-  border: 1px solid var(--border);
-  position: relative;
-  transition: all var(--transition);
-}
-
-.card-label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  opacity: 0.5;
-  margin-bottom: 10px;
-  font-weight: 600;
-}
-
-.card-text {
-  font-size: 1.15rem;
-  line-height: 1.6;
-  font-weight: 500;
-}
-
-.card-text.truth-color { color: var(--truth-light); }
-.card-text.dare-color { color: var(--dare-light); }
-
-.card-empty {
-  opacity: 0.4;
-  font-style: italic;
-}
-
-/* ========== CARD ANIMATION ========== */
-.card.pop {
-  animation: cardPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes cardPop {
-  0% { opacity: 0; transform: scale(0.85) translateY(10px); }
-  50% { transform: scale(1.02) translateY(-2px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-/* ========== ACTION ROW ========== */
-.action-row {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.btn-action {
-  flex: 1;
-  padding: 14px;
-  border: none;
-  border-radius: var(--radius-sm);
-  font-family: inherit;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-
-.btn-action:hover { transform: translateY(-2px); }
-.btn-action:active { transform: scale(0.97); }
-
-.btn-next {
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
-  color: #fff;
-  box-shadow: 0 4px 16px rgba(79,172,254,0.3);
-}
-
-.btn-reset {
-  background: var(--surface-hover);
-  color: var(--text-dim);
-  border: 1px solid var(--border);
-}
-
-.btn-reset:hover { color: var(--text); }
-
-/* ========== SHARE ROW ========== */
-.share-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.btn-share {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  border-radius: var(--radius-sm);
-  font-family: inherit;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.btn-share:hover { transform: translateY(-2px); }
-.btn-share:active { transform: scale(0.97); }
-
-.btn-whatsapp {
-  background: #25D366;
-  color: #fff;
-}
-
-.btn-whatsapp:hover { background: #1da851; }
-
-.btn-share-link {
-  background: var(--surface-hover);
-  color: var(--text-dim);
-  border: 1px solid var(--border);
-}
-
-.btn-share-link:hover { color: var(--text); }
-
-/* ========== HISTORY ========== */
-.history-section {
-  margin-top: 16px;
-  border-top: 1px solid var(--border);
-  padding-top: 14px;
-}
-
-.history-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.history-header h3 {
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-dim);
-}
-
-.history-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 6px 0;
-  font-size: 0.82rem;
-  color: var(--text-dim);
-  border-bottom: 1px solid rgba(255,255,255,0.03);
-  animation: fadeSlideIn 0.3s ease-out;
-}
-
-.history-item:last-child { border-bottom: none; }
-
-.history-badge {
-  font-size: 0.6rem;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-weight: 700;
-  text-transform: uppercase;
-  white-space: nowrap;
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-
-.history-badge.truth { background: rgba(102,126,234,0.25); color: var(--truth-light); }
-.history-badge.dare { background: rgba(245,87,108,0.25); color: var(--dare-light); }
-.history-badge.solo { background: rgba(0,0,0,0.3); color: var(--text-dim); }
-
-.history-player {
-  font-weight: 600;
-  color: var(--text);
-  flex-shrink: 0;
-}
-
-.history-text {
-  flex: 1;
-  line-height: 1.4;
-}
-
-.btn-clear-history {
-  background: none;
-  border: none;
-  color: var(--dare-light);
-  font-size: 0.75rem;
-  font-family: inherit;
-  cursor: pointer;
-  opacity: 0.6;
-  transition: opacity var(--transition);
-}
-
-.btn-clear-history:hover { opacity: 1; }
-
-/* ========== SOLO MODE ========== */
-.solo-ai {
-  text-align: center;
-  margin: 10px 0;
-}
-
-.solo-ai-label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-dim);
-}
-
-/* ========== TOAST ========== */
-.toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%) translateY(80px);
-  background: var(--surface);
-  backdrop-filter: blur(16px);
-  padding: 12px 24px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  font-size: 0.85rem;
-  opacity: 0;
-  transition: all 0.4s ease-out;
-  pointer-events: none;
-  z-index: 100;
-  white-space: nowrap;
-}
-
-.toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* ========== RESPONSIVE ========== */
-@media (max-width: 480px) {
-  .container { padding: 20px 16px; border-radius: 18px; }
-  .logo span { font-size: 1.7rem; }
-  .player-name-display { font-size: 1.4rem; }
-  .btn-choice { padding: 16px; font-size: 1rem; }
-  .card-text { font-size: 1rem; }
-  .choice-area { gap: 8px; }
-  .card { padding: 20px 16px; min-height: 100px; }
-  .player-input-row { flex-direction: column; }
-  .btn-icon { width: 100%; }
-  .action-row { flex-direction: column; }
-  .theme-dot { width: 28px; height: 28px; font-size: 12px; }
-  .option-pill { padding: 6px 14px; font-size: 0.8rem; }
-}
-
-@media (max-width: 360px) {
-  .container { padding: 14px 10px; }
-  .logo span { font-size: 1.4rem; }
-  .btn-choice { padding: 12px; font-size: 0.9rem; }
-}
-
-/* ========== PARTICLES ========== */
-.particles-container {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 999;
-  overflow: hidden;
-}
-
-.particle {
-  position: absolute;
-  border-radius: 50%;
-  animation: particleFall 1.2s ease-out forwards;
-  pointer-events: none;
-}
-
-@keyframes particleFall {
-  0% { opacity: 1; transform: translate(0, 0) scale(1); }
-  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0); }
-}
-
-/* ========== ANSWER AREA ========== */
-.answer-area {
-  width: 100%;
-  margin-top: 14px;
-  display: flex;
-  gap: 8px;
-  animation: fadeSlideIn 0.3s ease-out;
-}
-
-.answer-area input {
-  flex: 1;
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  background: rgba(255,255,255,0.08);
-  color: var(--text);
-  font-family: inherit;
-  font-size: 0.9rem;
-  outline: none;
-  transition: border var(--transition);
-}
-
-.answer-area input:focus { border-color: var(--accent); }
-.answer-area input::placeholder { color: #666; }
-
-.btn-answer {
-  padding: 10px 16px;
-  border: none;
-  border-radius: var(--radius-sm);
-  background: var(--accent);
-  color: #fff;
-  font-family: inherit;
-  font-weight: 700;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all var(--transition);
-  white-space: nowrap;
-}
-
-.btn-answer:hover { background: var(--accent2); transform: translateY(-1px); }
-.btn-answer:active { transform: scale(0.97); }
-
-.answer-display {
-  width: 100%;
-  margin-top: 12px;
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.06);
-  border: 1px solid var(--border);
-  animation: fadeSlideIn 0.3s ease-out;
-  text-align: left;
-}
-
-.answer-label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-dim);
-  font-weight: 600;
-  margin-right: 8px;
-}
-
-.answer-text {
-  font-size: 0.95rem;
-  color: var(--accent2);
-  font-weight: 500;
-  word-break: break-word;
-}
-
-.hidden { display: none !important; }
-
-/* ========== TENSION BAR ========== */
-.tension-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  border-radius: var(--radius);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 5;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-.tension-overlay.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.tension-label {
-  font-size: 0.9rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 16px;
-  color: var(--text-dim);
-}
-
-.tension-track {
-  width: 70%;
-  max-width: 280px;
-  height: 8px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 12px;
-}
-
-.tension-fill {
-  height: 100%;
-  width: 0%;
-  border-radius: 4px;
-  background: linear-gradient(90deg, var(--truth), var(--dare), var(--accent));
-  transition: width 0.05s linear;
-}
-
-.tension-count {
-  font-size: 2.5rem;
-  font-weight: 900;
-  color: var(--accent2);
-  animation: countPulse 0.5s ease-in-out;
-}
-
-@keyframes countPulse {
-  0% { transform: scale(1.2); opacity: 0.6; }
-  50% { transform: scale(0.9); }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-/* ========== REACTION TOAST ========== */
-.reaction {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.5);
-  font-size: 2.5rem;
-  font-weight: 900;
-  pointer-events: none;
-  z-index: 200;
-  opacity: 0;
-  text-shadow: 0 4px 20px rgba(0,0,0,0.5);
-  white-space: nowrap;
-}
-
-.reaction.show {
-  animation: reactionPop 1.2s ease-out forwards;
-}
-
-@keyframes reactionPop {
-  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5) rotate(-5deg); }
-  15% { opacity: 1; transform: translate(-50%, -50%) scale(1.2) rotate(2deg); }
-  30% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
-  70% { opacity: 1; transform: translate(-50%, -60%) scale(1); }
-  100% { opacity: 0; transform: translate(-50%, -80%) scale(0.8); }
-}
-
-/* ========== NO-SELECT ========== */
-.no-select { user-select: none; -webkit-user-select: none; }
 </style>
 </head>
 <body>
-
-<div class="container" id="app">
-  <!-- TOAST -->
+<div class="app" id="app">
   <div class="toast" id="toast"></div>
-  <!-- PARTICLES -->
-  <div class="particles-container" id="particles"></div>
-  <!-- REACTION -->
-  <div class="reaction" id="reaction"></div>
 
   <!-- HEADER -->
-  <div class="header no-select">
-    <div class="logo">
-      <span>ACTION</span>
-      <span class="ou">OU</span>
-      <span>VÉRITÉ</span>
-    </div>
-    <p class="subtitle" id="subtitle">Le jeu qui fait parler, rire et oser</p>
+  <div class="header">
+    <div class="logo">ACTION <span>OU</span> VÉRITÉ</div>
+    <div class="tagline">Le jeu de groupe WhatsApp</div>
   </div>
 
-  <!-- THEME BAR -->
-  <div class="theme-bar no-select" id="theme-bar">
-    <div class="theme-dot active" data-theme="default" title="Classic"></div>
-    <div class="theme-dot" data-theme="fire" title="Fire">🔥</div>
-    <div class="theme-dot" data-theme="ocean" title="Ocean">🌊</div>
-    <div class="theme-dot" data-theme="neon" title="Neon">💜</div>
+  <!-- ===== HOME ===== -->
+  <div class="screen active" id="sc-home">
+    <div class="screen-scroll">
+      <div class="lbl">👥 Joueurs</div>
+      <div class="input-row">
+        <input type="text" id="inp-name" placeholder="Prénom" maxlength="20" autocomplete="off">
+        <button class="btn btn-add" id="btn-add">Ajouter</button>
+      </div>
+      <div class="err" id="err-home"></div>
+      <div class="chips" id="chips"></div>
+
+      <div class="lbl">🎮 Mode</div>
+      <div class="pills" id="mode-pills">
+        <button class="pill active" data-v="multi">Multijoueur</button>
+        <button class="pill" data-v="solo">Solo</button>
+      </div>
+
+      <div class="lbl">🎯 Catégorie</div>
+      <div class="pills" id="cat-pills">
+        <button class="pill active" data-v="fun">Fun</button>
+        <button class="pill" data-v="hard">Hard</button>
+        <button class="pill" data-v="romantic">Romantique</button>
+        <button class="pill" data-v="ose">Osé 🔞</button>
+      </div>
+
+      <div class="lbl">📤 Partager le jeu</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn" style="flex:1;background:#25D366;color:#fff;" id="btn-home-wa">💬 WhatsApp</button>
+        <button class="btn" style="flex:1;background:var(--surface2);color:var(--dim);border:1px solid var(--border);" id="btn-home-copy">🔗 Copier lien</button>
+      </div>
+    </div>
+    <button class="btn-start" id="btn-start">🚀 Lancer la partie</button>
   </div>
 
-  <!-- TABS -->
-  <div class="settings-tabs no-select" id="settings-tabs">
-    <button class="tab active" data-tab="home">Accueil</button>
-    <button class="tab" data-tab="settings">Réglages</button>
-  </div>
-
-  <!-- ========== SCREEN: HOME ========== -->
-  <div class="screen active" id="screen-home">
-    <div class="settings-group">
-      <label>👥 Joueurs</label>
-      <div class="player-input-row">
-        <input type="text" id="player-name-input" placeholder="Entrer un prénom" maxlength="20" autocomplete="off">
-        <button class="btn-icon" id="btn-add-player">+ Ajouter</button>
-      </div>
-      <div class="players-grid" id="players-grid"></div>
-      <div class="error-msg" id="home-error"></div>
+  <!-- ===== GAME ===== -->
+  <div class="screen" id="sc-game">
+    <div class="game-top">
+      <button id="btn-quit">← Quitter</button>
+      <span class="badge" id="mode-badge">Fun</span>
     </div>
 
-    <div class="settings-group">
-      <label>🎮 Mode de jeu</label>
-      <div class="option-row" id="mode-options">
-        <button class="option-pill active" data-mode="multi">Multijoueur</button>
-        <button class="option-pill" data-mode="solo">Solo</button>
-      </div>
+    <div class="player-section">
+      <div class="turn-lbl">Au tour de</div>
+      <div class="player-name" id="player-name">―</div>
+      <div class="round-info" id="round-info"></div>
     </div>
 
-    <div class="settings-group">
-      <label>🎯 Style</label>
-      <div class="option-row" id="style-options">
-        <button class="option-pill active" data-style="fun">Fun</button>
-        <button class="option-pill" data-style="hard">Hard</button>
-        <button class="option-pill" data-style="romantic">Romantique</button>
-        <button class="option-pill" data-style="ose">Osé 🔞</button>
-      </div>
+    <div class="choices" id="choices">
+      <button class="choice choice-t" id="btn-t">☯ Vérité</button>
+      <button class="choice choice-d" id="btn-d">⚡ Action</button>
     </div>
 
-    <button class="btn-start" id="btn-start">🚀 Commencer la partie</button>
-  </div>
+    <div class="card" id="card">
+      <div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;">
+        <div class="card-label" id="card-label">Choisis Vérité ou Action</div>
+        <div class="card-text empty" id="card-text">Appuie sur un bouton</div>
 
-  <!-- ========== SCREEN: SETTINGS ========== -->
-  <div class="screen" id="screen-settings">
-    <div class="settings-group">
-      <label>🎨 Thème</label>
-      <div class="option-row" id="theme-options">
-        <button class="option-pill active" data-theme="default">Classic</button>
-        <button class="option-pill" data-theme="fire">Fire</button>
-        <button class="option-pill" data-theme="ocean">Ocean</button>
-        <button class="option-pill" data-theme="neon">Neon</button>
-      </div>
-    </div>
-
-    <div class="settings-group">
-      <label>🌐 Langue</label>
-      <div class="option-row" id="lang-options">
-        <button class="option-pill active" data-lang="fr">Français</button>
-        <button class="option-pill" data-lang="en">English</button>
-      </div>
-    </div>
-
-    <div class="settings-group">
-      <label>📋 Nom de la partie</label>
-      <input type="text" id="game-name-input" placeholder="Soirée entre amis..." maxlength="30" style="width:100%;padding:10px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:rgba(255,255,255,0.06);color:var(--text);font-family:inherit;font-size:0.9rem;outline:none;">
-    </div>
-
-    <div class="settings-group">
-      <label>⚙️ Options avancées</label>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;color:var(--text-dim);cursor:pointer;">
-          <input type="checkbox" id="chk-history" checked> Historique
-        </label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;color:var(--text-dim);cursor:pointer;">
-          <input type="checkbox" id="chk-animations" checked> Animations
-        </label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;color:var(--text-dim);cursor:pointer;">
-          <input type="checkbox" id="chk-sounds" checked> Sons
-        </label>
-      </div>
-    </div>
-
-    <button class="btn-start" id="btn-save-settings" style="margin-top:10px;">✅ Appliquer</button>
-  </div>
-
-  <!-- ========== SCREEN: GAME ========== -->
-  <div class="screen" id="screen-game">
-    <div class="game-header">
-      <div class="game-header-left">
-        <button class="btn-back" id="btn-quit-game">← Quitter</button>
-        <span class="game-style-badge" id="style-badge">Fun</span>
-      </div>
-      <span class="game-style-badge" id="mode-badge">Multi</span>
-    </div>
-
-    <div class="player-indicator">
-      <div class="player-turn-label">Au tour de</div>
-      <div class="player-name-display" id="active-player">―</div>
-      <div class="player-count" id="player-count"></div>
-    </div>
-
-    <div class="choice-area" id="choice-area">
-      <button class="btn-choice btn-truth" id="btn-truth">☯ Vérité</button>
-      <button class="btn-choice btn-dare" id="btn-dare">⚡ Action</button>
-    </div>
-
-    <div class="card" id="card" style="position:relative;">
-      <div class="card-label" id="card-label">Choisis Vérité ou Action</div>
-      <div class="card-text card-empty" id="card-text">Clique sur un bouton pour commencer</div>
-      <div class="answer-area hidden" id="answer-area">
-        <input type="text" id="answer-input" placeholder="Ta réponse..." maxlength="100" autocomplete="off">
-        <button class="btn-answer" id="btn-answer">💬 Répondre</button>
-      </div>
-      <div class="answer-display hidden" id="answer-display">
-        <span class="answer-label">Réponse :</span>
-        <span class="answer-text" id="answer-text"></span>
-      </div>
-      <div class="tension-overlay" id="tension-overlay">
-        <div class="tension-label" id="tension-label">Prépare-toi...</div>
-        <div class="tension-track">
-          <div class="tension-fill" id="tension-fill"></div>
+        <div class="ans-area hide" id="ans-area">
+          <input type="text" id="ans-inp" placeholder="Ta réponse..." maxlength="100" autocomplete="off">
+          <button class="btn-ans" id="btn-ans">💬</button>
         </div>
-        <div class="tension-count" id="tension-count">3</div>
+        <div class="ans-show hide" id="ans-show">
+          <span class="l">Réponse :</span>
+          <span class="v" id="ans-txt"></span>
+        </div>
+
+        <div class="overlay" id="overlay">
+          <div class="lbl" id="ov-lbl">Prépare-toi...</div>
+          <div class="track"><div class="fill" id="ov-fill"></div></div>
+          <div class="cnt" id="ov-cnt">3</div>
+        </div>
       </div>
     </div>
 
-    <div class="action-row" id="action-row">
-      <button class="btn-action btn-next" id="btn-next">Joueur suivant →</button>
-      <button class="btn-action btn-reset" id="btn-reset-game">↺</button>
+    <div class="share-bar hide" id="share-bar">
+      <button class="share-btn wa" id="btn-share-wa">💬 WhatsApp</button>
+      <button class="share-btn cp" id="btn-share-cp">📋 Copier</button>
     </div>
 
-    <div class="share-row" id="share-row">
-      <button class="btn-share btn-whatsapp" id="btn-whatsapp">💬 Partager sur WhatsApp</button>
-      <button class="btn-share btn-share-link" id="btn-share-link">🔗 Lien du jeu</button>
+    <div class="next-bar hide" id="next-bar">
+      <button class="next-btn nx" id="btn-next">Joueur suivant →</button>
+      <button class="next-btn qt" id="btn-reset">↺</button>
     </div>
 
-    <div class="history-section" id="history-section">
-      <div class="history-header">
-        <h3>📜 Historique</h3>
-        <button class="btn-clear-history" id="btn-clear-history">Effacer</button>
+    <div class="hist" id="hist">
+      <div class="hist-h">
+        <h3>📜 Tours</h3>
+        <button id="btn-clear-hist">Effacer</button>
       </div>
-      <div id="history-list"></div>
+      <div class="hist-items" id="hist-list"></div>
     </div>
   </div>
 </div>
 
 <script>
-// ============================================================
-// DATA: Questions & Défis
-// ============================================================
-const DATA = {
-  fr: {
-    name: 'Français',
-    truths: {
-      fun: [
-        "Quel est ton plat préféré ?",
-        "Quelle est ta couleur préférée ?",
-        "Quel est ton film préféré ?",
-        "Quelle est ta chanson préférée ?",
-        "Quel est ton plus grand rêve ?",
-        "Quelle est ta plus grande peur ?",
-        "Quel est ton plus gros défaut ?",
-        "Quelle est ta plus grande qualité ?",
-        "Quel est ton prénom complet ?",
-        "Quel âge as-tu ?",
-        "Quelle est la chose la plus bizarre que tu aies mangée ?",
-        "Quelle est la chose la plus ridicule que tu aies faite ?",
-        "As-tu déjà chanté seul(e) devant un miroir ?",
-        "Quelle est ta pire habitude ?",
-        "La coupe de cheveux la plus ratée que tu aies eue ?",
-        "As-tu déjà ri au mauvais moment ?",
-        "As-tu déjà dansé sans musique ?",
-        "Si tu pouvais changer ton nom, lequel choisirais-tu ?",
-        "Quel est le dernier mensonge que tu as dit ?",
-        "À qui envoyais-tu le plus de messages cette semaine ?",
-        "Quelle est la chose la plus enfantine que tu fais encore ?",
-        "As-tu déjà eu un secret que personne ne connaît ?",
-        "As-tu déjà envoyé un message à la mauvaise personne ?",
-        "As-tu déjà pleuré de rire ?",
-        "Quelle est la chose la plus étrange que tu fasses seul(e) ?",
-      ],
-      hard: [
-        "Qui est ton crush secret dans cette pièce ?",
-        "As-tu déjà été amoureux(se) ?",
-        "As-tu déjà eu le cœur brisé ?",
-        "As-tu déjà aimé quelqu'un en secret ?",
-        "As-tu déjà été jaloux(se) de quelqu'un ?",
-        "Qui trouves-tu le plus beau / la plus belle ici ?",
-        "Qui trouves-tu le plus drôle ici ?",
-        "As-tu déjà regretté un message envoyé ?",
-        "As-tu déjà eu honte d'avouer tes sentiments ?",
-        "As-tu déjà menti à tes parents ? Sur quoi ?",
-        "As-tu déjà triché à un examen ?",
-        "As-tu déjà parlé dans le dos de quelqu'un ?",
-        "As-tu déjà stalké quelqu'un sur les réseaux ?",
-        "Révèle le plus gros mensonge que tu aies raconté.",
-        "Quel est ton plus grand regret ?",
-        "Quelle est la personne qui t'inspire le plus ?",
-        "Qu'est-ce qui te rend vraiment heureux/heureuse ?",
-        "Si tu pouvais recommencer une journée de ta vie ?",
-        "As-tu déjà eu un crush sur une célébrité ?",
-        "As-tu déjà eu envie de disparaître de honte ?",
-        "As-tu déjà regretté une amitié ?",
-        "As-tu déjà eu peur d'être rejeté(e) ?",
-        "Quelle est la chose la plus folle que tu aies faite par amour ?",
-        "Quel est ton plus grand secret que personne ne connaît ?",
-        "De quoi es-tu le plus fier/fière ?",
-      ],
-      romantic: [
-        "Qu'est-ce qui te fait tomber amoureux(se) ?",
-        "Décris ton rendez-vous parfait.",
-        "Quel est le compliment le plus beau qu'on t'ait fait ?",
-        "Qu'est-ce que tu regardes en premier chez une personne ?",
-        "Préfères-tu les grands gestes romantiques ou les petites attentions ?",
-        "Quelle est ta plus belle histoire d'amour ?",
-        "Qu'est-ce qui te fait fondre chez quelqu'un ?",
-        "As-tu déjà écrit une lettre d'amour ?",
-        "Quel est ton plus beau souvenir avec quelqu'un ?",
-        "Que ferais-tu pour impressionner la personne qui te plaît ?",
-        "Caresse ou mot doux : tu préfères donner ou recevoir ?",
-        "Quelle est la chose la plus romantique qu'on t'ait offerte ?",
-        "As-tu déjà eu un coup de foudre ?",
-        "Qu'est-ce que l'amour pour toi ?",
-        "Où emmènerais-tu ton/ta partenaire pour un week-end parfait ?",
-        "Quel genre de câlin préfères-tu ?",
-        "Quelle chanson d'amour te fait pleurer ?",
-        "As-tu déjà dit 'je t'aime' sans le penser ?",
-        "Préfères-tu une soirée romantique ou une aventure spontanée ?",
-        "Quel détail chez quelqu'un te fait craquer instantanément ?",
-      ],
-      ose: [
-        "Combien de relations as-tu eues ?",
-        "As-tu déjà embrassé quelqu'un ?",
-        "Imagine et pose-moi 3 questions.",
-        "Que penses-tu de moi ?",
-        "Qu'est-ce que tu n'aimes pas chez moi ?",
-        "Es-tu vierge / puceau ?",
-        "Donne le nom de ton amoureux / amoureuse.",
-        "As-tu déjà déviergé une fille / été déviergé ?",
-        "Est-ce que je te plais ?",
-        "Comment s'est passé ton premier baiser ?",
-        "Comment s'est passé ton premier rapport sexuel ?",
-        "T'es-tu déjà masturbé(e) ?",
-        "Est-ce que tu aimes mes statuts ?",
-        "As-tu déjà embrassé quelqu'un en public ?",
-        "Que feras-tu si je te caresse ?",
-        "Qu'est-ce que tu aimes chez moi ?",
-        "As-tu déjà regardé des vidéos X ?",
-        "As-tu des photos ou vidéos nues de toi dans ton téléphone ?",
-        "As-tu déjà léché / fait une pipe ?",
-        "As-tu déjà envoyé des nudes à quelqu'un ?",
-        "Combien de vidéos porno as-tu dans ton téléphone ?",
-        "Quel est ton secret le plus inavouable ?",
-        "Impose-moi 3 questions en vérité.",
-        "Quel truc n'as-tu jamais fait et aimerais essayer un jour ?",
-        "Quelle est la chose la plus coquine que tu aies faite ?",
-        "As-tu déjà eu un plan à trois ?",
-        "Quel est ton fantasme secret ?",
-        "As-tu déjà trompé quelqu'un ?",
-        "Quelle est la partie de ton corps que tu préfères ?",
-        "Décris ton partenaire idéal sexuellement.",
-      ],
-    },
-    dares: {
-      fun: [
-        "Fais 10 sauts sur place.",
-        "Imite une célébrité pendant 30 secondes.",
-        "Chante un refrain au choix.",
-        "Danse sans musique pendant 20 secondes.",
-        "Fais rire tout le monde sans parler.",
-        "Tourne sur toi-même 5 fois.",
-        "Parle avec un accent pendant 1 minute.",
-        "Fais 5 pompes ou 10 squats.",
-        "Envoie un message gentil à un ami.",
-        "Fais une grimace pendant 15 secondes.",
-        "Raconte une blague.",
-        "Fais semblant d'être un présentateur télé.",
-        "Ferme les yeux et devine un objet autour de toi.",
-        "Fais une pose de mannequin.",
-        "Laisse le groupe choisir ton pseudo pour 5 minutes.",
-      ],
-      hard: [
-        "Appelle un ami et dis-lui 'je pense à toi'.",
-        "Envoie un emoji au hasard à quelqu'un.",
-        "Lis le dernier message que tu as envoyé.",
-        "Parle sans fermer la bouche pendant 20 secondes.",
-        "Fais une imitation de bébé.",
-        "Fais semblant d'être un professeur strict.",
-        "Dis ton prénom comme si tu étais en colère.",
-        "Fais un bruit d'ambulance pendant 10 secondes.",
-        "Laisse le groupe choisir ton prochain défi.",
-        "Imite une célébrité.",
-        "Fais semblant d'être dans un film d'action.",
-        "Raconte une histoire inventée en 30 secondes.",
-        "Fais une pose de super-héros.",
-        "Parle avec un accent inventé.",
-        "Fais semblant de cuisiner sans rien.",
-        "Fais un discours de victoire.",
-        "Choisis une personne et fais-lui un compliment sincère.",
-        "Fais une déclaration dramatique comme dans un roman.",
-        "Fais semblant d'être un chat pendant 20 secondes.",
-        "Fais rire quelqu'un sans parler.",
-      ],
-      romantic: [
-        "Regarde la personne de gauche dans les yeux pendant 10 secondes sans sourire.",
-        "Dis un compliment personnalisé à chaque joueur.",
-        "Fais semblant de demander quelqu'un en mariage.",
-        "Récite un poème d'amour improvisé.",
-        "Fais une déclaration d'amour… à ton téléphone.",
-        "Mime un baiser au ralenti (à l'air).",
-        "Chante les 30 secondes les plus romantiques que tu connais.",
-        "Envoie un message mignon à un contact.",
-        "Fais un slow avec une chaise.",
-        "Complimente-toi devant le miroir comme si tu étais ton propre crush.",
-        "Fais une promesse romantique solennelle au groupe.",
-        "Imagine ton date parfait et décris-le en détails.",
-        "Fais le portrait chinois amoureux de la personne à ta droite.",
-        "Danse un slow tout(e) seul(e) en fermant les yeux.",
-        "Susurre un prénom de façon romantique.",
-      ],
-      ose: [
-        "Mime un acte sexuel, les autres devinent.",
-        "Fais un massage à la personne de ton choix.",
-        "Choisis la personne la plus sexy du groupe.",
-        "Fais une danse sensuelle pendant 20 secondes.",
-        "Embrasse l'air comme si tu embrassais quelqu'un passionnément.",
-        "Raconte ton expérience sexuelle la plus mémorable.",
-        "Mime une position du Kama Sutra, les autres devinent.",
-        "Fais un strip-tease… juste avec ta veste.",
-        "Susurre quelque chose de coquin à l'oreille de ton voisin.",
-        "Décris ton scénario chaud idéal en 30 secondes.",
-        "Fais semblant d'être en train de séduire quelqu'un.",
-        "Choisis une personne et fais-lui un compliment osé.",
-        "Joue l'orgasme pendant 10 secondes.",
-        "Fais deviner un mot lié au sexe par gestes.",
-        "Donne un conseil chaud au joueur de gauche.",
-        "Raconte ton plus gros fantasme.",
-        "Fais un bruit coquin sans contexte.",
-        "Regarde la personne la plus sexy dans les yeux sans sourire.",
-        "Mime un baiser français (dans le vide).",
-        "Chante une chanson d'amour en mode très sensuel.",
-      ],
-    },
-  },
-  en: {
-    name: 'English',
-    truths: {
-      fun: [
-        "What's your favorite food?",
-        "What's your favorite color?",
-        "What's your favorite movie?",
-        "What's your favorite song?",
-        "What's your biggest dream?",
-        "What's your biggest fear?",
-        "What's your worst flaw?",
-        "What's your best quality?",
-        "What's your full name?",
-        "How old are you?",
-        "What's the weirdest thing you ever ate?",
-        "What's the silliest thing you ever did?",
-        "Have you ever sung alone in front of a mirror?",
-        "What's your worst habit?",
-        "What's your worst haircut ever?",
-        "Have you ever laughed at the wrong moment?",
-        "Have you ever danced without music?",
-        "If you could change your name, what would it be?",
-        "What's the last lie you told?",
-        "Who did you text the most this week?",
-        "What childish thing do you still do?",
-        "Do you have a secret nobody knows?",
-        "Have you ever texted the wrong person?",
-        "Have you ever cried from laughter?",
-        "What's the strangest thing you do alone?",
-      ],
-      hard: [
-        "Who's your secret crush in this room?",
-        "Have you ever been in love?",
-        "Have you ever had your heart broken?",
-        "Have you ever loved someone in secret?",
-        "Have you ever been jealous of someone?",
-        "Who do you find the most attractive here?",
-        "Who's the funniest person here?",
-        "Have you ever regretted a sent message?",
-        "Have you ever been ashamed to admit your feelings?",
-        "Have you ever lied to your parents? About what?",
-        "Have you ever cheated on an exam?",
-        "Have you ever talked behind someone's back?",
-        "Have you ever stalked someone on social media?",
-        "Reveal the biggest lie you ever told.",
-        "What's your biggest regret?",
-        "Who inspires you the most?",
-        "What truly makes you happy?",
-        "If you could relive one day of your life?",
-        "Have you ever had a celebrity crush?",
-        "Have you ever wanted to disappear from embarrassment?",
-        "Have you ever regretted a friendship?",
-        "Have you ever been afraid of being rejected?",
-        "What's the craziest thing you did for love?",
-        "What's your biggest secret nobody knows?",
-        "What are you most proud of?",
-      ],
-      romantic: [
-        "What makes you fall in love?",
-        "Describe your perfect date.",
-        "What's the nicest compliment you ever received?",
-        "What do you notice first in someone?",
-        "Do you prefer grand gestures or small attentions?",
-        "What's your best love story?",
-        "What melts your heart in someone?",
-        "Have you ever written a love letter?",
-        "What's your best memory with someone special?",
-        "What would you do to impress your crush?",
-        "Do you prefer giving or receiving hugs?",
-        "What's the most romantic gift you ever got?",
-        "Have you ever had love at first sight?",
-        "What does love mean to you?",
-        "Where would you take your partner for a perfect weekend?",
-        "What kind of hug do you prefer?",
-        "Which love song makes you cry?",
-        "Have you ever said 'I love you' without meaning it?",
-        "Romantic evening or spontaneous adventure?",
-        "What small detail makes you instantly like someone?",
-      ],
-      ose: [
-        "How many relationships have you had?",
-        "Have you ever kissed someone?",
-        "Are you a virgin?",
-        "What's the name of your crush?",
-        "Have you ever watched porn?",
-        "Do you have nudes on your phone?",
-        "Have you ever sent nudes to someone?",
-        "Have you ever masturbated?",
-        "Describe your first kiss.",
-        "Describe your first sexual experience.",
-        "What's your wildest fantasy?",
-        "Have you ever cheated on someone?",
-        "What do you like about me?",
-        "What's the naughtiest thing you've done?",
-        "Have you ever had a threesome?",
-        "What's your secret fantasy?",
-        "Would you ever have sex in public?",
-      ],
-    },
-    dares: {
-      fun: [
-        "Do 10 jumps in place.",
-        "Spin around 5 times.",
-        "Mimic an animal for 30 seconds.",
-        "Sing a random song.",
-        "Dance without music for 20 seconds.",
-        "Make a funny face.",
-        "Speak with a weird voice for 1 minute.",
-        "Act like a TV host.",
-        "Walk like a robot for 30 seconds.",
-        "Make the sound of an animal chosen by the group.",
-        "Declare your love to an object.",
-        "Talk like you're very old.",
-        "Fake cry for 15 seconds.",
-        "Imitate someone in the group.",
-        "Do an improvised mini dance.",
-        "Tell a joke.",
-        "Act like an influencer.",
-        "Freeze like a statue for 30 seconds.",
-        "Sing the alphabet backwards.",
-        "Do 5 push-ups (or try).",
-      ],
-      hard: [
-        "Call a friend and say 'I'm thinking of you'.",
-        "Send a random emoji to someone.",
-        "Read the last message you sent.",
-        "Speak without closing your mouth for 20 seconds.",
-        "Do a baby impression.",
-        "Act like a strict teacher.",
-        "Say your name like you're angry.",
-        "Make an ambulance sound for 10 seconds.",
-        "Let the group choose your next dare.",
-        "Imitate a celebrity.",
-        "Act like you're in an action movie.",
-        "Tell an invented story in 30 seconds.",
-        "Strike a superhero pose.",
-        "Speak with a made-up accent.",
-        "Act like you're cooking with nothing.",
-        "Give a victory speech.",
-        "Choose someone and give them a sincere compliment.",
-        "Make a dramatic declaration like in a novel.",
-        "Act like a cat for 20 seconds.",
-        "Make someone laugh without speaking.",
-      ],
-      romantic: [
-        "Stare into the eyes of the person on your left for 10 seconds without smiling.",
-        "Give a personalized compliment to each player.",
-        "Pretend to propose to someone.",
-        "Recite an improvised love poem.",
-        "Confess your love… to your phone.",
-        "Mime a slow-motion kiss (in the air).",
-        "Sing the most romantic 30 seconds you know.",
-        "Send a cute message to a contact.",
-        "Slow dance with a chair.",
-        "Compliment yourself in the mirror like you're your own crush.",
-        "Make a solemn romantic promise to the group.",
-        "Describe your perfect date in detail.",
-        "Do a romantic Chinese portrait of the person on your right.",
-        "Slow dance alone with your eyes closed.",
-        "Whisper a name in a romantic way.",
-      ],
-      ose: [
-        "Mime a sex act, others guess.",
-        "Give a massage to the person of your choice.",
-        "Pick the sexiest person in the group.",
-        "Do a sensual dance for 20 seconds.",
-        "Kiss the air like you're kissing someone passionately.",
-        "Describe your most memorable sexual experience.",
-        "Mime a Kama Sutra position, others guess.",
-        "Whisper something naughty in your neighbor's ear.",
-        "Describe your ideal hot scenario in 30 seconds.",
-        "Act like you're seducing someone.",
-        "Pick someone and give them a spicy compliment.",
-        "Fake an orgasm for 10 seconds.",
-        "Act out a sexy word, others guess.",
-        "Give a hot tip to the player on your left.",
-        "Make a naughty sound with no context.",
-        "Sing a love song in a very sensual way.",
-        "Describe your biggest fantasy.",
-        "Have you ever had sex in a public place?",
-        "Would you ever do a threesome?",
-      ],
-    },
-  },
-};
-
-// ============================================================
-// STATE
-// ============================================================
-const state = {
-  players: [],
-  currentIndex: 0,
-  mode: 'multi',       // 'multi' | 'solo'
-  style: 'fun',        // 'fun' | 'hard' | 'romantic' | 'ose'
-  theme: 'default',
-  lang: 'fr',
-  gameName: '',
-  history: [],
-  historyEnabled: true,
-  animationsEnabled: true,
-  soundsEnabled: true,
-  usedTruths: [],
-  usedDares: [],
-  truthHistory: [],
-  dareHistory: [],
-  lastTruthIdx: null,
-  lastDareIdx: null,
-  gameStarted: false,
-};
-
-// ============================================================
-// DOM REFS
-// ============================================================
-const $ = (id) => document.getElementById(id);
-const dom = {
-  toast: $('toast'),
-  subtitle: $('subtitle'),
-  themeBar: $('theme-bar'),
-  settingsTabs: $('settings-tabs'),
-
-  // Home
-  screenHome: $('screen-home'),
-  playerInput: $('player-name-input'),
-  btnAddPlayer: $('btn-add-player'),
-  playersGrid: $('players-grid'),
-  homeError: $('home-error'),
-  modeOptions: $('mode-options'),
-  styleOptions: $('style-options'),
-  btnStart: $('btn-start'),
-
-  // Settings
-  screenSettings: $('screen-settings'),
-  themeOptions: $('theme-options'),
-  langOptions: $('lang-options'),
-  gameNameInput: $('game-name-input'),
-  chkHistory: $('chk-history'),
-  chkAnimations: $('chk-animations'),
-  chkSounds: $('chk-sounds'),
-  btnSaveSettings: $('btn-save-settings'),
-
-  // Game
-  screenGame: $('screen-game'),
-  btnQuit: $('btn-quit-game'),
-  styleBadge: $('style-badge'),
-  modeBadge: $('mode-badge'),
-  activePlayer: $('active-player'),
-  playerCount: $('player-count'),
-  btnTruth: $('btn-truth'),
-  btnDare: $('btn-dare'),
-  card: $('card'),
-  cardLabel: $('card-label'),
-  cardText: $('card-text'),
-  btnNext: $('btn-next'),
-  btnResetGame: $('btn-reset-game'),
-  historySection: $('history-section'),
-  historyList: $('history-list'),
-  btnClearHistory: $('btn-clear-history'),
-  choiceArea: $('choice-area'),
-  shareRow: $('share-row'),
-  btnWhatsapp: $('btn-whatsapp'),
-  btnShareLink: $('btn-share-link'),
-  // Answer
-  answerArea: $('answer-area'),
-  answerInput: $('answer-input'),
-  btnAnswer: $('btn-answer'),
-  answerDisplay: $('answer-display'),
-  answerText: $('answer-text'),
-  // Ambiance
-  particles: $('particles'),
-  tensionOverlay: $('tension-overlay'),
-  tensionFill: $('tension-fill'),
-  tensionCount: $('tension-count'),
-  tensionLabel: $('tension-label'),
-  reaction: $('reaction'),
-};
-
-// ============================================================
-// TRANSLATIONS
-// ============================================================
+// ===== DATA =====
 const TR = {
-  fr: {
-    subtitle: 'Le jeu qui fait parler, rire et oser',
-    turnOf: 'Au tour de',
-    choose: 'Choisis Vérité ou Action',
-    clickToStart: 'Clique sur un bouton pour commencer',
-    truth: 'Vérité',
-    dare: 'Action',
-    nextPlayer: 'Joueur suivant →',
-    quit: '← Quitter',
-    playerCount: (i, n) => `Joueur ${i+1}/${n}`,
-    history: '📜 Historique',
-    clear: 'Effacer',
-    noHistory: 'Aucune question pour l\'instant',
-    playerAdded: (n) => `${n} ajouté !`,
-    playerExists: 'Ce joueur existe déjà.',
-    emptyName: 'Entre un prénom.',
-    needPlayers: 'Ajoute au moins 1 joueur.',
-    startDisabled: 'Ajoute au moins 1 joueur pour commencer',
-    gameReset: 'Partie réinitialisée !',
-    historyCleared: 'Historique effacé.',
-    settingsSaved: 'Réglages appliqués.',
-    soloLabel: '🤖 Mode Solo',
-    soloTurn: 'À toi de jouer !',
-    toastReset: '↺ Partie réinitialisée',
-  },
-  en: {
-    subtitle: 'The game that makes you talk, laugh and dare',
-    turnOf: "It's",
-    choose: 'Choose Truth or Dare',
-    clickToStart: 'Click a button to start',
-    truth: 'Truth',
-    dare: 'Dare',
-    nextPlayer: 'Next player →',
-    quit: '← Quit',
-    playerCount: (i, n) => `Player ${i+1}/${n}`,
-    history: '📜 History',
-    clear: 'Clear',
-    noHistory: 'No questions yet',
-    playerAdded: (n) => `${n} added!`,
-    playerExists: 'This player already exists.',
-    emptyName: 'Enter a name.',
-    needPlayers: 'Add at least 1 player.',
-    startDisabled: 'Add at least 1 player to start',
-    gameReset: 'Game reset!',
-    historyCleared: 'History cleared.',
-    settingsSaved: 'Settings applied.',
-    soloLabel: '🤖 Solo Mode',
-    soloTurn: 'Your turn!',
-    toastReset: '↺ Game reset',
-  },
+  fr:{
+    truths:{
+      fun:["Quel est ton plat préféré ?","Ta couleur préférée ?","Ton film préféré ?","Ton plus grand rêve ?","Ta plus grande peur ?","Ton plus gros défaut ?","Ta plus grande qualité ?","La chose la plus bizarre que tu aies mangée ?","Ta pire habitude ?","As-tu déjà ri au mauvais moment ?","As-tu déjà dansé sans musique ?","Quel est le dernier mensonge que tu as dit ?","As-tu déjà eu un secret inavouable ?","As-tu déjà pleuré de rire ?","La chose la plus enfantine que tu fais encore ?"],
+      hard:["As-tu déjà été amoureux(se) ?","Qui est ton crush secret ici ?","As-tu déjà eu le cœur brisé ?","As-tu déjà aimé quelqu'un en secret ?","Qui trouves-tu le plus beau/belle ici ?","As-tu déjà menti à tes parents ?","As-tu déjà triché à un examen ?","As-tu déjà stalké quelqu'un ?","Quel est ton plus grand regret ?","De quoi es-tu le plus fier/fière ?","Qu'est-ce qui te rend vraiment heureux ?","As-tu déjà regretté une amitié ?","As-tu déjà eu peur d'être rejeté(e) ?","La chose la plus folle par amour ?","Le plus gros mensonge que tu aies raconté ?"],
+      romantic:["Qu'est-ce qui te fait tomber amoureux(se) ?","Décris ton rendez-vous parfait.","Le plus beau compliment reçu ?","Que regardes-tu en premier chez quelqu'un ?","Ta plus belle histoire d'amour ?","As-tu déjà écrit une lettre d'amour ?","As-tu déjà eu un coup de foudre ?","Qu'est-ce que l'amour pour toi ?","Préfères-tu les gestes romantiques ou les petites attentions ?","Où irais-tu pour un week-end parfait ?","Quelle chanson d'amour te fait pleurer ?","As-tu déjà dit 'je t'aime' sans le penser ?"],
+      ose:["Combien de relations as-tu eues ?","As-tu déjà embrassé quelqu'un ?","Es-tu vierge/puceau ?","Donne le nom de ton amoureux(se).","As-tu déjà regardé des vidéos X ?","As-tu des nudes dans ton téléphone ?","As-tu déjà envoyé des nudes ?","T'es-tu déjà masturbé(e) ?","Décris ton premier baiser.","Décris ta première expérience sexuelle.","Quel est ton fantasme secret ?","As-tu déjà trompé quelqu'un ?","As-tu déjà eu un plan à trois ?","La chose la plus coquine que tu aies faite ?","Quel truc n'as-tu jamais fait et aimerais essayer ?"]
+    },
+    dares:{
+      fun:["Fais 10 sauts sur place.","Imite une célébrité 30s.","Chante un refrain.","Danse sans musique 20s.","Fais rire tout le monde sans parler.","Tourne 5 fois sur toi-même.","Parle avec un accent 1 min.","Fais 5 pompes ou 10 squats.","Envoie un message gentil à un ami.","Fais une grimace 15s.","Raconte une blague.","Ferme les yeux, devine un objet.","Fais une pose de mannequin.","Laisse le groupe choisir ton pseudo 5 min.","Fais semblant d'être un présentateur télé."],
+      hard:["Appelle un ami et dis 'je pense à toi'.","Envoie un emoji au hasard.","Lis le dernier message envoyé.","Imite un bébé.","Fais semblant d'être un prof strict.","Fais un bruit d'ambulance 10s.","Imite une célébrité.","Raconte une histoire inventée en 30s.","Fais une pose de super-héros.","Parle avec un accent inventé.","Fais un discours de victoire.","Fais une déclaration dramatique.","Fais semblant d'être un chat 20s.","Fais rire quelqu'un sans parler.","Choisis une personne, compliment sincère."],
+      romantic:["Regarde la personne à gauche dans les yeux 10s sans sourire.","Compliment personnalisé à chaque joueur.","Fais semblant de demander en mariage.","Récite un poème d'amour improvisé.","Fais une déclaration d'amour à ton téléphone.","Mime un baiser au ralenti.","Chante 30s les plus romantiques.","Fais un slow avec une chaise.","Complimente-toi devant le miroir.","Fais une promesse romantique au groupe.","Danse un slow seul(e) yeux fermés.","Susurre un prénom de façon romantique."],
+      ose:["Mime un acte sexuel, les autres devinent.","Fais un massage à la personne de ton choix.","Choisis la personne la plus sexy du groupe.","Danse sensuelle 20s.","Embrasse l'air passionnément.","Raconte ton expérience la plus chaude.","Mime une position du Kama Sutra.","Fais un strip-tease… de la veste.","Susurre un truc coquin à l'oreille du voisin.","Décris ton scénario chaud idéal.","Joue l'orgasme 10s.","Regarde la personne la plus sexy sans sourire."]
+    },
+    reactions:["Ouch ! 🔥","Bien joué ! 👏","Trop fort ! 💪","Osé ! 😏","No way ! 😱","Savage ! 🐉","Respect ! 🫡","Incroyable ! 🤯","GG ! 🎮"]
+  }
 };
 
-function t(key, ...args) {
-  const val = TR[state.lang][key];
-  return typeof val === 'function' ? val(...args) : val;
-}
+const gameUrl = 'https://allakouassiaxellemarius-sys.github.io/ALLA-/';
 
-// ============================================================
-// THEME
-// ============================================================
-function setTheme(theme) {
-  state.theme = theme;
-  document.documentElement.setAttribute('data-theme', theme);
-  document.querySelectorAll('[data-theme]').forEach(el => {
-    const t = el.dataset.theme;
-    el.classList.toggle('active', t === theme);
-  });
-  // Update theme-bar dots
-  document.querySelectorAll('.theme-dot').forEach(d => {
-    d.classList.toggle('active', d.dataset.theme === theme);
-  });
-  // Update theme option pills
-  document.querySelectorAll('#theme-options .option-pill').forEach(p => {
-    p.classList.toggle('active', p.dataset.theme === theme);
-  });
-}
-
-// ============================================================
-// PLAYERS
-// ============================================================
-function addPlayer(name) {
-  name = name.trim().charAt(0).toUpperCase() + name.trim().slice(1).toLowerCase();
-  dom.homeError.textContent = '';
-  if (!name) { dom.homeError.textContent = t('emptyName'); return false; }
-  if (state.players.includes(name)) { dom.homeError.textContent = t('playerExists'); return false; }
-  state.players.push(name);
-  renderPlayers();
-  dom.playerInput.value = '';
-  dom.playerInput.focus();
-  showToast(t('playerAdded', name));
-  return true;
-}
-
-function removePlayer(index) {
-  state.players.splice(index, 1);
-  if (state.currentIndex >= state.players.length) state.currentIndex = 0;
-  renderPlayers();
-}
-
-function renderPlayers() {
-  if (!state.players.length) {
-    dom.playersGrid.innerHTML = '<span style="color:var(--text-dim);font-size:0.85rem;">Aucun joueur pour l\'instant</span>';
-  } else {
-    dom.playersGrid.innerHTML = state.players.map((p, i) =>
-      `<span class="player-chip">${escapeHtml(p)} <span class="remove" data-index="${i}">✕</span></span>`
-    ).join('');
-    dom.playersGrid.querySelectorAll('.remove').forEach(el => {
-      el.addEventListener('click', () => removePlayer(parseInt(el.dataset.index)));
-    });
-  }
-  dom.btnStart.disabled = state.players.length === 0;
-  dom.btnStart.textContent = state.players.length === 0 ? t('startDisabled') : '🚀 ' + t('needPlayers').replace('Ajoute au moins 1 joueur', 'Lancer la partie');
-  if (state.players.length === 0) {
-    dom.btnStart.textContent = '🚀 ' + t('startDisabled');
-  } else {
-    dom.btnStart.textContent = `🚀 Lancer la partie (${state.players.length})`;
-  }
-}
-
-function escapeHtml(s) {
-  const d = document.createElement('div');
-  d.textContent = s;
-  return d.innerHTML;
-}
-
-// ============================================================
-// GAME
-// ============================================================
-function startGame() {
-  if (state.players.length === 0) {
-    showToast(t('needPlayers'));
-    return;
-  }
-  state.gameStarted = true;
-  state.currentIndex = 0;
-  state.usedTruths = [];
-  state.usedDares = [];
-  state.history = [];
-  state.truthHistory = [];
-  state.dareHistory = [];
-  state.lastTruthIdx = null;
-  state.lastDareIdx = null;
-  renderHistory();
-  showScreen('game');
-  updateGameUI();
-}
-
-function updateGameUI() {
-  const p = state.players[state.currentIndex];
-  dom.activePlayer.textContent = p ? escapeHtml(p) : '―';
-  dom.playerCount.textContent = t('playerCount', state.currentIndex, state.players.length);
-  dom.styleBadge.textContent = state.style.charAt(0).toUpperCase() + state.style.slice(1);
-  dom.modeBadge.textContent = state.mode === 'solo' ? t('soloLabel') : '👥 Multi';
-
-  dom.btnTruth.disabled = false;
-  dom.dareBtn?.disabled && (dom.dareBtn.disabled = false);
-  dom.btnTruth.disabled = false;
-  dom.dareBtn = dom.btnDare;
-  dom.dareBtn.disabled = false;
-
-  dom.cardLabel.textContent = t('choose');
-  dom.cardText.textContent = t('clickToStart');
-  dom.cardText.className = 'card-text card-empty';
-  dom.card.classList.remove('pop');
-  dom.btnNext.textContent = t('nextPlayer');
-}
-
-function pickQuestion(type) {
-  const data = DATA[state.lang];
-  const pool = type === 'truth' ? data.truths[state.style] : data.dares[state.style];
-  if (!pool || pool.length === 0) return '…';
-
-  const usedKey = type === 'truth' ? 'usedTruths' : 'usedDares';
-  const lastKey = type === 'truth' ? 'lastTruthIdx' : 'lastDareIdx';
-  const used = state[usedKey];
-
-  let available = pool.filter((_, i) => !used.includes(i) && i !== state[lastKey]);
-  if (available.length === 0) {
-    // Reset used pool
-    state[usedKey] = [];
-    available = pool.filter((_, i) => i !== state[lastKey]);
-    if (available.length === 0) available = pool;
-  }
-
-  let idx;
-  let pick;
-  do {
-    idx = Math.floor(Math.random() * pool.length);
-  } while (used.includes(idx) || idx === state[lastKey]);
-
-  pick = pool[idx];
-  state[usedKey].push(idx);
-  state[lastKey] = idx;
-
-  // Add to history
-  state.history.push({
-    type,
-    player: state.players[state.currentIndex],
-    text: pick,
-    style: state.style,
-  });
-  renderHistory();
-
-  return pick;
-}
-
-function handleChoice(type) {
-  if (!state.gameStarted || state.players.length === 0) return;
-
-  dom.btnTruth.disabled = true;
-  dom.btnDare.disabled = true;
-
-  // Play sound
-  if (type === 'truth') playTruthSound();
-  else playDareSound();
-
-  // Tension / countdown then reveal
-  showTension(type, () => {
-    const pick = pickQuestion(type);
-    const isTruth = type === 'truth';
-
-    dom.cardLabel.textContent = isTruth ? '☯ ' + t('truth') : '⚡ ' + t('dare');
-    dom.cardText.textContent = pick;
-    dom.cardText.className = 'card-text ' + (isTruth ? 'truth-color' : 'dare-color');
-
-    if (state.animationsEnabled) {
-      dom.card.classList.remove('pop');
-      void dom.card.offsetWidth;
-      dom.card.classList.add('pop');
-    }
-
-    // Particles
-    burstParticles(type);
-
-    // Show answer input for truth questions
-    if (isTruth) {
-      dom.answerArea.classList.remove('hidden');
-      dom.answerDisplay.classList.add('hidden');
-      dom.answerInput.value = '';
-      dom.answerInput.focus();
-    } else {
-      dom.answerArea.classList.add('hidden');
-      dom.answerDisplay.classList.add('hidden');
-    }
-
-    // Reaction
-    setTimeout(() => showReaction(), 400);
-
-    dom.btnNext.textContent = t('nextPlayer');
-
-    // Solo mode auto-advance after delay
-    if (state.mode === 'solo') {
-      setTimeout(() => nextPlayer(), 4000);
-    }
-  });
-}
-
-function submitAnswer() {
-  const answer = dom.answerInput.value.trim();
-  if (!answer) {
-    showToast('Écris une réponse d\'abord !');
-    return;
-  }
-  // Save answer in history
-  const last = state.history[state.history.length - 1];
-  if (last && !last.answer) {
-    last.answer = answer;
-  }
-  dom.answerText.textContent = answer;
-  dom.answerArea.classList.add('hidden');
-  dom.answerDisplay.classList.remove('hidden');
-  renderHistory();
-  showToast('💬 Réponse enregistrée !');
-}
-
-function nextPlayer() {
-  if (state.players.length === 0) return;
-  state.currentIndex = (state.currentIndex + 1) % state.players.length;
-  dom.answerArea.classList.add('hidden');
-  dom.answerDisplay.classList.add('hidden');
-  updateGameUI();
-  if (state.animationsEnabled) {
-    dom.activePlayer.style.animation = 'none';
-    void dom.activePlayer.offsetWidth;
-    dom.activePlayer.style.animation = 'fadeSlideIn 0.3s ease-out';
-  }
-}
-
-function resetGame() {
-  state.gameStarted = false;
-  state.currentIndex = 0;
-  state.usedTruths = [];
-  state.usedDares = [];
-  state.history = [];
-  state.truthHistory = [];
-  state.dareHistory = [];
-  state.lastTruthIdx = null;
-  state.lastDareIdx = null;
-  renderHistory();
-  showScreen('home');
-  showToast(t('toastReset'));
-}
-
-function clearHistory() {
-  state.history = [];
-  renderHistory();
-  showToast(t('historyCleared'));
-}
-
-// ============================================================
-// HISTORY
-// ============================================================
-function renderHistory() {
-  if (!state.historyEnabled || state.history.length === 0) {
-    dom.historyList.innerHTML = state.history.length === 0
-      ? '<div style="color:var(--text-dim);font-size:0.8rem;text-align:center;padding:8px 0;">' + t('noHistory') + '</div>'
-      : '';
-    return;
-  }
-  const items = state.history.map((h, i) => {
-    const badge = h.type === 'truth' ? 'truth' : 'dare';
-    const answerHtml = h.answer
-      ? `<span style="color:var(--accent2);font-size:0.78rem;display:block;margin-top:2px;">→ ${escapeHtml(h.answer)}</span>`
-      : '';
-    return `<div class="history-item">
-      <span class="history-badge ${badge}">${h.type === 'truth' ? 'V' : 'A'}</span>
-      <span class="history-player">${escapeHtml(h.player)}</span>
-      <span class="history-text">${escapeHtml(h.text)}${answerHtml}</span>
-    </div>`;
-  }).reverse().join('');
-  dom.historyList.innerHTML = items;
-}
-
-// ============================================================
-// SOUNDS (Web Audio API)
-// ============================================================
-let audioCtx = null;
-
-function getAudioCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  return audioCtx;
-}
-
-function playTone(freq, duration, type, gainVal = 0.15) {
-  try {
-    const ctx = getAudioCtx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = type || 'sine';
-    osc.frequency.value = freq;
-    gain.gain.setValueAtTime(gainVal, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + duration);
-  } catch (e) { /* silent fail */ }
-}
-
-function playTruthSound() {
-  if (!state.soundsEnabled) return;
-  playTone(523, 0.15, 'sine', 0.12);
-  setTimeout(() => playTone(659, 0.15, 'sine', 0.12), 100);
-  setTimeout(() => playTone(784, 0.3, 'sine', 0.12), 200);
-}
-
-function playDareSound() {
-  if (!state.soundsEnabled) return;
-  playTone(330, 0.2, 'sawtooth', 0.08);
-  setTimeout(() => playTone(262, 0.2, 'sawtooth', 0.08), 150);
-  setTimeout(() => playTone(392, 0.35, 'square', 0.06), 300);
-}
-
-function playCountTick() {
-  if (!state.soundsEnabled) return;
-  playTone(880, 0.08, 'sine', 0.06);
-}
-
-function playRevealSound() {
-  if (!state.soundsEnabled) return;
-  playTone(587, 0.1, 'sine', 0.1);
-  setTimeout(() => playTone(740, 0.1, 'sine', 0.1), 80);
-  setTimeout(() => playTone(880, 0.1, 'sine', 0.1), 160);
-  setTimeout(() => playTone(1047, 0.25, 'sine', 0.12), 240);
-}
-
-function playReactionSound() {
-  if (!state.soundsEnabled) return;
-  playTone(440, 0.12, 'triangle', 0.08);
-  setTimeout(() => playTone(523, 0.12, 'triangle', 0.08), 120);
-}
-
-// ============================================================
-// PARTICLES
-// ============================================================
-function burstParticles(type) {
-  const container = dom.particles;
-  const colors = type === 'truth'
-    ? ['#667eea', '#8b9cf7', '#a78bfa', '#7c3aed', '#6d28d9']
-    : ['#f5576c', '#f7798b', '#fb7185', '#ec4899', '#be185d'];
-  const cx = window.innerWidth / 2;
-  const cy = window.innerHeight / 2;
-
-  for (let i = 0; i < 40; i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    const size = 4 + Math.random() * 8;
-    p.style.width = size + 'px';
-    p.style.height = size + 'px';
-    p.style.background = colors[Math.floor(Math.random() * colors.length)];
-    p.style.left = (cx + (Math.random() - 0.5) * 60) + 'px';
-    p.style.top = (cy + (Math.random() - 0.5) * 60) + 'px';
-    const angle = Math.random() * Math.PI * 2;
-    const dist = 80 + Math.random() * 200;
-    p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
-    p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
-    p.style.boxShadow = `0 0 6px ${colors[i % colors.length]}`;
-    container.appendChild(p);
-    setTimeout(() => p.remove(), 1200);
-  }
-}
-
-// ============================================================
-// TENSION / COUNTDOWN
-// ============================================================
-function showTension(type, callback) {
-  if (!state.animationsEnabled) { callback(); return; }
-
-  const overlay = dom.tensionOverlay;
-  const fill = dom.tensionFill;
-  const count = dom.tensionCount;
-  const label = dom.tensionLabel;
-
-  label.textContent = type === 'truth' ? '☯ Vérité...' : '⚡ Action...';
-  count.textContent = '';
-  fill.style.width = '0%';
-  overlay.classList.add('active');
-
-  let start = Date.now();
-  const duration = 1800;
-  let lastSecond = 4;
-  count.textContent = '3';
-
-  function tick() {
-    const elapsed = Date.now() - start;
-    const progress = Math.min(elapsed / duration, 1);
-    fill.style.width = (progress * 100) + '%';
-
-    const remaining = Math.ceil((duration - elapsed) / 1000);
-    const sec = Math.max(remaining, 1);
-    if (sec !== lastSecond) {
-      lastSecond = sec;
-      count.textContent = sec;
-      playCountTick();
-      count.style.animation = 'none';
-      void count.offsetWidth;
-      count.style.animation = 'countPulse 0.5s ease-in-out';
-    }
-
-    if (progress < 1) {
-      requestAnimationFrame(tick);
-    } else {
-      count.textContent = 'GO!';
-      playRevealSound();
-      setTimeout(() => {
-        overlay.classList.remove('active');
-        callback();
-      }, 400);
-    }
-  }
-  tick();
-}
-
-// ============================================================
-// REACTIONS
-// ============================================================
-const REACTIONS = {
-  fr: [
-    { text: 'Ouch ! 🔥', min: 0 },
-    { text: 'Bien joué ! 👏', min: 0 },
-    { text: 'Trop fort ! 💪', min: 0 },
-    { text: 'Osé ! 😏', min: 0 },
-    { text: 'No way ! 😱', min: 0 },
-    { text: 'Savage ! 🐉', min: 0 },
-    { text: 'Respect ! 🫡', min: 0 },
-    { text: 'Incroyable ! 🤯', min: 0 },
-    { text: 'Il ose ! 😈', min: 0 },
-    { text: 'GG ! 🎮', min: 0 },
-  ],
-  en: [
-    { text: 'Ouch! 🔥', min: 0 },
-    { text: 'Nice one! 👏', min: 0 },
-    { text: 'So good! 💪', min: 0 },
-    { text: 'Bold! 😏', min: 0 },
-    { text: 'No way! 😱', min: 0 },
-    { text: 'Savage! 🐉', min: 0 },
-    { text: 'Respect! 🫡', min: 0 },
-    { text: 'Unreal! 🤯', min: 0 },
-    { text: 'Daring! 😈', min: 0 },
-    { text: 'GG! 🎮', min: 0 },
-  ],
+// ===== STATE =====
+const S = {
+  players: [], idx: 0, mode: 'multi', cat: 'fun',
+  usedT: [], usedD: [], lastT: null, lastD: null,
+  history: [], started: false
 };
 
-function showReaction() {
-  if (!state.animationsEnabled) return;
-  const pool = REACTIONS[state.lang] || REACTIONS.fr;
-  const r = pool[Math.floor(Math.random() * pool.length)];
-  const el = dom.reaction;
-  el.textContent = r.text;
-  el.style.color = ['#ffd200', '#4facfe', '#f5576c', '#00ff88', '#a78bfa'][Math.floor(Math.random() * 5)];
-  el.className = 'reaction';
-  void el.offsetWidth;
-  el.classList.add('show');
-  setTimeout(() => { el.className = 'reaction'; }, 1200);
-  playReactionSound();
+// ===== DOM =====
+const $ = id => document.getElementById(id);
+const D = {
+  toast: $('toast'), scHome: $('sc-home'), scGame: $('sc-game'),
+  inpName: $('inp-name'), btnAdd: $('btn-add'), chips: $('chips'), errHome: $('err-home'),
+  modePills: $('mode-pills'), catPills: $('cat-pills'),
+  btnStart: $('btn-start'), btnHomeWa: $('btn-home-wa'), btnHomeCopy: $('btn-home-copy'),
+  playerName: $('player-name'), roundInfo: $('round-info'), modeBadge: $('mode-badge'),
+  btnT: $('btn-t'), btnD: $('btn-d'), card: $('card'),
+  cardLabel: $('card-label'), cardText: $('card-text'),
+  ansArea: $('ans-area'), ansInp: $('ans-inp'), btnAns: $('btn-ans'),
+  ansShow: $('ans-show'), ansTxt: $('ans-txt'),
+  shareBar: $('share-bar'), btnShareWa: $('btn-share-wa'), btnShareCp: $('btn-share-cp'),
+  nextBar: $('next-bar'), btnNext: $('btn-next'), btnReset: $('btn-reset'),
+  histList: $('hist-list'), btnClearHist: $('btn-clear-hist'),
+  btnQuit: $('btn-quit'),
+  overlay: $('overlay'), ovLbl: $('ov-lbl'), ovFill: $('ov-fill'), ovCnt: $('ov-cnt')
+};
+
+// ===== HELPERS =====
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function toast(m){D.toast.textContent=m;D.toast.classList.add('show');setTimeout(()=>D.toast.classList.remove('show'),2000)}
+
+function pick(cat,type){
+  const pool = TR.fr[type][cat];
+  if(!pool||!pool.length)return'…';
+  const usedKey = type==='truth'?'usedT':'usedD';
+  const lastKey = type==='truth'?'lastT':'lastD';
+  let avail = pool.filter((_,i)=>!S[usedKey].includes(i)&&i!==S[lastKey]);
+  if(!avail.length){S[usedKey]=[];avail = pool.filter((_,i)=>i!==S[lastKey]);if(!avail.length)avail=pool}
+  let idx;do{idx=Math.floor(Math.random()*pool.length)}while(S[usedKey].includes(idx)||idx===S[lastKey]);
+  S[usedKey].push(idx);S[lastKey]=idx;
+  return pool[idx]
 }
 
-// ============================================================
-// SHARE FUNCTIONS
-// ============================================================
-function shareOnWhatsApp() {
-  const text = dom.cardText.textContent;
-  const label = dom.cardLabel.textContent;
-  const player = dom.activePlayer.textContent;
+// ===== PLAYERS =====
+function addPlayer(){
+  const n = D.inpName.value.trim();
+  D.errHome.textContent='';
+  if(!n){D.errHome.textContent='Entre un prénom.';return}
+  const nn = n.charAt(0).toUpperCase()+n.slice(1).toLowerCase();
+  if(S.players.includes(nn)){D.errHome.textContent='Ce joueur existe déjà.';return}
+  S.players.push(nn);renderChips();D.inpName.value='';D.inpName.focus();toast(`${nn} ajouté !`)
+}
+function removePlayer(i){S.players.splice(i,1);if(S.idx>=S.players.length)S.idx=0;renderChips()}
+function renderChips(){
+  D.chips.innerHTML=S.players.length
+    ? S.players.map((p,i)=>`<span class="chip">${esc(p)} <span class="rm" data-i="${i}">✕</span></span>`).join('')
+    : '<span style="color:var(--dim);font-size:.82rem;">Aucun joueur</span>';
+  D.chips.querySelectorAll('.rm').forEach(el=>el.addEventListener('click',()=>removePlayer(parseInt(el.dataset.i))));
+  updateStart()
+}
+function updateStart(){
+  const ok = S.players.length>0;
+  D.btnStart.disabled=!ok;
+  D.btnStart.textContent=ok?`🚀 Lancer (${S.players.length})`:'🚀 Ajoute des joueurs'
+}
 
-  if (!text || text === t('clickToStart') || text === '―') {
-    showToast('Tire d\'abord une question !');
-    return;
+// ===== GAME =====
+function startGame(){
+  if(!S.players.length){toast('Ajoute au moins 1 joueur.');return}
+  S.started=true;S.idx=0;S.usedT=[];S.usedD=[];S.history=[];S.lastT=null;S.lastD=null;
+  D.scHome.classList.remove('active');D.scGame.classList.add('active');
+  renderHist();updateUI()
+}
+
+function updateUI(){
+  const p=S.players[S.idx];
+  D.playerName.textContent=p?esc(p):'―';
+  D.roundInfo.textContent=`Joueur ${S.idx+1}/${S.players.length}`;
+  D.modeBadge.textContent=S.cat.charAt(0).toUpperCase()+S.cat.slice(1);
+  D.btnT.disabled=false;D.btnD.disabled=false;
+  D.cardLabel.textContent='Choisis Vérité ou Action';
+  D.cardText.textContent='Appuie sur un bouton';
+  D.cardText.className='card-text empty';
+  D.card.classList.remove('pop');
+  D.ansArea.classList.add('hide');
+  D.ansShow.classList.add('hide');
+  D.shareBar.classList.add('hide');
+  D.nextBar.classList.add('hide');
+}
+
+function handleChoice(type){
+  if(!S.started||!S.players.length)return;
+  D.btnT.disabled=true;D.btnD.disabled=true;
+  showTension(type,()=>{
+    const q=pick(S.cat,type);const isT=type==='truth';
+    D.cardLabel.textContent=isT?'☯ Vérité':'⚡ Action';
+    D.cardText.textContent=q;D.cardText.className='card-text '+(isT?'t':'d');
+    D.card.classList.remove('pop');void D.card.offsetWidth;D.card.classList.add('pop');
+    S.history.push({type,player:S.players[S.idx],text:q,cat:S.cat});
+    renderHist();
+    if(isT){D.ansArea.classList.remove('hide');D.ansInp.value='';D.ansInp.focus()}
+    D.shareBar.classList.remove('hide');
+    D.nextBar.classList.remove('hide');
+    if(S.mode==='solo')setTimeout(nextPlayer,4000)
+  })
+}
+
+function submitAns(){
+  const a=D.ansInp.value.trim();
+  if(!a){toast('Écris ta réponse.');return}
+  const h=S.history[S.history.length-1];
+  if(h&&!h.answer)h.answer=a;
+  D.ansTxt.textContent=a;D.ansArea.classList.add('hide');D.ansShow.classList.remove('hide');
+  renderHist();toast('✅ Réponse enregistrée')
+}
+
+function nextPlayer(){
+  if(!S.players.length)return;
+  S.idx=(S.idx+1)%S.players.length;
+  D.ansArea.classList.add('hide');D.ansShow.classList.add('hide');
+  updateUI()
+}
+
+function resetGame(){
+  S.started=false;S.history=[];
+  D.scGame.classList.remove('active');D.scHome.classList.add('active');
+  renderHist();toast('↺ Partie réinitialisée')
+}
+
+// ===== TENSION =====
+function showTension(type,cb){
+  const ov=D.overlay,fl=D.ovFill,cn=D.ovCnt,lb=D.ovLbl;
+  lb.textContent=type==='truth'?'☯ Vérité...':'⚡ Action...';
+  cn.textContent='';fl.style.width='0%';ov.classList.add('active');
+  const dur=1600;const start=Date.now();let lastSec=4;cn.textContent='3';
+  function tick(){
+    const e=Date.now()-start,p=Math.min(e/dur,1);
+    fl.style.width=(p*100)+'%';
+    const sec=Math.max(Math.ceil((dur-e)/1000),1);
+    if(sec!==lastSec){lastSec=sec;cn.textContent=sec;cn.style.animation='none';void cn.offsetWidth;cn.style.animation='pulse .5s'}
+    if(p<1)requestAnimationFrame(tick);
+    else{cn.textContent='GO!';setTimeout(()=>{ov.classList.remove('active');cb()},350)}
   }
+  tick()
+}
 
-  const msg = encodeURIComponent(
-    `🎮 *Action ou Vérité*%0A%0A` +
-    `👤 ${player}%0A` +
-    `${label}%0A` +
-    `❓ ${text}%0A%0A` +
-    `📱 Joue aussi : https://allakouassiaxellemarius-sys.github.io/ALLA-/`
+// ===== SHARE =====
+function shareWa(){
+  const t=D.cardText.textContent,lb=D.cardLabel.textContent,p=D.playerName.textContent;
+  if(!t||t==='Appuie sur un bouton'||t==='―'){toast('Tire une question d\'abord !');return}
+  const a = D.ansTxt.textContent&&!D.ansShow.classList.contains('hide')?`\n💬 Réponse : ${D.ansTxt.textContent}`:'';
+  const msg=encodeURIComponent(
+    `🎮 *Action ou Vérité*\n👤 *${p}*\n${lb}\n❓ ${t}${a}\n\n📱 Rejoins la partie : ${gameUrl}`
   );
-
-  window.open(`https://wa.me/?text=${msg}`, '_blank');
-  showToast('💬 WhatsApp ouvert !');
+  window.open(`https://wa.me/?text=${msg}`,'_blank');toast('💬 WhatsApp ouvert !')
 }
 
-function shareGameLink() {
-  const url = 'https://allakouassiaxellemarius-sys.github.io/ALLA-/';
-  if (navigator.share) {
-    navigator.share({ title: 'Action ou Vérité', text: 'Viens jouer avec moi !', url });
-  } else {
-    navigator.clipboard.writeText(url).then(() => showToast('🔗 Lien copié !')).catch(() => {
-      prompt('Copie le lien :', url);
-    });
-  }
+function shareCp(){
+  const t=D.cardText.textContent,lb=D.cardLabel.textContent,p=D.playerName.textContent;
+  if(!t||t==='Appuie sur un bouton'||t==='―'){toast('Tire une question d\'abord !');return}
+  const a = D.ansTxt.textContent&&!D.ansShow.classList.contains('hide')?`\n💬 Réponse : ${D.ansTxt.textContent}`:'';
+  const msg=`🎮 Action ou Vérité\n👤 ${p}\n${lb}\n❓ ${t}${a}\n\n📱 Rejoins la partie : ${gameUrl}`;
+  if(navigator.clipboard) navigator.clipboard.writeText(msg).then(()=>toast('📋 Copié !'));
+  else prompt('Copie ce message :',msg)
 }
 
-// ============================================================
-// SCREEN MANAGEMENT
-// ============================================================
-function showScreen(screen) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  if (screen === 'home') dom.screenHome.classList.add('active');
-  else if (screen === 'settings') dom.screenSettings.classList.add('active');
-  else if (screen === 'game') dom.screenGame.classList.add('active');
+function shareHomeWa(){
+  const msg=encodeURIComponent(`🎮 *Action ou Vérité*\nViens jouer avec moi !\n${gameUrl}`);
+  window.open(`https://wa.me/?text=${msg}`,'_blank')
+}
+function shareHomeCp(){
+  if(navigator.clipboard)navigator.clipboard.writeText(gameUrl).then(()=>toast('🔗 Lien copié !'));
+  else prompt('Copie le lien :',gameUrl)
 }
 
-// ============================================================
-// TOAST
-// ============================================================
-let toastTimer = null;
-function showToast(msg) {
-  dom.toast.textContent = msg;
-  dom.toast.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => dom.toast.classList.remove('show'), 2000);
+// ===== HISTORY =====
+function renderHist(){
+  if(!S.history.length){D.histList.innerHTML='<span style="color:var(--dim);font-size:.7rem;">Aucun tour</span>';return}
+  D.histList.innerHTML=S.history.slice().reverse().map(h=>{
+    const b=h.type==='truth'?'t':'d';
+    const a=h.answer?`<span class="a">→ ${esc(h.answer)}</span>`:'';
+    return `<div class="hist-item"><span class="b ${b}">${h.type==='truth'?'V':'A'}</span><span class="p">${esc(h.player)}</span><span class="t">${esc(h.text)}${a}</span></div>`
+  }).join('')
 }
 
-// ============================================================
-// EVENT BINDING
-// ============================================================
-// Players
-dom.btnAddPlayer.addEventListener('click', () => addPlayer(dom.playerInput.value));
-dom.playerInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addPlayer(dom.playerInput.value); });
+// ===== EVENTS =====
+D.btnAdd.addEventListener('click',addPlayer);
+D.inpName.addEventListener('keydown',e=>{if(e.key==='Enter')addPlayer()});
 
-// Mode options
-dom.modeOptions.querySelectorAll('.option-pill').forEach(p => {
-  p.addEventListener('click', () => {
-    dom.modeOptions.querySelectorAll('.option-pill').forEach(x => x.classList.remove('active'));
-    p.classList.add('active');
-    state.mode = p.dataset.mode;
-  });
+D.modePills.querySelectorAll('.pill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    D.modePills.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));
+    p.classList.add('active');S.mode=p.dataset.v
+  })
+});
+D.catPills.querySelectorAll('.pill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    D.catPills.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));
+    p.classList.add('active');S.cat=p.dataset.v;S.usedT=[];S.usedD=[];S.lastT=null;S.lastD=null
+  })
+});
+D.btnStart.addEventListener('click',startGame);
+D.btnHomeWa.addEventListener('click',shareHomeWa);
+D.btnHomeCopy.addEventListener('click',shareHomeCp);
+D.btnQuit.addEventListener('click',resetGame);
+D.btnT.addEventListener('click',()=>handleChoice('truth'));
+D.btnD.addEventListener('click',()=>handleChoice('dare'));
+D.btnAns.addEventListener('click',submitAns);
+D.ansInp.addEventListener('keydown',e=>{if(e.key==='Enter')submitAns()});
+D.btnNext.addEventListener('click',nextPlayer);
+D.btnReset.addEventListener('click',resetGame);
+D.btnClearHist.addEventListener('click',()=>{S.history=[];renderHist();toast('🗑️ Effacé')});
+D.btnShareWa.addEventListener('click',shareWa);
+D.btnShareCp.addEventListener('click',shareCp);
+
+// ===== KEYBOARD =====
+document.addEventListener('keydown',e=>{
+  if(!S.started)return
+  if(e.key==='t'||e.key==='1'){e.preventDefault();D.btnT.click()}
+  if(e.key==='d'||e.key==='2'){e.preventDefault();D.btnD.click()}
+  if(e.key==='n'||e.key==='ArrowRight'){e.preventDefault();D.btnNext.click()}
+  if(e.key==='Escape')resetGame()
 });
 
-// Style options
-dom.styleOptions.querySelectorAll('.option-pill').forEach(p => {
-  p.addEventListener('click', () => {
-    dom.styleOptions.querySelectorAll('.option-pill').forEach(x => x.classList.remove('active'));
-    p.classList.add('active');
-    state.style = p.dataset.style;
-    state.usedTruths = [];
-    state.usedDares = [];
-    state.lastTruthIdx = null;
-    state.lastDareIdx = null;
-  });
-});
-
-// Theme (settings)
-dom.themeOptions.querySelectorAll('.option-pill').forEach(p => {
-  p.addEventListener('click', () => setTheme(p.dataset.theme));
-});
-
-// Theme (top bar)
-dom.themeBar.querySelectorAll('.theme-dot').forEach(d => {
-  d.addEventListener('click', () => setTheme(d.dataset.theme));
-});
-
-// Language
-dom.langOptions.querySelectorAll('.option-pill').forEach(p => {
-  p.addEventListener('click', () => {
-    dom.langOptions.querySelectorAll('.option-pill').forEach(x => x.classList.remove('active'));
-    p.classList.add('active');
-    state.lang = p.dataset.lang;
-    updateUILang();
-  });
-});
-
-function updateUILang() {
-  dom.subtitle.textContent = TR[state.lang].subtitle;
-  updateGameUI();
-  if (!state.gameStarted) {
-    renderPlayers();
-  }
-}
-
-// Tabs
-dom.settingsTabs.querySelectorAll('.tab').forEach(t => {
-  t.addEventListener('click', () => {
-    dom.settingsTabs.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-    t.classList.add('active');
-    showScreen(t.dataset.tab);
-  });
-});
-
-// Start
-dom.btnStart.addEventListener('click', startGame);
-
-// Quit game
-dom.btnQuit.addEventListener('click', resetGame);
-
-// Choices
-dom.btnTruth.addEventListener('click', () => handleChoice('truth'));
-dom.btnDare.addEventListener('click', () => handleChoice('dare'));
-
-// Next / Reset
-dom.btnNext.addEventListener('click', nextPlayer);
-dom.btnResetGame.addEventListener('click', resetGame);
-dom.btnClearHistory.addEventListener('click', clearHistory);
-dom.btnAnswer.addEventListener('click', submitAnswer);
-dom.answerInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitAnswer(); });
-
-// Share
-dom.btnWhatsapp.addEventListener('click', shareOnWhatsApp);
-dom.btnShareLink.addEventListener('click', shareGameLink);
-
-// Settings save
-dom.btnSaveSettings.addEventListener('click', () => {
-  state.gameName = dom.gameNameInput.value.trim();
-  state.historyEnabled = dom.chkHistory.checked;
-  state.animationsEnabled = dom.chkAnimations.checked;
-  state.soundsEnabled = dom.chkSounds.checked;
-  dom.historySection.style.display = state.historyEnabled ? 'block' : 'none';
-  showToast(t('settingsSaved'));
-  dom.settingsTabs.querySelector('[data-tab="home"]').click();
-});
-
-// Keyboard shortcuts
-document.addEventListener('keydown', (e) => {
-  if (!state.gameStarted) return;
-  if (e.key === '1' || e.key === 't') { e.preventDefault(); dom.btnTruth.click(); }
-  if (e.key === '2' || e.key === 'd') { e.preventDefault(); dom.btnDare.click(); }
-  if (e.key === 'Enter' && !dom.btnTruth.disabled) { /* handled */ }
-  if (e.key === 'ArrowRight' || e.key === 'n') { e.preventDefault(); if (!dom.btnTruth.disabled) return; dom.btnNext.click(); }
-  if (e.key === 'Escape') { resetGame(); }
-});
-
-// ============================================================
-// INIT
-// ============================================================
-renderPlayers();
-dom.historySection.style.display = 'none';
-
-console.log('🎮 Action ou Vérité prêt !');
-console.log('Raccourcis : [T]ruth [D]are [N]ext [Esc]quit');
+// ===== INIT =====
+renderChips();
+console.log('🎮 Action ou Vérité WhatsApp prêt !')
 </script>
 </body>
 </html>
