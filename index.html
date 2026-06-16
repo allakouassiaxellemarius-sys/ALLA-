@@ -719,6 +719,115 @@ body {
   .btn-choice { padding: 12px; font-size: 0.9rem; }
 }
 
+/* ========== PARTICLES ========== */
+.particles-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: particleFall 1.2s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes particleFall {
+  0% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0); }
+}
+
+/* ========== TENSION BAR ========== */
+.tension-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.tension-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.tension-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 16px;
+  color: var(--text-dim);
+}
+
+.tension-track {
+  width: 70%;
+  max-width: 280px;
+  height: 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.tension-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--truth), var(--dare), var(--accent));
+  transition: width 0.05s linear;
+}
+
+.tension-count {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--accent2);
+  animation: countPulse 0.5s ease-in-out;
+}
+
+@keyframes countPulse {
+  0% { transform: scale(1.2); opacity: 0.6; }
+  50% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ========== REACTION TOAST ========== */
+.reaction {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.5);
+  font-size: 2.5rem;
+  font-weight: 900;
+  pointer-events: none;
+  z-index: 200;
+  opacity: 0;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  white-space: nowrap;
+}
+
+.reaction.show {
+  animation: reactionPop 1.2s ease-out forwards;
+}
+
+@keyframes reactionPop {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5) rotate(-5deg); }
+  15% { opacity: 1; transform: translate(-50%, -50%) scale(1.2) rotate(2deg); }
+  30% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  70% { opacity: 1; transform: translate(-50%, -60%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -80%) scale(0.8); }
+}
+
 /* ========== NO-SELECT ========== */
 .no-select { user-select: none; -webkit-user-select: none; }
 </style>
@@ -728,6 +837,10 @@ body {
 <div class="container" id="app">
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
+  <!-- PARTICLES -->
+  <div class="particles-container" id="particles"></div>
+  <!-- REACTION -->
+  <div class="reaction" id="reaction"></div>
 
   <!-- HEADER -->
   <div class="header no-select">
@@ -819,6 +932,9 @@ body {
         <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;color:var(--text-dim);cursor:pointer;">
           <input type="checkbox" id="chk-animations" checked> Animations
         </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;color:var(--text-dim);cursor:pointer;">
+          <input type="checkbox" id="chk-sounds" checked> Sons
+        </label>
       </div>
     </div>
 
@@ -846,9 +962,16 @@ body {
       <button class="btn-choice btn-dare" id="btn-dare">⚡ Action</button>
     </div>
 
-    <div class="card" id="card">
+    <div class="card" id="card" style="position:relative;">
       <div class="card-label" id="card-label">Choisis Vérité ou Action</div>
       <div class="card-text card-empty" id="card-text">Clique sur un bouton pour commencer</div>
+      <div class="tension-overlay" id="tension-overlay">
+        <div class="tension-label" id="tension-label">Prépare-toi...</div>
+        <div class="tension-track">
+          <div class="tension-fill" id="tension-fill"></div>
+        </div>
+        <div class="tension-count" id="tension-count">3</div>
+      </div>
     </div>
 
     <div class="action-row" id="action-row">
@@ -1180,6 +1303,7 @@ const state = {
   history: [],
   historyEnabled: true,
   animationsEnabled: true,
+  soundsEnabled: true,
   usedTruths: [],
   usedDares: [],
   truthHistory: [],
@@ -1216,6 +1340,7 @@ const dom = {
   gameNameInput: $('game-name-input'),
   chkHistory: $('chk-history'),
   chkAnimations: $('chk-animations'),
+  chkSounds: $('chk-sounds'),
   btnSaveSettings: $('btn-save-settings'),
 
   // Game
@@ -1239,6 +1364,13 @@ const dom = {
   shareRow: $('share-row'),
   btnWhatsapp: $('btn-whatsapp'),
   btnShareLink: $('btn-share-link'),
+  // Ambiance
+  particles: $('particles'),
+  tensionOverlay: $('tension-overlay'),
+  tensionFill: $('tension-fill'),
+  tensionCount: $('tension-count'),
+  tensionLabel: $('tension-label'),
+  reaction: $('reaction'),
 };
 
 // ============================================================
@@ -1454,27 +1586,41 @@ function pickQuestion(type) {
 function handleChoice(type) {
   if (!state.gameStarted || state.players.length === 0) return;
 
-  const pick = pickQuestion(type);
-  const isTruth = type === 'truth';
-
-  dom.cardLabel.textContent = isTruth ? '☯ ' + t('truth') : '⚡ ' + t('dare');
-  dom.cardText.textContent = pick;
-  dom.cardText.className = 'card-text ' + (isTruth ? 'truth-color' : 'dare-color');
-
-  if (state.animationsEnabled) {
-    dom.card.classList.remove('pop');
-    void dom.card.offsetWidth;
-    dom.card.classList.add('pop');
-  }
-
   dom.btnTruth.disabled = true;
   dom.btnDare.disabled = true;
-  dom.btnNext.textContent = t('nextPlayer');
 
-  // Solo mode auto-advance after delay
-  if (state.mode === 'solo') {
-    setTimeout(() => nextPlayer(), 3000);
-  }
+  // Play sound
+  if (type === 'truth') playTruthSound();
+  else playDareSound();
+
+  // Tension / countdown then reveal
+  showTension(type, () => {
+    const pick = pickQuestion(type);
+    const isTruth = type === 'truth';
+
+    dom.cardLabel.textContent = isTruth ? '☯ ' + t('truth') : '⚡ ' + t('dare');
+    dom.cardText.textContent = pick;
+    dom.cardText.className = 'card-text ' + (isTruth ? 'truth-color' : 'dare-color');
+
+    if (state.animationsEnabled) {
+      dom.card.classList.remove('pop');
+      void dom.card.offsetWidth;
+      dom.card.classList.add('pop');
+    }
+
+    // Particles
+    burstParticles(type);
+
+    // Reaction
+    setTimeout(() => showReaction(), 400);
+
+    dom.btnNext.textContent = t('nextPlayer');
+
+    // Solo mode auto-advance after delay
+    if (state.mode === 'solo') {
+      setTimeout(() => nextPlayer(), 4000);
+    }
+  });
 }
 
 function nextPlayer() {
@@ -1528,6 +1674,190 @@ function renderHistory() {
     </div>`;
   }).reverse().join('');
   dom.historyList.innerHTML = items;
+}
+
+// ============================================================
+// SOUNDS (Web Audio API)
+// ============================================================
+let audioCtx = null;
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playTone(freq, duration, type, gainVal = 0.15) {
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + duration);
+  } catch (e) { /* silent fail */ }
+}
+
+function playTruthSound() {
+  if (!state.soundsEnabled) return;
+  playTone(523, 0.15, 'sine', 0.12);
+  setTimeout(() => playTone(659, 0.15, 'sine', 0.12), 100);
+  setTimeout(() => playTone(784, 0.3, 'sine', 0.12), 200);
+}
+
+function playDareSound() {
+  if (!state.soundsEnabled) return;
+  playTone(330, 0.2, 'sawtooth', 0.08);
+  setTimeout(() => playTone(262, 0.2, 'sawtooth', 0.08), 150);
+  setTimeout(() => playTone(392, 0.35, 'square', 0.06), 300);
+}
+
+function playCountTick() {
+  if (!state.soundsEnabled) return;
+  playTone(880, 0.08, 'sine', 0.06);
+}
+
+function playRevealSound() {
+  if (!state.soundsEnabled) return;
+  playTone(587, 0.1, 'sine', 0.1);
+  setTimeout(() => playTone(740, 0.1, 'sine', 0.1), 80);
+  setTimeout(() => playTone(880, 0.1, 'sine', 0.1), 160);
+  setTimeout(() => playTone(1047, 0.25, 'sine', 0.12), 240);
+}
+
+function playReactionSound() {
+  if (!state.soundsEnabled) return;
+  playTone(440, 0.12, 'triangle', 0.08);
+  setTimeout(() => playTone(523, 0.12, 'triangle', 0.08), 120);
+}
+
+// ============================================================
+// PARTICLES
+// ============================================================
+function burstParticles(type) {
+  const container = dom.particles;
+  const colors = type === 'truth'
+    ? ['#667eea', '#8b9cf7', '#a78bfa', '#7c3aed', '#6d28d9']
+    : ['#f5576c', '#f7798b', '#fb7185', '#ec4899', '#be185d'];
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+
+  for (let i = 0; i < 40; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 4 + Math.random() * 8;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    p.style.left = (cx + (Math.random() - 0.5) * 60) + 'px';
+    p.style.top = (cy + (Math.random() - 0.5) * 60) + 'px';
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 80 + Math.random() * 200;
+    p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+    p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+    p.style.boxShadow = `0 0 6px ${colors[i % colors.length]}`;
+    container.appendChild(p);
+    setTimeout(() => p.remove(), 1200);
+  }
+}
+
+// ============================================================
+// TENSION / COUNTDOWN
+// ============================================================
+function showTension(type, callback) {
+  if (!state.animationsEnabled) { callback(); return; }
+
+  const overlay = dom.tensionOverlay;
+  const fill = dom.tensionFill;
+  const count = dom.tensionCount;
+  const label = dom.tensionLabel;
+
+  label.textContent = type === 'truth' ? '☯ Vérité...' : '⚡ Action...';
+  count.textContent = '';
+  fill.style.width = '0%';
+  overlay.classList.add('active');
+
+  let start = Date.now();
+  const duration = 1800;
+  let lastSecond = 4;
+  count.textContent = '3';
+
+  function tick() {
+    const elapsed = Date.now() - start;
+    const progress = Math.min(elapsed / duration, 1);
+    fill.style.width = (progress * 100) + '%';
+
+    const remaining = Math.ceil((duration - elapsed) / 1000);
+    const sec = Math.max(remaining, 1);
+    if (sec !== lastSecond) {
+      lastSecond = sec;
+      count.textContent = sec;
+      playCountTick();
+      count.style.animation = 'none';
+      void count.offsetWidth;
+      count.style.animation = 'countPulse 0.5s ease-in-out';
+    }
+
+    if (progress < 1) {
+      requestAnimationFrame(tick);
+    } else {
+      count.textContent = 'GO!';
+      playRevealSound();
+      setTimeout(() => {
+        overlay.classList.remove('active');
+        callback();
+      }, 400);
+    }
+  }
+  tick();
+}
+
+// ============================================================
+// REACTIONS
+// ============================================================
+const REACTIONS = {
+  fr: [
+    { text: 'Ouch ! 🔥', min: 0 },
+    { text: 'Bien joué ! 👏', min: 0 },
+    { text: 'Trop fort ! 💪', min: 0 },
+    { text: 'Osé ! 😏', min: 0 },
+    { text: 'No way ! 😱', min: 0 },
+    { text: 'Savage ! 🐉', min: 0 },
+    { text: 'Respect ! 🫡', min: 0 },
+    { text: 'Incroyable ! 🤯', min: 0 },
+    { text: 'Il ose ! 😈', min: 0 },
+    { text: 'GG ! 🎮', min: 0 },
+  ],
+  en: [
+    { text: 'Ouch! 🔥', min: 0 },
+    { text: 'Nice one! 👏', min: 0 },
+    { text: 'So good! 💪', min: 0 },
+    { text: 'Bold! 😏', min: 0 },
+    { text: 'No way! 😱', min: 0 },
+    { text: 'Savage! 🐉', min: 0 },
+    { text: 'Respect! 🫡', min: 0 },
+    { text: 'Unreal! 🤯', min: 0 },
+    { text: 'Daring! 😈', min: 0 },
+    { text: 'GG! 🎮', min: 0 },
+  ],
+};
+
+function showReaction() {
+  if (!state.animationsEnabled) return;
+  const pool = REACTIONS[state.lang] || REACTIONS.fr;
+  const r = pool[Math.floor(Math.random() * pool.length)];
+  const el = dom.reaction;
+  el.textContent = r.text;
+  el.style.color = ['#ffd200', '#4facfe', '#f5576c', '#00ff88', '#a78bfa'][Math.floor(Math.random() * 5)];
+  el.className = 'reaction';
+  void el.offsetWidth;
+  el.classList.add('show');
+  setTimeout(() => { el.className = 'reaction'; }, 1200);
+  playReactionSound();
 }
 
 // ============================================================
@@ -1677,6 +2007,7 @@ dom.btnSaveSettings.addEventListener('click', () => {
   state.gameName = dom.gameNameInput.value.trim();
   state.historyEnabled = dom.chkHistory.checked;
   state.animationsEnabled = dom.chkAnimations.checked;
+  state.soundsEnabled = dom.chkSounds.checked;
   dom.historySection.style.display = state.historyEnabled ? 'block' : 'none';
   showToast(t('settingsSaved'));
   dom.settingsTabs.querySelector('[data-tab="home"]').click();
