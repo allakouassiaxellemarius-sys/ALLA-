@@ -740,6 +740,77 @@ body {
   100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0); }
 }
 
+/* ========== ANSWER AREA ========== */
+.answer-area {
+  width: 100%;
+  margin-top: 14px;
+  display: flex;
+  gap: 8px;
+  animation: fadeSlideIn 0.3s ease-out;
+}
+
+.answer-area input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.08);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border var(--transition);
+}
+
+.answer-area input:focus { border-color: var(--accent); }
+.answer-area input::placeholder { color: #666; }
+
+.btn-answer {
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: #fff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.btn-answer:hover { background: var(--accent2); transform: translateY(-1px); }
+.btn-answer:active { transform: scale(0.97); }
+
+.answer-display {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  animation: fadeSlideIn 0.3s ease-out;
+  text-align: left;
+}
+
+.answer-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  font-weight: 600;
+  margin-right: 8px;
+}
+
+.answer-text {
+  font-size: 0.95rem;
+  color: var(--accent2);
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.hidden { display: none !important; }
+
 /* ========== TENSION BAR ========== */
 .tension-overlay {
   position: absolute;
@@ -966,6 +1037,14 @@ body {
     <div class="card" id="card" style="position:relative;">
       <div class="card-label" id="card-label">Choisis Vérité ou Action</div>
       <div class="card-text card-empty" id="card-text">Clique sur un bouton pour commencer</div>
+      <div class="answer-area hidden" id="answer-area">
+        <input type="text" id="answer-input" placeholder="Ta réponse..." maxlength="100" autocomplete="off">
+        <button class="btn-answer" id="btn-answer">💬 Répondre</button>
+      </div>
+      <div class="answer-display hidden" id="answer-display">
+        <span class="answer-label">Réponse :</span>
+        <span class="answer-text" id="answer-text"></span>
+      </div>
       <div class="tension-overlay" id="tension-overlay">
         <div class="tension-label" id="tension-label">Prépare-toi...</div>
         <div class="tension-track">
@@ -1454,6 +1533,12 @@ const dom = {
   shareRow: $('share-row'),
   btnWhatsapp: $('btn-whatsapp'),
   btnShareLink: $('btn-share-link'),
+  // Answer
+  answerArea: $('answer-area'),
+  answerInput: $('answer-input'),
+  btnAnswer: $('btn-answer'),
+  answerDisplay: $('answer-display'),
+  answerText: $('answer-text'),
   // Ambiance
   particles: $('particles'),
   tensionOverlay: $('tension-overlay'),
@@ -1701,6 +1786,17 @@ function handleChoice(type) {
     // Particles
     burstParticles(type);
 
+    // Show answer input for truth questions
+    if (isTruth) {
+      dom.answerArea.classList.remove('hidden');
+      dom.answerDisplay.classList.add('hidden');
+      dom.answerInput.value = '';
+      dom.answerInput.focus();
+    } else {
+      dom.answerArea.classList.add('hidden');
+      dom.answerDisplay.classList.add('hidden');
+    }
+
     // Reaction
     setTimeout(() => showReaction(), 400);
 
@@ -1713,9 +1809,29 @@ function handleChoice(type) {
   });
 }
 
+function submitAnswer() {
+  const answer = dom.answerInput.value.trim();
+  if (!answer) {
+    showToast('Écris une réponse d\'abord !');
+    return;
+  }
+  // Save answer in history
+  const last = state.history[state.history.length - 1];
+  if (last && !last.answer) {
+    last.answer = answer;
+  }
+  dom.answerText.textContent = answer;
+  dom.answerArea.classList.add('hidden');
+  dom.answerDisplay.classList.remove('hidden');
+  renderHistory();
+  showToast('💬 Réponse enregistrée !');
+}
+
 function nextPlayer() {
   if (state.players.length === 0) return;
   state.currentIndex = (state.currentIndex + 1) % state.players.length;
+  dom.answerArea.classList.add('hidden');
+  dom.answerDisplay.classList.add('hidden');
   updateGameUI();
   if (state.animationsEnabled) {
     dom.activePlayer.style.animation = 'none';
@@ -1757,10 +1873,13 @@ function renderHistory() {
   }
   const items = state.history.map((h, i) => {
     const badge = h.type === 'truth' ? 'truth' : 'dare';
+    const answerHtml = h.answer
+      ? `<span style="color:var(--accent2);font-size:0.78rem;display:block;margin-top:2px;">→ ${escapeHtml(h.answer)}</span>`
+      : '';
     return `<div class="history-item">
       <span class="history-badge ${badge}">${h.type === 'truth' ? 'V' : 'A'}</span>
       <span class="history-player">${escapeHtml(h.player)}</span>
-      <span class="history-text">${escapeHtml(h.text)}</span>
+      <span class="history-text">${escapeHtml(h.text)}${answerHtml}</span>
     </div>`;
   }).reverse().join('');
   dom.historyList.innerHTML = items;
@@ -2087,6 +2206,8 @@ dom.btnDare.addEventListener('click', () => handleChoice('dare'));
 dom.btnNext.addEventListener('click', nextPlayer);
 dom.btnResetGame.addEventListener('click', resetGame);
 dom.btnClearHistory.addEventListener('click', clearHistory);
+dom.btnAnswer.addEventListener('click', submitAnswer);
+dom.answerInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitAnswer(); });
 
 // Share
 dom.btnWhatsapp.addEventListener('click', shareOnWhatsApp);
